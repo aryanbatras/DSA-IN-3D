@@ -1,3 +1,4 @@
+import java.awt.image.DataBufferInt;
 import java.io.*;
 import java.awt.*;
 import java.util.*;
@@ -21,32 +22,69 @@ public class Window extends JFrame {
     double V_YAXIS, V_XAXIS, V_ZAXIS, M_X, M_Y, M_Z, latestX, latestY, yaw, pitch, radius;
     BufferedImage IMG, BEINGRENDERED, ENVIRONMENT;
     Dimension SCREEN; Camera CAMERA; ArrayList<Shape> WORLD;
-    ScheduledExecutorService mouseClock, keyClock;
-    ScheduledFuture<?> mouseSchedule, keySchedule;
+    ScheduledExecutorService Clock; ScheduledFuture<?> Schedule;
 
     Window() {
         setup();
-        listener();
+        start();
+        listen();
     }
+
+    private void start() {
+        int[] arr = {5, 4, 3};
+
+        float space = 1.5f;
+        float startLeft = -arr.length / 2.0f;
+        for (int i = 0; i < arr.length; i++) {
+            float x = (startLeft + i) * space;
+            WORLD.add(new Box(new Point(x, 0, 0), 1, 1, 1,
+                    new Color(0.4f, 0.7f, 1.0f), Material.TRANSLUCENT, 0));
+        }
+
+        double totalX = 0, totalY = 0, totalZ = 0;
+        for (Shape s : WORLD) {
+            if (s instanceof Box box) {
+                Point c = box.getCenter();
+                totalX += c.x;
+                totalY += c.y;
+                totalZ += c.z;
+            }
+        }
+
+        M_X = totalX / arr.length;
+        M_Y = totalY / arr.length + 1;
+        M_Z = totalZ / arr.length;
+
+        double  minX = Double.MAX_VALUE,
+                maxX = -Double.MAX_VALUE;
+
+        for (Shape s : WORLD) {
+            if (s instanceof Box box) {
+                double x = box.getCenter().x;
+                minX = Math.min(minX, x);
+                maxX = Math.max(maxX, x);
+            }
+        }
+
+        double worldLength = maxX - minX;
+        radius = worldLength * 1.25;
+
+        drawImage(HEIGHT, WIDTH);
+    }
+
 
     private void setup() {
-        SCREEN = Toolkit.getDefaultToolkit().getScreenSize(); HEIGHT = SCREEN.height / 2; WIDTH = SCREEN.width / 2; setSize(WIDTH,HEIGHT);
+        SCREEN = Toolkit.getDefaultToolkit().getScreenSize(); HEIGHT = SCREEN.height; WIDTH = SCREEN.width; setSize(WIDTH,HEIGHT);
         V_YAXIS = 2; V_XAXIS = 1; V_ZAXIS = -3; M_X = 0; M_Y = 0; M_Z = 0; latestX = 0; latestY = 0;
-        Point startpos = new Point(M_X - V_XAXIS, M_Y - V_YAXIS, M_Z - V_ZAXIS).normalize();
-        yaw = Math.toDegrees(Math.atan2(startpos.x, startpos.z)); pitch = Math.toDegrees(Math.asin(startpos.y));
-        radius = new Point(V_XAXIS - M_X, V_YAXIS - M_Y, V_ZAXIS - M_Z).length();
-        keyClock = Executors.newSingleThreadScheduledExecutor(); mouseClock = Executors.newSingleThreadScheduledExecutor();
-        String[] sceneNames = { "PureSky", "Room", "MirrorHall", "ModernHall", "ChristmasHall",  "Lounge", "Garden", "Backyard", "Lake", "Pool" };
-        String selectedScene = sceneNames[new Random().nextInt(sceneNames.length)];
-        try { ENVIRONMENT = ImageIO.read(getClass().getResourceAsStream("/Resources/" + selectedScene.toLowerCase() + ".jpg") ); } catch(IOException e){ e.printStackTrace(); }
-        WORLD = new ArrayList<Shape>();
-        WORLD.add(new Sphere(new Point(0.5,0.5,0.5), 0.5, new Color(0.8f,0.8f,0.8f), Material.METAL, 0.01 ));
-        WORLD.add(new Box(new Point(-1, 0.5, -1), 0.5, 0.5, 0.5,new Color(0.8f,0.8f,0.8f), Material.METAL, 0.01 ));
-        drawImage(HEIGHT, WIDTH); setBackground(java.awt.Color.BLACK); setLocationRelativeTo(null);
+        radius = new Point(V_XAXIS - M_X, V_YAXIS - M_Y, V_ZAXIS - M_Z).length(); yaw = 0; pitch = 0;
+        Clock = Executors.newSingleThreadScheduledExecutor();
+        try { ENVIRONMENT = ImageIO.read(getClass().getResourceAsStream("/Resources/lake.jpg") ); } catch(IOException e){ e.printStackTrace(); }
+        setBackground(java.awt.Color.BLACK); setLocationRelativeTo(null);
         setUndecorated(true); setResizable(false); setVisible(true); setLayout(null);
+        WORLD = new ArrayList<Shape>();
     }
 
-    private void listener() {
+    private void listen() {
         addKeyListener(new KeyAdapter( ) {
             public void keyPressed(KeyEvent e) {
                 double  moveSpeed = 0.5,
@@ -65,9 +103,8 @@ public class Window extends JFrame {
                     default: return;
                 }
                 M_X += movement.x; M_Y += movement.y; M_Z += movement.z;
-                drawImage(HEIGHT / 8, WIDTH / 8);
-                if(keySchedule != null && keySchedule.isDone() == false) keySchedule.cancel(true);
-                keySchedule = keyClock.schedule(() -> drawImage(HEIGHT, WIDTH),250,TimeUnit.MILLISECONDS);
+                drawImage(HEIGHT / 20, WIDTH / 20);
+                drawImageSchedule();
             }
         });
         addMouseListener(new MouseAdapter( ) {
@@ -75,43 +112,66 @@ public class Window extends JFrame {
                 latestX = e.getX(); latestY = e.getY();
             }
             public void mouseReleased(MouseEvent e) {
-                drawImage(HEIGHT, WIDTH);
+                drawImageSchedule();
             }
         });
         addMouseMotionListener(new MouseAdapter( ) {
             public void mouseDragged(MouseEvent e) {
                 double beingDragged_X = e.getX(), beingDragged_Y = e.getY();
-                yaw += - ( beingDragged_X - latestX ) * 0.1; pitch -= ( beingDragged_Y - latestY ) * 0.1;
                 if (Math.abs(beingDragged_X - latestX) < 20 && Math.abs(beingDragged_Y - latestY) < 20) return;
-                drawImage(HEIGHT / 8, WIDTH / 8);
+                yaw += - ( beingDragged_X - latestX ) * 0.1; pitch -= ( beingDragged_Y - latestY ) * 0.1;
+                drawImage(HEIGHT / 20, WIDTH / 20);
                 latestX = beingDragged_X; latestY = beingDragged_Y;
             }
         });
         addMouseWheelListener(new MouseAdapter( ) {
             public void mouseWheelMoved(MouseWheelEvent e) {
                 double offset_Z = e.getPreciseWheelRotation() / 10; radius += offset_Z * 0.25;
-                drawImage(HEIGHT / 8, WIDTH / 8);
-                if(mouseSchedule != null && mouseSchedule.isDone() == false) mouseSchedule.cancel(true);
-                mouseSchedule = mouseClock.schedule(() -> drawImage(HEIGHT, WIDTH),250,TimeUnit.MILLISECONDS);
+                System.out.println(radius );
+                drawImage(HEIGHT / 20, WIDTH / 20);
+                drawImageSchedule();
             }
         });
+    }
 
+    void drawImageSchedule(){
+        if(Schedule != null && Schedule.isDone() == false) Schedule.cancel(false);
+        Schedule = Clock.schedule(() -> drawImage(HEIGHT, WIDTH),200,TimeUnit.MILLISECONDS);
     }
 
     private void drawImage(int HEIGHT, int WIDTH) {
+
+        long start = System.nanoTime() / 1000000;
         newCameraPosition();
         BEINGRENDERED = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-        for (int y = 0; y < HEIGHT; y++) {
-            for (int x = 0; x < WIDTH; x++) {
-                double u = (double) x / WIDTH;
-                double v = (double) (HEIGHT - y) / HEIGHT;
-                Ray ray = CAMERA.getRay(u, v);
-                Color pixelColor = new Color(Main.rayColor(WORLD, ray, ENVIRONMENT, 10));
-                    BEINGRENDERED.setRGB(x, y, pixelColor.colorToInteger());
-            }
+        int cores = Runtime.getRuntime().availableProcessors();
+        ExecutorService exec = Executors.newFixedThreadPool(cores);
+        int[] pixels = ((DataBufferInt) BEINGRENDERED.getRaster().getDataBuffer()).getData();
+        ArrayList<Future<?>> tasks = new ArrayList<>();
+        for (int yStart = 0; yStart < HEIGHT; yStart += HEIGHT / cores) {
+            final int y0 = yStart;
+            final int y1 = Math.min(yStart + (HEIGHT / cores), HEIGHT);
+            tasks.add(exec.submit(() -> {
+                for (int y = y0; y < y1; y++) {
+                    for (int x = 0; x < WIDTH; x++) {
+                        double u = (double) x / WIDTH;
+                        double v = (double) (HEIGHT - y) / HEIGHT;
+                        Ray ray = CAMERA.getRay(u, v);
+                        Color pixelColor = new Color(Main.rayColor(WORLD, ray, ENVIRONMENT, 2));
+                        pixels[y * WIDTH + x] = pixelColor.colorToInteger();
+                    }
+                }
+            }));
         }
+        for (Future<?> f : tasks) {
+            try { f.get(); }
+            catch (InterruptedException | ExecutionException e) { throw new RuntimeException(e); }
+        }
+        exec.shutdown();
+
         IMG = BEINGRENDERED;
         repaint();
+        System.out.println("Rendered " + ( ( System.nanoTime() / 1000000 ) - start ) + "ms");
     }
 
     private void newCameraPosition() {

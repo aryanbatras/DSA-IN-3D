@@ -188,7 +188,7 @@ public class Main {
             );
         }
 
-        if (hitShape == null) {
+        if (hitShape == null && environmentMap != null) {
             Point getDirection = r.getDirection().normalize();
             double u = 0.5 + Math.atan2(getDirection.z, getDirection.x) / (2 * Math.PI);
             double v = 0.5 - Math.asin(getDirection.y) / Math.PI;
