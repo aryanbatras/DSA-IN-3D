@@ -1,19 +1,7 @@
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Random;
-
-/*
-
- Initial Setup Screen
- Do the Resolution setup
- Frame should be relative to the W & H of Image
- And It should not change after setup
- RayTracerWindow.getDimensions() -> W & H
-
- */
-
 
 public class Main {
 

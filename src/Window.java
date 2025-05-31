@@ -24,7 +24,6 @@ public class Window extends JFrame implements KeyListener, MouseListener, MouseM
     ScheduledFuture<?> mouseSchedule, keySchedule;
 
     JLabel LabelX, LabelY, LabelZ;JTextField LabelChangerX, LabelChangerY, LabelChangerZ; Font LabelFont, UpdateFont;
-    Image ArrowsImage, ZbuttonImage, XbuttonImage, MouseImage;
 
     JDialog olderEditObjectWindow; JPanel viewObjects; int objectCounter;
     JProgressBar saveImageProgress; JScrollPane viewObjectsScrolling;
@@ -37,14 +36,13 @@ public class Window extends JFrame implements KeyListener, MouseListener, MouseM
     Window() throws IOException {
         setup();
         window();
-        overlay();
+//        overlay();
     }
 
     void overlay() {
         Components();
         axisWindow();
         objectWindow();
-        MouseKeyWindow();
         saveImageWindow();
         specialFeaturesWindow();
         closeApplicationWindow();
@@ -2221,75 +2219,6 @@ public class Window extends JFrame implements KeyListener, MouseListener, MouseM
         return editRadius;
     }
 
-    void MouseKeyWindow() {
-
-        mouseKeyWindow = new JWindow();
-
-        mouseKeyWindow.setBackground(new java.awt.Color(0,0,0,0));
-        mouseKeyWindow.setSize(getWidth() / 4, getHeight() / 5);
-        mouseKeyWindow.setLocation(
-                getWidth() - mouseKeyWindow.getWidth(),
-                getHeight() - mouseKeyWindow.getHeight()
-        );
-        mouseKeyWindow.setAlwaysOnTop(true);
-        mouseKeyWindow.setLayout(null);
-
-        mouseKeyWindow.add(mousePanel(mouseKeyWindow));
-        mouseKeyWindow.add(keyPanel(mouseKeyWindow));
-        mouseKeyWindow.setVisible(true);
-
-    }
-
-    JPanel keyPanel(JWindow mouseKeyWindow) {
-        JPanel keyPanel = new JPanel();
-        keyPanel.setBackground(new java.awt.Color(50,0,0,0));
-        keyPanel.setSize(mouseKeyWindow.getWidth() / 2, mouseKeyWindow.getHeight());
-        keyPanel.setLocation(mouseKeyWindow.getWidth() / 2, 0);
-
-        JComponent keyImageComponent = new JComponent( ) {
-            protected void paintComponent(Graphics g) {
-                g.drawImage(ArrowsImage, 0, 0, this.getWidth(), this.getHeight() / 2, this);
-                g.drawImage(XbuttonImage, this.getWidth() / 2 - this.getWidth() / 3, this.getHeight() / 2 + this.getHeight() / 8, this.getWidth() / 3, this.getHeight() / 3, this);
-                g.drawImage(ZbuttonImage, this.getWidth() / 2, this.getHeight() / 2 + this.getHeight() / 8, this.getWidth() / 3, this.getHeight() / 3, this);
-            }
-        };
-        keyImageComponent.setPreferredSize(new Dimension(keyPanel.getWidth(), keyPanel.getHeight() / 2 + keyPanel.getHeight() / 4));
-
-        JLabel keyText = new JLabel("Press keys to move around");
-        keyText.setFont(new Font(Font.SERIF, Font.ITALIC, getWidth() / 100));
-        keyText.setSize(keyPanel.getWidth(), keyPanel.getHeight() / 4);
-        keyText.setForeground(java.awt.Color.white);
-
-        keyPanel.add(keyImageComponent);
-        keyPanel.add(keyText);
-        keyPanel.setVisible(true);
-        return keyPanel;
-    }
-
-    JPanel mousePanel(JWindow mouseKeyWindow) {
-        JPanel mousePanel = new JPanel();
-        mousePanel.setBackground(new java.awt.Color(0,0,0,0));
-        mousePanel.setSize(mouseKeyWindow.getWidth() / 2, mouseKeyWindow.getHeight());
-        mousePanel.setLocation(0,0);
-
-        JComponent mouseImageComponent = new JComponent() {
-            protected void paintComponent(Graphics g) {
-                g.drawImage(MouseImage, 0, 0, this.getWidth(), this.getHeight(), this);
-            }
-        };
-        mouseImageComponent.setPreferredSize(new Dimension(mousePanel.getWidth(),mousePanel.getHeight() / 2 + mousePanel.getHeight() / 4));
-
-        JLabel mouseText = new JLabel("Drag mouse to view around");
-        mouseText.setForeground(java.awt.Color.white);
-        mouseText.setFont(new Font(Font.SERIF, Font.ITALIC, getWidth() / 100));
-        mouseText.setSize(mousePanel.getWidth(), mousePanel.getHeight() / 4);
-
-        mousePanel.add(mouseImageComponent);
-        mousePanel.add(mouseText);
-        mousePanel.setVisible(true);
-        return mousePanel;
-    }
-
     void addOverlayColor() {
         LabelX.setForeground(java.awt.Color.white);
         LabelY.setForeground(java.awt.Color.white);
@@ -2433,11 +2362,6 @@ public class Window extends JFrame implements KeyListener, MouseListener, MouseM
             public void removeUpdate(DocumentEvent e) { update(); }
             public void changedUpdate(DocumentEvent e){ update(); }
         });
-
-        MouseImage = new ImageIcon(getClass().getResource("/Resources/MouseImage.png")).getImage();
-        ArrowsImage = new ImageIcon(getClass().getResource("/Resources/ArrowsImage.png")).getImage();
-        ZbuttonImage = new ImageIcon(getClass().getResource("/Resources/ZButtonImage.png")).getImage();
-        XbuttonImage = new ImageIcon(getClass().getResource("/Resources/XButtonImage.png")).getImage();
 
         addOverlayFonts();
         addOverlayColor();
