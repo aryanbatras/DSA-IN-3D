@@ -1,20 +1,22 @@
+package Utility;
+
 public class Camera {
-    private Point3D origin;
-    private Point3D lowerLeftCorner;
-    private Point3D horizontal;
-    private Point3D vertical;
-    private Point3D u, v, w;
+    private Point origin;
+    private Point lowerLeftCorner;
+    private Point horizontal;
+    private Point vertical;
+    private Point u, v, w;
     private double lensRadius;
 
-    public Camera(Point3D lookfrom, Point3D lookat, Point3D vup, double vfov, double aspectRatio) {
+    public Camera(Point lookfrom, Point lookat, Point vup, double vfov, double aspectRatio) {
         double theta = Math.toRadians(vfov);
         double h = Math.tan(theta / 2);
         double viewportHeight = 2.0 * h;
         double viewportWidth = aspectRatio * viewportHeight;
 
-        w = lookfrom.sub(lookat).normalize(); // camera backward
-        u = vup.cross(w).normalize();         // camera right
-        v = w.cross(u);                       // camera up
+        w = lookfrom.sub(lookat).normalize();
+        u = vup.cross(w).normalize();
+        v = w.cross(u);
 
         origin = lookfrom;
         horizontal = u.mul(viewportWidth);
@@ -23,27 +25,27 @@ public class Camera {
     }
 
     public Ray getRay(double s, double t) {
-        Point3D direction = lowerLeftCorner.add(horizontal.mul(s)).add(vertical.mul(t)).sub(origin);
+        Point direction = lowerLeftCorner.add(horizontal.mul(s)).add(vertical.mul(t)).sub(origin);
         return new Ray(origin, direction);
     }
 
-    public Point3D getForward() {
-        return w.mul(-1); // Forward is -w
+    public Point getForward() {
+        return w.mul(-1);
     }
 
-    public Point3D getRight() {
+    public Point getRight() {
         return u;
     }
 
-    public Point3D getUp() {
+    public Point getUp() {
         return v;
     }
 
-    public Point3D getOrigin() {
+    public Point getOrigin() {
         return origin;
     }
 
-    public void setPosition(Point3D newOrigin) {
+    public void setPosition(Point newOrigin) {
         this.origin = newOrigin;
         lowerLeftCorner = origin.sub(horizontal.mul(0.5)).sub(vertical.mul(0.5)).sub(w);
     }
@@ -54,15 +56,15 @@ public class Camera {
         return getRay(u, v);
     }
 
-    public Point3D getLookFrom() {
+    public Point getLookFrom() {
         return origin;
     }
 
-    public Point3D getLookAt() {
+    public Point getLookAt() {
         return origin.add(w.mul(-1));
     }
 
-    public Point3D getVUp() {
+    public Point getVUp() {
         return v;
     }
 

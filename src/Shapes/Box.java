@@ -1,16 +1,19 @@
-import java.io.Serializable;
+package Shapes;
 
-public class Box extends Shape implements Serializable {
-    private static final long serialVersionUID = 1L;
+import Utility.Material;
+import Utility.Point;
+import Utility.Color;
+import Utility.Ray;
 
-    private Point3D center;
-    private double width, height, depth;
+public class Box extends Shape {
+    public Point center;
+    public double width, height, depth;
     public Color color;
     public Material material;
     public double fuzz;
 
-    public Box(Point3D center, double width, double height, double depth, Color color, Material material, double fuzz) {
-        this.center = new Point3D(center);
+    public Box(Point center, double width, double height, double depth, Color color, Material material, double fuzz) {
+        this.center = new Point(center);
         this.width = width;
         this.height = height;
         this.depth = depth;
@@ -19,28 +22,28 @@ public class Box extends Shape implements Serializable {
         this.fuzz = fuzz;
     }
 
-    public Point3D getMin() {
-        return new Point3D(
+    public Point getMin() {
+        return new Point(
                 center.x - width / 2,
                 center.y - height / 2,
                 center.z - depth / 2
         );
     }
 
-    public Point3D getMax() {
-        return new Point3D(
+    public Point getMax() {
+        return new Point(
                 center.x + width / 2,
                 center.y + height / 2,
                 center.z + depth / 2
         );
     }
 
-    public void setCenter(Point3D newCenter) {
-        this.center = new Point3D(newCenter);
+    public void setCenter(Point newCenter) {
+        this.center = new Point(newCenter);
     }
 
-    public Point3D getCenter() {
-        return new Point3D(center);
+    public Point getCenter() {
+        return new Point(center);
     }
 
     public double getBoundingRadius() {
@@ -68,14 +71,14 @@ public class Box extends Shape implements Serializable {
     }
 
     public double hit(Ray ray) {
-        Point3D min = getMin();
-        Point3D max = getMax();
+        Point min = getMin();
+        Point max = getMax();
         double tMin = 0.001;
         double tMax = Double.MAX_VALUE;
 
         for (int i = 0; i < 3; i++) {
             double origin = (i == 0) ? ray.origin.x : (i == 1) ? ray.origin.y : ray.origin.z;
-            double direction = (i == 0) ? ray.direction.x : (i == 1) ? ray.direction.y : ray.direction.z;
+            double direction = (i == 0) ? ray.getDirection( ).x : (i == 1) ? ray.getDirection( ).y : ray.getDirection( ).z;
             double minBound = (i == 0) ? min.x : (i == 1) ? min.y : min.z;
             double maxBound = (i == 0) ? max.x : (i == 1) ? max.y : max.z;
 
@@ -95,7 +98,7 @@ public class Box extends Shape implements Serializable {
         return tMin;
     }
 
-    public double distanceTo(Point3D point) {
+    public double distanceTo(Point point) {
         return center.sub(point).length();
     }
 

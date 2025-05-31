@@ -1,7 +1,6 @@
-import java.io.Serializable;
+package Utility;
 
-public enum Material implements Serializable {
-    DIELECTRIC,
+public enum Material {
     LAMBERTIAN,
     METAL,
     GLOSSY,
@@ -12,9 +11,7 @@ public enum Material implements Serializable {
     CHROME,
     MAGIC_GOO,
     ANODIZED_METAL,
-    CRYSTAL,
     MIST,
-    NONE
 }
 
 

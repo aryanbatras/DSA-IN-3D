@@ -1,89 +1,83 @@
-import java.awt.*;
-import java.io.Serializable;
+package Utility;
 
-public class Point3D implements Serializable {
+public class Point {
+    public double x;
+    public double y;
+    public double z;
 
-    double x, y, z;
-
-    Point3D() {
-        x = 0.0;
-        y = 0.0;
-        z = 0.0;
-    }
-
-    Point3D(Point3D p) {
+    public Point(Point p) {
         x = p.x;
         y = p.y;
         z = p.z;
     }
 
-    Point3D(double x, double y, double z) {
+    public Point(double x, double y, double z) {
         this.x = x;
         this.y = y;
         this.z = z;
     }
 
-    Point3D add(Point3D p) {
-        return new Point3D(
+    public Point add(Point p) {
+        return new Point(
                 x + p.x,
                 y + p.y,
                 z + p.z
         );
     }
 
-    Point3D sub(Point3D p) {
-        return new Point3D(
+    public Point sub(Point p) {
+        return new Point(
                 x - p.x,
                 y - p.y,
                 z - p.z
         );
     }
 
-    Point3D div(double scalar) {
-        return new Point3D(
+    Point div(double scalar) {
+        return new Point(
                 x / scalar,
                 y / scalar,
                 z / scalar
         );
     }
 
-    Point3D mul(double scalar) {
-        return new Point3D(
+    public Point mul(double scalar) {
+        return new Point(
                 this.x * scalar,
                 this.y * scalar,
                 this.z * scalar
         );
     }
 
-    double dot(Point3D p) {
+    public double dot(Point p) {
         return x * p.x + y * p.y + z * p.z;
     }
 
-    Point3D normalize() {
+    public Point normalize() {
         double len = Math.sqrt(x * x + y * y + z * z);
-        if (len == 0) return new Point3D(0, 0, 0); // avoid division by zero
-        return new Point3D(x / len, y / len, z / len);
+        if (len == 0) return new Point(0, 0, 0); // avoid division by zero
+        return new Point(x / len, y / len, z / len);
     }
 
-    Point3D cross(Point3D other) {
+    public Point cross(Point other) {
         double x = this.y * other.z - this.z * other.y;
         double y = this.z * other.x - this.x * other.z;
         double z = this.x * other.y - this.y * other.x;
-        return new Point3D(x, y, z);
+        return new Point(x, y, z);
     }
 
-    double length(){
+    public double length(){
         return Math.sqrt(x * x + y * y + x * x);
     }
 
-    public static Point3D projectToGround(Ray ray, double preserveY) {
+    public static Point projectToGround(Ray ray, double preserveY) {
         if (Math.abs(ray.direction.y) < 1e-6) { return ray.origin; }
         double t = -ray.origin.y / ray.direction.y;
-        Point3D projected = ray.at(t);
-        return new Point3D(projected.x, preserveY, projected.z);
+        Point projected = ray.at(t);
+        return new Point(projected.x, preserveY, projected.z);
     }
 
-    public double distanceTo(Point3D other) {
+    public double distanceTo(Point other) {
         double dx = x - other.x;
         double dy = y - other.y;
         double dz = z - other.z;

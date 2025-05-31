@@ -1,22 +1,17 @@
-import java.io.Serializable;
+package Utility;
 
-public class Color implements Serializable {
+public class Color {
+    public float r;
+    public float g;
+    public float b;
 
-    float r, g, b;
-
-    Color() {
-        r = 0.0F;
-        g = 0.0F;
-        b = 0.0F;
-    }
-
-    Color(Color c) {
+    public Color(Color c) {
         r = c.r;
         g = c.g;
         b = c.b;
     }
 
-    Color(float r, float g, float b) {
+    public Color(float r, float g, float b) {
         this.r = r;
         this.g = g;
         this.b = b;
@@ -44,7 +39,7 @@ public class Color implements Serializable {
         );
     }
 
-    int colorToInteger() {
+    public int colorToInteger() {
 
         float rClamped = Math.min(1.0f, Math.max(0.0f, r));
         float gClamped = Math.min(1.0f, Math.max(0.0f, g));
