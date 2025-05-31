@@ -1,4 +1,3 @@
-import java.awt.image.DataBufferInt;
 import java.io.*;
 import java.awt.*;
 import java.util.*;
@@ -16,6 +15,7 @@ import java.awt.event.*;
 import javax.imageio.ImageIO;
 import java.util.concurrent.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 
 public class Window extends JFrame {
     int HEIGHT, WIDTH;
@@ -38,7 +38,7 @@ public class Window extends JFrame {
         for (int i = 0; i < arr.length; i++) {
             float x = (startLeft + i) * space;
             WORLD.add(new Box(new Point(x, 0, 0), 1, 1, 1,
-                    new Color(0.4f, 0.7f, 1.0f), Material.TRANSLUCENT, 0));
+                    new Color(0.4f, 0.7f, 1.0f), Material.MATTE, 0));
         }
 
         double totalX = 0, totalY = 0, totalZ = 0;
