@@ -11,8 +11,9 @@ public class Box extends Shape {
     public Color color;
     public Material material;
     public double fuzz;
+    public double val;
 
-    public Box(Point center, double width, double height, double depth, Color color, Material material, double fuzz) {
+    public Box(Point center, double width, double height, double depth, Color color, Material material, double fuzz, double value) {
         this.center = new Point(center);
         this.width = width;
         this.height = height;
@@ -20,6 +21,7 @@ public class Box extends Shape {
         this.color = new Color(color);
         this.material = material;
         this.fuzz = fuzz;
+        this.val = value;
     }
 
     public Point getMin() {
@@ -103,15 +105,15 @@ public class Box extends Shape {
     }
 
     public double getWidth() {
-        return Math.abs(getMin().x - getMin().x);
+        return Math.abs(getMax().x - getMin().x);
     }
 
     public double getHeight() {
-        return Math.abs(getMin().y - getMin().y);
+        return Math.abs(getMax().y - getMin().y);
     }
 
     public double getDepth() {
-        return Math.abs(getMax().z - getMax().z);
+        return Math.abs(getMax().z - getMin().z);
     }
 
 }

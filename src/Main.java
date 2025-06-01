@@ -9,16 +9,16 @@ import Utility.Ray;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Random;
 
-public class Main {
-    public static Random random;
-    public static void main(String[] args) throws IOException {
-        random = new Random();
-        new Window();
+public class Main{
+    public static void main(String[] args) throws InterruptedException, IOException {
+        new Window( );
+
     }
 
-    public static Color rayColor(ArrayList<Shape> WORLD, Ray r, BufferedImage environmentMap, int depth) {
+    public static Color rayColor(ArrayList<Shape> WORLD, Ray r, BufferedImage environmentMap, Map<Box, Integer[]> boxMap, int depth) {
         if(depth <= 0){ return new Color(0,0,0); }
         double nearest = Double.MAX_VALUE;
         Material hitMaterial = null;
@@ -43,11 +43,11 @@ public class Main {
                 }
 
                 else if (currentShape instanceof Box box) {
-                    Point center = box.getMin().add(box.getMax()).mul(0.5);
+                    Point center = box.getMin( ).add(box.getMax( )).mul(0.5);
                     Point localHit = hitPoint.sub(center);
-                    double dx = Math.abs(localHit.x) - Math.abs(box.getMax().x - box.getMin().x) / 2.0;
-                    double dy = Math.abs(localHit.y) - Math.abs(box.getMax().y - box.getMin().y) / 2.0;
-                    double dz = Math.abs(localHit.z) - Math.abs(box.getMax().z - box.getMin().z) / 2.0;
+                    double dx = Math.abs(localHit.x) - Math.abs(box.getMax( ).x - box.getMin( ).x) / 2.0;
+                    double dy = Math.abs(localHit.y) - Math.abs(box.getMax( ).y - box.getMin( ).y) / 2.0;
+                    double dz = Math.abs(localHit.z) - Math.abs(box.getMax( ).z - box.getMin( ).z) / 2.0;
                     if (dx > dy && dx > dz)
                         normal = new Point(Math.signum(localHit.x), 0, 0);
                     else if (dy > dz)
@@ -57,8 +57,62 @@ public class Main {
                     hitColor = box.color;
                     hitMaterial = box.material;
                     fuzz = box.fuzz;
-                }
 
+                    if (boxMap.containsKey(box)) {
+                        // Project to 2D UV on the hit face
+                        Point boxMin = box.getMin( );
+                        Point boxMax = box.getMax( );
+                        Point boxSize = boxMax.sub(boxMin);
+
+                        double u = 0, v = 0;
+                        if (normal.x != 0) { // ±X face
+                            u = (hitPoint.z - boxMin.z) / boxSize.z;
+                            v = (hitPoint.y - boxMin.y) / boxSize.y;
+                        } else if (normal.y != 0) { // ±Y face
+                            u = (hitPoint.x - boxMin.x) / boxSize.x;
+                            v = (hitPoint.z - boxMin.z) / boxSize.z;
+                        } else if (normal.z != 0) { // ±Z face
+                            u = (hitPoint.x - boxMin.x) / boxSize.x;
+                            v = (hitPoint.y - boxMin.y) / boxSize.y;
+                        }
+
+                        if (normal.x > 0 || normal.y > 0 || normal.z < 0) {
+                            u = 1.0 - u;
+                        }
+
+                        Integer[] digits = boxMap.get(box);
+                        if (digits != null && normal.z != 0) {
+                            int n = digits.length;
+                            double digitWidth = 1.0 / n;
+
+                            for (int i = 0; i < n; i++) {
+                                double startU = i * digitWidth;
+                                double endU = (i + 1) * digitWidth;
+                                if (u >= startU && u < endU) {
+                                    double localU = (u - startU) / digitWidth;
+                                    if (isInDigit(digits[i], localU, v, n)) {
+                                        // Digit chrome with highlight
+                                        if (hitMaterial == Material.CHROME) {
+                                            Point reflected = reflect(r.getDirection().normalize(), normal);
+                                            reflected = reflected.add(randomInUnitSphere().mul(fuzz * 0.1));
+                                            Ray rayChromeDigit = new Ray(hitPoint, reflected);
+                                            Color chromeBase = rayColor(WORLD, rayChromeDigit, environmentMap, boxMap, 5);
+
+                                            // Highlighted chrome tint (bluish hue added)
+                                            return new Color(
+                                                    Math.min(1f, hitColor.r * chromeBase.r * 0.7f + 0.2f),
+                                                    Math.min(1f, hitColor.g * chromeBase.g * 0.8f + 0.3f),
+                                                    Math.min(1f, hitColor.b * chromeBase.b * 1.2f + 0.4f)
+                                            );
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+
+                    }
+                }
             }
         }
 
@@ -78,7 +132,7 @@ public class Main {
             Point reflected = reflect(r.getDirection().normalize( ), normal);
             reflected = reflected.add(randomInUnitSphere( ).mul(fuzz * 0.1));
             Ray rayChrome = new Ray(hitPoint, reflected);
-            Color chromeColor = rayColor(WORLD, rayChrome, environmentMap, depth - 1);
+            Color chromeColor = rayColor(WORLD, rayChrome, environmentMap, boxMap, depth - 1);
             return new Color(
                     hitColor.r * chromeColor.r * 1.2f,
                     hitColor.g * chromeColor.g * 1.1f,
@@ -111,6 +165,56 @@ public class Main {
 
     }
 
+    static boolean isInDigit(int digit, double u, double v, int l) {
+        u = (u - 0.3) / 0.2;
+        if( l <= 2){ v = (v - 0.45) / 0.2; }
+        else if(l <= 4) { v = (v - 0.52) / 0.1; }
+        else { v = (v - 0.52) / 0.05;}
+
+        if (u < -0.2 || u > 1.2 || v < -0.2 || v > 1.2) return false;
+
+        if (u < 0 || u > 1 || v < 0 || v > 1) return false;
+
+        double r = 0.152;
+        float segW = 0.6f;
+        float segH = 0.05f;
+
+
+
+        // Horizontal bars
+        boolean top    = roundRect(u, v, 0.5, 0.92, segW, segH, r);
+        boolean mid    = roundRect(u, v, 0.5, 0.5, segW, segH, r);
+        boolean bottom = roundRect(u, v, 0.5, 0.08, segW, segH, r);
+
+        // Vertical bars (left/right top/mid/bottom)
+        boolean lt = roundRect(u, v, 0.18, 0.75, segH, 0.3, r);
+        boolean lb = roundRect(u, v, 0.18, 0.25, segH, 0.3, r);
+        boolean rt = roundRect(u, v, 0.82, 0.75, segH, 0.3, r);
+        boolean rb = roundRect(u, v, 0.82, 0.25, segH, 0.3, r);
+
+        switch (digit) {
+            case 0: return top || bottom || lt || lb || rt || rb;
+            case 1: return rt || rb;
+            case 2: return top || mid || bottom || rt || lb;
+            case 3: return top || mid || bottom || rt || rb;
+            case 4: return mid || rt || rb || lt;
+            case 5: return top || mid || bottom || lt || rb;
+            case 6: return mid || bottom || lt || lb || rb;
+            case 7: return top || rt || rb;
+            case 8: return top || mid || bottom || lt || lb || rt || rb;
+            case 9: return top || mid || lt || rt || rb;
+        }
+
+        return false;
+    }
+
+   public static boolean roundRect(double u, double v, double cx, double cy, double w, double h, double r) {
+        double dx = Math.max(Math.abs(u - cx) - w / 2.0, 0);
+        double dy = Math.max(Math.abs(v - cy) - h / 2.0, 0);
+        return (dx * dx + dy * dy) < r * r;
+    }
+
+
     public static Point reflect(Point v, Point n) {
         return v.sub(n.mul(2 * v.dot(n)));
     }
@@ -118,16 +222,15 @@ public class Main {
     public static Point randomInUnitSphere() {
         while (true) {
             Point p = new Point(
-                    random.nextDouble() * 2 - 1,
-                    random.nextDouble() * 2 - 1,
-                    random.nextDouble() * 2 - 1
+                    new Random().nextDouble() * 2 - 1,
+                    new Random().nextDouble() * 2 - 1,
+                    new Random().nextDouble() * 2 - 1
             );
             if (p.dot(p) < 1) return p;
         }
     }
 
 }
-
 
 
 
