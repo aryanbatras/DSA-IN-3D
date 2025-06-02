@@ -30,7 +30,7 @@ public class Video {
 
     public static void deleteFrameImages(String folderPath) {
         File dir = new File(folderPath);
-        File[] files = dir.listFiles((d, name) -> name.matches("frame_\\d{6}\\.jpg"));
+        File[] files = dir.listFiles((d, name) -> name.matches("frame_\\d{6}\\.png"));
 
         if (files != null) {
             for (File file : files) {
@@ -63,7 +63,7 @@ public class Video {
         ProcessBuilder pb = new ProcessBuilder(
                 ffmpeg.getAbsolutePath(),
                 "-framerate", "30",
-                "-i", "frame_%06d.jpg",
+                "-i", "frame_%06d.png",
                 "-c:v", "libx264",
                 "-pix_fmt", "yuv420p",
                 "-y", finalOutput

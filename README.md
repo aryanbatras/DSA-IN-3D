@@ -9,5 +9,10 @@
 - every box is associated with a value show that [Done]
 - fix bugs make numbers look beautiful [Done]
 - make a line of chain between the boxes [Done]
-- show insert, delete animations (swap too) [This is challenging]
+- show insertion animation in array [Done]
+- implement video generation using ffmpeg [Done]
+- clean code and give a better structure to the code base
+- delete animations (swap too) [This is challenging]
 - generate video
+
+### Phase 2
