@@ -11,9 +11,11 @@ public class Box extends Shape {
     public Color color;
     public Material material;
     public double fuzz;
-    public double val;
+    public int val;
 
-    public Box(Point center, double width, double height, double depth, Color color, Material material, double fuzz, double value) {
+    private Integer[] digits;
+
+    public Box(Point center, double width, double height, double depth, Color color, Material material, double fuzz, int value) {
         this.center = new Point(center);
         this.width = width;
         this.height = height;
@@ -22,6 +24,19 @@ public class Box extends Shape {
         this.material = material;
         this.fuzz = fuzz;
         this.val = value;
+        setDigitsFromNumber(value);
+    }
+
+    public void setDigitsFromNumber(int value){
+        String s = String.valueOf(value);
+        digits = new Integer[s.length()];
+        for(int i = 0; i < s.length(); i++){
+            digits[i] = Character.getNumericValue(s.charAt(i));
+        }
+    }
+
+    public Integer[] getDigits(){
+        return digits;
     }
 
     public Point getMin() {

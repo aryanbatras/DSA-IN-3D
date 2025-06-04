@@ -1,28 +1,20 @@
 import java.io.*;
-import java.awt.*;
 import java.util.*;
 
 import Shapes.Box;
 import Shapes.Shape;
-import javax.swing.*;
 
 import Utility.*;
 import Utility.Color;
 import Utility.Point;
 
-import java.awt.event.*;
 import java.nio.file.Paths;
 import java.nio.file.Files;
-import javax.imageio.ImageIO;
-import java.util.concurrent.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
 
-// KISS: KEEP IT SUPER SIMPLE
 public class Window {
 
     ArrayList<Shape> WORLD;
-    Dimension SCREEN;
     Camera CAMERA;
     Render RENDER;
 
@@ -37,28 +29,14 @@ public class Window {
 
     private void setup() {
 
-        SCREEN = Toolkit
-                .getDefaultToolkit()
-                .getScreenSize();
-
-        CAMERA = new Camera(
-                new Point(1, 2, -3).length(),
-                0.25,
-                0,
-                0,
-                0,
-                0
-        );
-
+        CAMERA = new Camera();
 
         RENDER = new Render(
-                new BufferedImage((int) SCREEN.getWidth(), (int) SCREEN.getHeight(), BufferedImage.TYPE_INT_RGB),
-                new BufferedImage((int) SCREEN.getWidth(), (int) SCREEN.getHeight(), BufferedImage.TYPE_INT_RGB),
-                new BufferedImage((int) SCREEN.getWidth(), (int) SCREEN.getHeight(), BufferedImage.TYPE_INT_RGB),
-                (int) SCREEN.getHeight(),
-                (int) SCREEN.getWidth()
+                new BufferedImage((int) Screen.getWidth(), (int) Screen.getHeight(), BufferedImage.TYPE_INT_RGB),
+                new BufferedImage((int) Screen.getWidth(), (int) Screen.getHeight(), BufferedImage.TYPE_INT_RGB),
+                new BufferedImage((int) Screen.getWidth(), (int) Screen.getHeight(), BufferedImage.TYPE_INT_RGB)
         );
-        RENDER.setENVIRONMENT("/resources/sunset.jpg");
+        RENDER.setENVIRONMENT("/Resources/sunset.jpg");
 
         WORLD = new ArrayList<Shape>();
     }
@@ -94,7 +72,7 @@ public class Window {
                     double delta = (finalX - initialX) / (double) steps;
                     for (int step = 0; step <= steps; step++) {
                         newBox.center.x = initialX + delta * step;
-                        CAMERA.addM_Z(0.025);
+//                        CAMERA.addM_Z(0.025);
                         RENDER.drawImage(CAMERA, WORLD, boxMap);
                     }
 
@@ -119,7 +97,7 @@ public class Window {
                             o.width += changer;
                             o.center.x += changer2;
                         }
-                        CAMERA.subM_X(0.025);
+//                        CAMERA.subM_X(0.025);
                         RENDER.drawImage(CAMERA, WORLD, boxMap);
                     }
             }
@@ -132,13 +110,13 @@ public class Window {
         double divider = 1.25f / (double) steps;
         for (int step = 0; step < steps; step++) {
             CAMERA.setYaw(CAMERA.getYaw() + 0.25);
-            CAMERA.subM_X(0.25);
+//            CAMERA.subM_X(0.25);
             newBox.center.y -= divider;
             RENDER.drawImage(CAMERA, WORLD, boxMap);
         }
 
 
-        String framesDir = "/Users/aryanbatra/Desktop/DSA IN 3D/src/resources/frames";
+        String framesDir = "/Users/aryanbatra/Desktop/DSA IN 3D/src/Resources/frames";
         String outputVideoFolder = "/Users/aryanbatra/Desktop/DSA IN 3D/vid";
         try {
             Video.generateVideo(framesDir, outputVideoFolder);
@@ -222,7 +200,7 @@ public class Window {
         }
 
         double worldLength = maxX - minX;
-        CAMERA.setRadius(worldLength * 0.5);
+//        CAMERA.setRadius(worldLength * 0.5);
 
         RENDER.drawImage(CAMERA, WORLD, boxMap);
     }
