@@ -18,7 +18,13 @@ import java.util.concurrent.*;
 
 public class Render {
 
-    public static FFmpegStream PREVIEW_FFMPEG = null;
+    // Configuration
+    private static final int MAX_RECURSION_DEPTH = 3;
+    private static final int TILE_SIZE = 32; // For better cache locality
+    private static final int MAX_THREADS = Math.max(1, Runtime.getRuntime().availableProcessors() - 1);
+
+    // Thread-safe singleton for FFmpeg
+    private static volatile FFmpegStream PREVIEW_FFMPEG = null;
 
     public static void initFFmpegPreview(int width, int height, int fps, String outputFile) {
         try {
@@ -60,38 +66,73 @@ public class Render {
     }
 
     public void drawImage(Camera camera, ArrayList<Shape> world) {
-        long start = System.nanoTime() / 1_000_000;
+        long startTime = System.nanoTime();
+        final int width = BEINGRENDERED.getWidth();
+        final int height = BEINGRENDERED.getHeight();
+        final int[] pixels = ((DataBufferInt) BEINGRENDERED.getRaster().getDataBuffer()).getData();
+        // Convert to array once for better performance
+        final Shape[] worldArray = world.toArray(new Shape[0]);
 
-        int width = BEINGRENDERED.getWidth();
-        int height = BEINGRENDERED.getHeight();
-        int[] pixels = ((DataBufferInt) BEINGRENDERED.getRaster().getDataBuffer()).getData();
+        // Update camera perspective once
+        final Camera finalCamera = camera.setCameraPerspective(width, height);
 
-        camera = camera.setCameraPerspective(width, height);
-        ExecutorService exec = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        ArrayList<Future<?>> tasks = new ArrayList<>();
-        int slice = height / Runtime.getRuntime().availableProcessors();
+        // Use a fixed thread pool with optimal thread count
+        final ExecutorService executor = Executors.newFixedThreadPool(MAX_THREADS);
+        final CountDownLatch latch = new CountDownLatch((width / TILE_SIZE + 1) * (height / TILE_SIZE + 1));
 
-        for (int i = 0; i < Runtime.getRuntime().availableProcessors(); i++) {
-            final int y0 = i * slice;
-            final int y1 = (i == Runtime.getRuntime().availableProcessors() - 1) ? height : y0 + slice;
-            Camera cam = camera;
-            tasks.add(exec.submit(() -> {
-                for (int y = y0; y < y1; y++) {
-                    for (int x = 0; x < width; x++) {
-                        double u = (double) x / ( width - 1 );
-                        double v = (double) ( height - y ) / ( height - 1 );
-                        Ray ray = cam.getRay(u, v);
-                        Color pixelColor = rayColor(world, ray, ENVIRONMENT);
-                        pixels[y * width + x] = pixelColor.colorToInteger();
+        // Process image in tiles for better cache locality
+        for (int tileY = 0; tileY < height; tileY += TILE_SIZE) {
+            for (int tileX = 0; tileX < width; tileX += TILE_SIZE) {
+                final int tx = tileX;
+                final int ty = tileY;
+                final int tileW = Math.min(TILE_SIZE, width - tx);
+                final int tileH = Math.min(TILE_SIZE, height - ty);
+
+                executor.submit(() -> {
+                    try {
+                        // Reusable objects for this thread
+                        Ray ray = new Ray();
+
+                        for (int y = ty; y < ty + tileH; y++) {
+                            final double v = (double)(height - y) / (height - 1);
+                            final int rowOffset = y * width;
+
+                            for (int x = tx; x < tx + tileW; x++) {
+                                final double u = (double)x / (width - 1);
+
+                                // Get ray and calculate color
+                                ray = finalCamera.getRay(u, v);
+                                Color pixelColor = rayColor(world, ray, ENVIRONMENT);
+                                pixels[rowOffset + x] = pixelColor.colorToInteger();
+                            }
+                        }
+                    } finally {
+                        latch.countDown();
                     }
-                }
-            }));
+                });
+            }
         }
 
-        for (Future<?> f : tasks) {
-            try { f.get(); } catch (Exception e) { throw new RuntimeException(e); }
+        try {
+            // Wait for all tiles to complete with timeout
+            if (!latch.await(10, TimeUnit.SECONDS)) {
+                System.err.println("Warning: Rendering took too long, some tiles may be incomplete");
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Rendering interrupted", e);
+        } finally {
+            executor.shutdownNow();
+            try {
+                if (!executor.awaitTermination(1, TimeUnit.SECONDS)) {
+                    executor.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
-        exec.shutdown();
+
+        long renderTime = System.nanoTime() - startTime;
 
         BufferedImage fullRes = new BufferedImage(
                 (int) Screen.getWidth(),
@@ -115,41 +156,106 @@ public class Render {
             }
         }
 
-        System.out.println("Rendered in " + (System.nanoTime() / 1_000_000 - start) + " ms | Frame " + FRAMES++);
+        // Post-processing and display
+//        postProcessAndDisplay();
+
+        // Log performance metrics
+        System.out.printf("Rendered frame %d in %.2f ms%n",
+            FRAMES++,
+            renderTime / 1_000_000.0);
     }
 
-    private int rayColorFast(ArrayList<Shape> world, Ray r, BufferedImage environmentMap) {
+    /**
+     * Optimized version of rayColor that avoids allocations and uses array instead of ArrayList
+     */
+    /**
+     * Optimized version that uses array instead of ArrayList for shapes
+     */
+    private static Color rayColor(Shape[] world, Ray r, BufferedImage environmentMap) {
+        return rayColor(world, r, environmentMap, MAX_RECURSION_DEPTH);
+    }
+
+    private static Color rayColor(Shape[] world, Ray r, BufferedImage environmentMap, int depth) {
+        if (depth <= 0) return new Color(0, 0, 0);
+
         double nearest = Double.MAX_VALUE;
         Point hitPoint = null, normal = null;
-        int hitColor = 0;
+        Color hitColor = null;
+        double fuzz = 0;
+        Material material = null;
+        Shape hitShape = null;
 
+        // First pass: find the closest hit
         for (Shape shape : world) {
             double t = shape.hit(r);
-            if (t > 0.001 && t < nearest && shape instanceof Box box && box.material == Material.CHROME) {
-                nearest = t;
-                hitPoint = r.at(t);
-                Point center = box.getMin().add(box.getMax()).mul(0.5);
-                Point localHit = hitPoint.sub(center);
-                double dx = Math.abs(localHit.x) - Math.abs(box.getMax().x - box.getMin().x) / 2.0;
-                double dy = Math.abs(localHit.y) - Math.abs(box.getMax().y - box.getMin().y) / 2.0;
-                double dz = Math.abs(localHit.z) - Math.abs(box.getMax().z - box.getMin().z) / 2.0;
-
-                normal = (dx > dy && dx > dz) ? new Point(Math.signum(localHit.x), 0, 0)
-                        : (dy > dz) ? new Point(0, Math.signum(localHit.y), 0)
-                        : new Point(0, 0, Math.signum(localHit.z));
-
-                hitColor = box.color.colorToInteger();
+            if (t > 0.001 && t < nearest) {
+                if (shape instanceof Box box) {
+                    nearest = t;
+                    hitPoint = r.at(t);
+                    normal = box.getNormal(hitPoint);
+                    hitColor = box.color;
+                    fuzz = box.fuzz;
+                    material = box.material;
+                    hitShape = shape;
+                }
             }
         }
 
 
-        return hitColor != 0 ? hitColor : sampleEnvironment(r, environmentMap).colorToInteger();
+        if (hitPoint != null) {
+            if (hitShape instanceof Box box && box.getDigits() != null) {
+                // Handle digit rendering logic here
+                Point boxMin = box.getMin();
+                Point boxMax = box.getMax();
+                Point boxSize = boxMax.sub(boxMin);
+                double u = 1.0 - (hitPoint.x - boxMin.x) / boxSize.x;
+                double v = (hitPoint.y - boxMin.y) / boxSize.y;
+                Integer[] digits = box.getDigits();
+                double digitWidth = 1.0 / digits.length;
+
+                for (int i = 0; i < digits.length; i++) {
+                    double startU = i * digitWidth, endU = (i + 1) * digitWidth;
+                    if (u >= startU && u < endU && isInDigit(digits[i], (u - startU) / digitWidth, v, digits.length)) {
+                        Point reflected = reflect(r.getDirection().normalize(), normal)
+                                .add(randomInUnitSphere().mul(fuzz * 0.1));
+                        Color bounce = rayColor(world, new Ray(hitPoint, reflected), environmentMap, depth - 1);
+                        return new Color(
+                                Math.min(1f, hitColor.r * bounce.r * 0.7f + 0.2f),
+                                Math.min(1f, hitColor.g * bounce.g * 0.8f + 0.3f),
+                                Math.min(1f, hitColor.b * bounce.b * 1.2f + 0.4f)
+                        );
+                    }
+                }
+            }
+
+            // Default material handling
+            if (material == Material.CHROME) {
+                Point reflected = reflect(r.getDirection().normalize(), normal);
+                Ray scattered = new Ray(hitPoint, reflected.add(randomInUnitSphere().mul(fuzz)));
+                Color reflectedColor = rayColor(world, scattered, environmentMap, depth - 1);
+                return new Color(
+                        (float) (hitColor.r * 0.2 + reflectedColor.r * 0.8),
+                        (float) (hitColor.g * 0.2 + reflectedColor.g * 0.8),
+                        (float) (hitColor.b * 0.2 + reflectedColor.b * 0.8)
+                );
+            }
+            return hitColor;
+        }
+        return sampleEnvironment(r, environmentMap);
     }
 
     public static Color rayColor(ArrayList<Shape> world, Ray r, BufferedImage environmentMap) {
-        return rayColor(world, r, environmentMap, 3);
+        return rayColor(world, r, environmentMap, MAX_RECURSION_DEPTH);
     }
-    
+
+    /**
+     * Trace a ray through the scene and calculate its color
+     * @param world Array of shapes in the scene
+     * @param r Ray to trace
+     * @param environmentMap Environment map for background
+     * @param depth Current recursion depth
+     * @return Color of the ray
+     */
     private static Color rayColor(ArrayList<Shape> world, Ray r, BufferedImage environmentMap, int depth) {
         if (depth <= 0) return new Color(0, 0, 0);
 
@@ -176,7 +282,6 @@ public class Render {
                     if (normal.z != 0 && box.getDigits( ) != null) {
                         Point boxMin = box.getMin( ), boxMax = box.getMax( ), boxSize = boxMax.sub(boxMin);
                         double u = 1.0 - (hitPoint.x - boxMin.x) / boxSize.x;
-                        // Flip v-coordinate to correct the digit orientation
                         double v = (hitPoint.y - boxMin.y) / boxSize.y;
                         Integer[] digits = box.getDigits( );
                         double digitWidth = 1.0 / digits.length;

@@ -45,4 +45,11 @@ Rendering Optimizations are very much required as current speed is 200ms for eve
 Decided to focus on implementing data structure and animations first !
 Build the GUI and simple progress bar because we have no option ! Rendering time is a lot.
 Then ask for a live interaction mode ! Where rendering happens and is shown to user at the same time !
-[ Remember to keep stuff super simple ! ] 
+[ Remember to keep stuff super simple ! ]
+
+Making the rendering fast is most important
+Then adding animations and GUI ! 
+Then adding live interaction mode !
+Then adding video generation !
+Then adding scene builder !
+Then adding more data structures !
