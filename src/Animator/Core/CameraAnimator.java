@@ -26,6 +26,7 @@ public class CameraAnimator {
         for (int i = 0; i < frames; i++) {
             camera.setM_X(camera.getM_X() + delta);
             renderer.drawImage(camera, world);
+//            renderer.drawImage(camera, world);
         }
     }
 

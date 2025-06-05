@@ -16,16 +16,16 @@ public class JArrayList {
     private ArrayList<Integer> arr;
     private JArrayListAnimator animator;
 
-    public JArrayList(){
+    public JArrayList() throws IOException {
         arr = new ArrayList<Integer>();
-        animator = new JArrayListAnimator(); // Set Scene Defaults For Array
+        animator = new JArrayListAnimator();
     }
     public JArrayList(int size){
         arr = new ArrayList<Integer>(size);
     }
     public void add(int value){
         arr.add(value);
-        Box box = animator.setBox(value);
+        Box box = animator.addBox(value);
         animator.addAnimator(box, value);
     }
     public void remove(int index){
@@ -36,6 +36,8 @@ public class JArrayList {
     public Integer get(int index){
         return arr.get(index);
     }
+
+
     public void generateVideo(){
         String framesDir = "/Users/aryanbatra/Desktop/DSA IN 3D/src/Resources/frames/";
         String outputVideoFolder = "/Users/aryanbatra/Desktop/DSA IN 3D/vid/";
@@ -47,4 +49,5 @@ public class JArrayList {
             throw new RuntimeException(e);
         }
     }
+
 }

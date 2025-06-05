@@ -1,9 +1,6 @@
 package Shapes;
 
-import Utility.Material;
-import Utility.Point;
-import Utility.Color;
-import Utility.Ray;
+import Utility.*;
 
 public class Box extends Shape {
     public Point center;
@@ -63,6 +60,7 @@ public class Box extends Shape {
         return new Point(center);
     }
 
+
     public double getBoundingRadius() {
         return Math.sqrt(width * width + height * height + depth * depth) / 2;
     }
@@ -87,6 +85,45 @@ public class Box extends Shape {
         depth *= scale;
     }
 
+    public Point getNormal(Point hitPoint) {
+        Point min = getMin();
+        Point max = getMax();
+        
+        // Calculate which face was hit by finding the closest boundary
+        double minDist = Double.MAX_VALUE;
+        Point normal = new Point(0, 0, 0);
+        
+        // Check distance to each face
+        double[] distances = {
+            Math.abs(hitPoint.x - min.x), // Left face
+            Math.abs(hitPoint.x - max.x), // Right face
+            Math.abs(hitPoint.y - min.y), // Bottom face
+            Math.abs(hitPoint.y - max.y), // Top face
+            Math.abs(hitPoint.z - min.z), // Front face
+            Math.abs(hitPoint.z - max.z)  // Back face
+        };
+        
+        // Find the minimum distance
+        int minIndex = 0;
+        for (int i = 1; i < distances.length; i++) {
+            if (distances[i] < minDist) {
+                minDist = distances[i];
+                minIndex = i;
+            }
+        }
+        
+        // Set the corresponding normal
+        switch (minIndex) {
+            case 0: return new Point(-1, 0, 0);  // Left face
+            case 1: return new Point(1, 0, 0);   // Right face
+            case 2: return new Point(0, -1, 0);  // Bottom face
+            case 3: return new Point(0, 1, 0);   // Top face
+            case 4: return new Point(0, 0, -1);  // Front face
+            case 5: return new Point(0, 0, 1);   // Back face
+            default: return new Point(0, 1, 0);  // Default to up
+        }
+    }
+    
     public double hit(Ray ray) {
         Point min = getMin();
         Point max = getMax();

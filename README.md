@@ -29,7 +29,7 @@ Functions of this class will be internally called ! We start by going into the d
 ```
 
 ### Phase 2
-- Creata a separate JArrayListAnimator class (Separate animation logic) [Done]
+- Create a separate JArrayListAnimator class (Separate animation logic) [Done]
 - Simplify animation logic using separate cameraAnimator and boxAnimator class [Done]
 - Add both add and remove operation animations for a simple ArrayList [Done]
 - Simply video generation for every data structure [On going . . .]
@@ -40,3 +40,9 @@ Rendering Optimizations are very much required as current speed is 200ms for eve
 
 ### Phase 3
 - Extreme optimizations are needed for rendering ! 
+- Implemented BVH from scratch and it didn't boosted rendering time !
+
+Decided to focus on implementing data structure and animations first !
+Build the GUI and simple progress bar because we have no option ! Rendering time is a lot.
+Then ask for a live interaction mode ! Where rendering happens and is shown to user at the same time !
+[ Remember to keep stuff super simple ! ] 

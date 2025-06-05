@@ -1,8 +1,5 @@
 package Shapes;
-import Utility.Material;
-import Utility.Point;
-import Utility.Color;
-import Utility.Ray;
+import Utility.*;
 
 public class Sphere extends Shape {
     public Material material;
@@ -49,5 +46,6 @@ public class Sphere extends Shape {
     public double getRadius() {
         return radius;
     }
+
 
 }

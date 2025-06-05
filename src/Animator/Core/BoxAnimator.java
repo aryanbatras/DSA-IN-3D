@@ -33,7 +33,6 @@ public class BoxAnimator {
     public void slideUp(Box box, int finalY) {
         int initialX = (int) box.center.x;
         double delta = (double)(finalY - initialX) / frames;
-
         for (int i = 0; i < frames; i++) {
             box.center.y += delta;
             renderer.drawImage(camera, world);
@@ -41,7 +40,7 @@ public class BoxAnimator {
     }
 
     public void shiftLeft(Box box) {
-        double delta = 1.0 / frames; // Move 1 unit left over all frames
+        double delta = 1.0 / frames;
         for (int i = 0; i < frames; i++) {
             box.center.x += delta;
             renderer.drawImage(camera, world);
