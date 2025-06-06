@@ -48,8 +48,8 @@ Then ask for a live interaction mode ! Where rendering happens and is shown to u
 [ Remember to keep stuff super simple ! ]
 
 Making the rendering fast is most important
-Then adding animations and GUI ! 
 Then adding live interaction mode !
+Then adding more data structures !
+Then adding animations and GUI !
 Then adding video generation !
 Then adding scene builder !
-Then adding more data structures !

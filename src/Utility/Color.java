@@ -17,28 +17,6 @@ public class Color {
         this.b = b;
     }
 
-    Color addColors(Color c) {
-        r += c.r;
-        g += c.g;
-        b += c.b;
-        return this;
-    }
-
-    Color divideColors(int sample) {
-        r /= sample;
-        g /= sample;
-        b /= sample;
-        return this;
-    }
-
-    Color multiplyColors(double t) {
-        return new Color(
-                (float) (this.r * t),
-                (float) (this.g * t),
-                (float) (this.b * t)
-        );
-    }
-
     public int colorToInteger() {
 
         float rClamped = Math.min(1.0f, Math.max(0.0f, r));

@@ -1,74 +1,86 @@
 package Animator;
-
-import java.io.IOException;
-import java.util.*;
-
 import Animator.Core.BoxAnimator;
 import Animator.Core.CameraAnimator;
+
+import Collections.Animations.*;
+
 import Shapes.Box;
 import Shapes.Shape;
-import Utility.*;
+import Utility.Camera;
+import Utility.Color;
+import Utility.Material;
+import Utility.Point;
+import Utility.Render;
+import java.util.ArrayList;
 
 public class JArrayListAnimator {
+    private final ArrayList<Shape> world;
+    private final Render renderer;
+    private final Camera camera;
 
-    private Shape bvhWorld = null;
-    private ArrayList<Shape> world;
-    private Render renderer;
-    private Camera camera;
+    private int positionAlongX;
+    private final int framesPerSecond;
 
-    private int PositionAlongX;
-    private int framesPerSecond;
+    private final CameraAnimator cameraAnimator;
+    private final BoxAnimator boxAnimator;
 
-    private CameraAnimator cameraAnimator;
-    private BoxAnimator boxAnimator;
-
-    public JArrayListAnimator() throws IOException {
-        renderer = new Render("/Resources/lake.jpg");
-        world = new ArrayList<Shape>( );
-        camera = new Camera( );
-        framesPerSecond = 25;
-        PositionAlongX = 0;
-
-        cameraAnimator = new CameraAnimator(renderer, camera, world, framesPerSecond);
-        boxAnimator = new BoxAnimator(renderer, camera, world, framesPerSecond);
+    public JArrayListAnimator() {
+        this.world = new ArrayList<>();
+        this.camera = new Camera();
+        this.framesPerSecond = 25;
+        this.positionAlongX = 0;
+        this.renderer = new Render("/Resources/lake.jpg");
+        this.cameraAnimator = new CameraAnimator(renderer, camera, world, framesPerSecond);
+        this.boxAnimator = new BoxAnimator(renderer, camera, world, framesPerSecond);
     }
 
-    public void addAnimatorReverse(Box box, int value) {
-        boxAnimator.slideFromLeft(box, PositionAlongX);
-        cameraAnimator.slideAlongX(PositionAlongX);
-        PositionAlongX++;
-    }
 
-    public void addAnimator(Box box, int value) {
-        boxAnimator.slideFromLeft(box, PositionAlongX);
-        cameraAnimator.slideAlongX(PositionAlongX);
-        PositionAlongX--;
-    }
+    public void runAddAnimation(int value, JArrayListInsertAnimation animation) {
+        double finalX = positionAlongX;
+        double finalY = 0;
 
-    public void removeAnimator(Box box, int index) {
-        cameraAnimator.slideAlongX((int) box.center.x);
-        boxAnimator.slideUp(box, (int) (box.center.x+5));
-        for (int i = index + 1; i < world.size(); i++) {
-            Shape shape = world.get(i);
-            if (shape instanceof Box) {
-                boxAnimator.shiftLeft((Box) shape);
-            }
+        Box box = new Box(
+                new Point(finalX, finalY, 0),
+                1, 1, 0.1,
+                new Color(0.4f, 0.7f, 1.0f),
+                Material.CHROME, 0, value
+        );
+
+        world.add(box);
+
+        switch (animation) {
+            case BOUNCE -> boxAnimator.bounceIn(box, finalY);
+            case SLIDE_FROM_TOP -> boxAnimator.slideFromTop(box, finalY);
+            case SLIDE_FROM_LEFT -> boxAnimator.slideFromLeft(box, finalX);
+            case SLIDE_FROM_RIGHT -> boxAnimator.slideFromRight(box, finalX);
+            case SCALE_POP -> boxAnimator.scalePop(box);
+            case SHAKE -> boxAnimator.shake(box);
         }
 
+        cameraAnimator.slideAlongX(positionAlongX);
+        positionAlongX--;
     }
 
-    public Box addBox(int value) {
-        Box box = new Box(new Point(999, 0, 0), 1, 1, 0.1, new Color(0.4f, 0.7f, 1.0f), Material.CHROME, 0, value);
-        world.add(box);
-        return box;
-    }
-    public void removeBox(int index){
-        world.remove(index);
+
+    public void runRemoveAnimation(int index, JArrayListRemoveAnimation animation) {
+        Box box = (Box) world.get(index);
+        double originalX = box.center.x;
+        cameraAnimator.slideAlongX(originalX);
+
+        switch (animation) {
+            case FADE_UP -> boxAnimator.fadeOutAndUp(box, box.center.y + 5);
+            case SLIDE_UP -> boxAnimator.slideUp(box, box.center.y + 5);
+            case SCALE_DOWN -> boxAnimator.scaleDown(box);
+            case SHAKE_AND_FADE -> boxAnimator.shakeAndFade(box);
+            case SHRINK_AND_DROP -> boxAnimator.shrinkAndDrop(box);
+        }
+
+        world.remove(box);
+        boxAnimator.shiftElementsLeft(index);
+        positionAlongX++;
     }
 
-    public Box getBox(int index){
-        return (Box) world.get(index);
-    }
+
 
 }
 

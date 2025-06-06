@@ -20,13 +20,12 @@ public class CameraAnimator {
         this.world = world;
     }
 
-    public void slideAlongX(int cameraFinal){
+    public void slideAlongX(double cameraFinal){
         double cameraInitial = camera.getM_X();
         double delta = (cameraFinal - cameraInitial) / frames;
         for (int i = 0; i < frames; i++) {
             camera.setM_X(camera.getM_X() + delta);
             renderer.drawImage(camera, world);
-//            renderer.drawImage(camera, world);
         }
     }
 

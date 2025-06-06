@@ -62,7 +62,6 @@ public class Camera {
         return new Ray(origin, direction);
     }
 
-    // Reuses the given Ray instead of allocating a new one
     public void getRayFast(double u, double v, Ray ray) {
         Point dir = lowerLeftCorner.add(horizontal.mul(u)).add(vertical.mul(v)).sub(origin);
         ray.set(origin, dir);
