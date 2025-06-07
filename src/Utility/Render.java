@@ -1,6 +1,6 @@
 package Utility;
 
-import Shapes.Box;
+import Collections.Code;
 import Shapes.Shape;
 
 import javax.imageio.ImageIO;
@@ -9,10 +9,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.concurrent.*;
 
-import static Utility.Digit.isInDigit;
 import static Utility.Tracer.rayColor;
 
 public class Render {
@@ -40,7 +38,7 @@ public class Render {
         }
     }
 
-    public void drawImage(Camera camera, ArrayList<Shape> world) {
+    public void drawImage(Camera camera, ArrayList<Shape> world, Subtitle subtitle) {
 //        long startTime = System.nanoTime( );
         final int width = BEINGRENDERED.getWidth( );
         final int height = BEINGRENDERED.getHeight( );
@@ -93,6 +91,26 @@ public class Render {
 
 //        long renderTime = System.nanoTime( ) - startTime;
 
+        Graphics2D g2d = BEINGRENDERED.createGraphics();
+
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+        // Draw subtitle panel
+        g2d.setColor(new java.awt.Color(0, 0, 0, 150));
+        g2d.fillRoundRect(20, height - 80, width - 40, 60, 15, 15);
+
+        // Draw subtitle text
+        g2d.setColor(java.awt.Color.WHITE);
+        g2d.setFont(new Font(Font.SERIF, Font.BOLD, 16));
+        g2d.drawString(subtitle.getSubtitle(), 40, height - 40);
+
+
+        Code.render(g2d, Screen.getWidth());
+
+        g2d.dispose();
+
+
+
         if (PREVIEW_FFMPEG != null) {
             try {
                 PREVIEW_FFMPEG.writeFrame(BEINGRENDERED);
@@ -103,5 +121,6 @@ public class Render {
 //        System.out.printf("Rendered in %.2f ms%n", renderTime / 1_000_000.0);
 
     }
+
 
 }

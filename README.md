@@ -40,16 +40,23 @@ Rendering Optimizations are very much required as current speed is 200ms for eve
 
 ### Phase 3
 - Extreme optimizations are needed for rendering ! 
-- Implemented BVH from scratch and it didn't boosted rendering time !
+- Implemented BVH from scratch, and it didn't boost rendering time !
 
 Decided to focus on implementing data structure and animations first !
 Build the GUI and simple progress bar because we have no option ! Rendering time is a lot.
 Then ask for a live interaction mode ! Where rendering happens and is shown to user at the same time !
 [ Remember to keep stuff super simple ! ]
 
-Making the rendering fast is most important
-Then adding live interaction mode !
-Then adding more data structures !
-Then adding animations and GUI !
-Then adding video generation !
-Then adding scene builder !
+### Phase 4
+- Implemented Multiple Animations in JArrayList [Done]
+- Implemented Randomized Animations in JArrayList [Done]
+- The coolest feature ! Subtitles in video generation [Done]
+- Make the subtitles sync with the video [The Challenge is to sync subtitles with video]
+- Make the subtitles look more natural [The challenge is to make subtitles look more natural]
+- Make the subtitles look more beautiful [The challenge is to make subtitles look more beautiful]
+- Make the subtitles look more realistic [The challenge is to make subtitles look more realistic]
+- Make the subtitles look more humanistic [The challenge is to make subtitles look more humanistic]
+
+- GIVE A OPTION TO USER TO CHANGE THE MODE; WHETHER VIDEO GENERATION OR LIVE INTERACTION MODE OR TEACHING MODE
+- DO NOT RENDER ANIMATIONS UNLESS THE MODE IS SPECIFIED SPECIFICALLY !
+

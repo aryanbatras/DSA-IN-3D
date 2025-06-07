@@ -1,0 +1,154 @@
+package Collections;
+
+import Utility.Screen;
+
+import java.awt.*;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.ArrayList;
+import java.awt.Color;
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class Code {
+    private static List<String> sourceLines;
+    private static final AtomicInteger currentLine = new AtomicInteger(-1);
+    private static boolean enabled = false;
+
+    private static final int PADDING = 8;
+    private static final Font CODE_FONT = new Font("Monospaced", Font.PLAIN, Math.min(18, (int)(10 / Screen.getScale())));
+
+    private static final Color BG = new Color(20, 20, 30, 230);
+    private static final Color TEXT = new Color(230, 230, 240);
+    private static final Color CURRENT_LINE_BG = new Color(80, 130, 255, 80);
+    private static final Color LINE_NO = new Color(120, 120, 150);
+
+
+    static {
+        try {
+            String mainFile = findMainFile();
+            if (mainFile != null) {
+                sourceLines = Files.readAllLines(Paths.get(mainFile));
+                enabled = true;
+            }
+        } catch (IOException e) {
+            System.err.println("CodeOverlay: Auto-load failed: " + e.getMessage());
+        }
+    }
+
+    private static String findMainFile() {
+        String dir = System.getProperty("user.dir");
+        String[] candidates = {
+                "/src/Main.java",
+                "/Main.java"
+        };
+
+        for (String path : candidates) {
+            if (Files.exists(Paths.get(dir + path))) {
+                return dir + path;
+            }
+        }
+        return null;
+    }
+
+    public static void markCurrentLine() {
+        if (!enabled) return;
+
+        for (StackTraceElement el : Thread.currentThread().getStackTrace()) {
+            if ("Main.java".equals(el.getFileName())) {
+                currentLine.set(el.getLineNumber() - 1);
+                return;
+            }
+        }
+    }
+
+    private static int getMaxVisibleLines() {
+        double scale = Screen.getScale();
+        return (scale <= 0.25) ? 1 : 3;
+    }
+
+    private static List<String> wrapText(FontMetrics fm, String text, int maxWidth) {
+        List<String> lines = new ArrayList<>();
+        if (text == null || text.isEmpty()) {
+            lines.add("");
+            return lines;
+        }
+
+        String[] words = text.split(" ");
+        StringBuilder currentLine = new StringBuilder();
+
+        for (String word : words) {
+            String test = currentLine.isEmpty() ? word : currentLine + " " + word;
+            if (fm.stringWidth(test) <= maxWidth) {
+                currentLine = new StringBuilder(test);
+            } else {
+                if (!currentLine.isEmpty()) lines.add(currentLine.toString());
+                currentLine = new StringBuilder(word);
+            }
+        }
+
+        if (!currentLine.isEmpty()) lines.add(currentLine.toString());
+        return lines;
+    }
+
+    public static void render(Graphics2D g2d, int canvasWidth) {
+        if (!enabled || sourceLines == null || currentLine.get() < 0) return;
+
+        int lineIndex = currentLine.get();
+        if (lineIndex >= sourceLines.size()) return;
+
+        g2d.setFont(CODE_FONT);
+        FontMetrics fm = g2d.getFontMetrics();
+        int lineHeight = fm.getHeight() + 2;
+
+        int overlayWidth = Math.max(300, Math.min(600, canvasWidth / 2));
+        int contentWidth = overlayWidth - 2 * PADDING - 30;
+        int availableHeight = Math.max(100, Screen.getHeight() / 4);
+        int maxPossibleLines = Math.max(1, (availableHeight - 2 * PADDING) / lineHeight);
+        int maxVisibleLines = Math.min(getMaxVisibleLines(), maxPossibleLines);
+
+        List<Integer> visibleLineIndices = new ArrayList<>();
+        List<List<String>> wrappedLines = new ArrayList<>();
+        int totalLines = 0;
+        int startLine = Math.max(0, lineIndex - maxVisibleLines / 2);
+
+        for (int i = startLine; i < sourceLines.size() && totalLines < maxPossibleLines; i++) {
+            List<String> wrapped = wrapText(fm, sourceLines.get(i).strip(), contentWidth);
+            if (totalLines + wrapped.size() > maxPossibleLines) break;
+            visibleLineIndices.add(i);
+            wrappedLines.add(wrapped);
+            totalLines += wrapped.size();
+        }
+
+        int overlayHeight = Math.min((totalLines * lineHeight) + 2 * PADDING, availableHeight);
+        int x = Math.max(PADDING, canvasWidth - overlayWidth - PADDING);
+        int y = PADDING;
+        int currentY = y + PADDING + fm.getAscent();
+
+        g2d.setColor(BG);
+        g2d.fillRect(x, y, overlayWidth, overlayHeight);
+
+        for (int i = 0; i < visibleLineIndices.size(); i++) {
+            int lineNum = visibleLineIndices.get(i);
+            List<String> wrapped = wrappedLines.get(i);
+            boolean isCurrentLine = (lineNum == lineIndex);
+
+            for (String wrappedLine : wrapped) {
+                if (wrappedLine.equals(wrapped.get(0))) {
+                    g2d.setColor(LINE_NO);
+                    g2d.drawString(String.valueOf(lineNum + 1), x + 6, currentY);
+                }
+
+                if (isCurrentLine) {
+                    g2d.setColor(CURRENT_LINE_BG);
+                    g2d.fillRect(x + 30, currentY - fm.getAscent(), contentWidth + 10, lineHeight);
+                }
+
+                g2d.setColor(TEXT);
+                g2d.drawString(wrappedLine, x + 30, currentY);
+                currentY += lineHeight;
+            }
+        }
+    }
+}

@@ -1,17 +1,17 @@
 package Utility;
 
 public class Camera {
-    private Point origin;
     private Point lowerLeftCorner;
     private Point horizontal;
     private Point vertical;
     private Point u, v, w;
-    private double yaw;
-    private double pitch;
-    private double radius;
+    private Point origin;
     private double M_X;
     private double M_Y;
     private double M_Z;
+    private double yaw;
+    private double pitch;
+    private double radius;
 
     public Camera() {
         radius = new Point(1, 2, -3).length();

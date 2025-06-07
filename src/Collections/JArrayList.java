@@ -15,6 +15,11 @@ public class JArrayList {
     private final JArrayListInsertAnimation defaultInsertAnimation;
     private final JArrayListRemoveAnimation defaultRemoveAnimation;
 
+
+    //
+    // CONSTRUCTORS
+    //
+
     public JArrayList() {
         this(
                 JArrayListInsertAnimation.SLIDE_FROM_RIGHT,
@@ -50,7 +55,9 @@ public class JArrayList {
 
 
 
-
+//    //
+//    // CONSTRUCTORS WITH RANDOMIZER
+//    //
 
     public JArrayList(JArrayListRandomAnimation randomizer) {
         this(
@@ -90,39 +97,51 @@ public class JArrayList {
     }
 
 
+
+
+
+    //
+    // METHODS ADD REMOVE
+    //
+
     public void add(int value) {
+        Code.markCurrentLine();
         arr.add(value);
         animator.runAddAnimation(value, randomizer != null ? randomizer.randomInsertAnimation() : defaultInsertAnimation);
     }
 
     public void add(int value, JArrayListInsertAnimation boxAnimation) {
+        Code.markCurrentLine();
         arr.add(value);
         animator.runAddAnimation(value, boxAnimation);
     }
 
-
-
-
-
     public void remove(int index) {
+        Code.markCurrentLine();
         arr.remove(index);
-        JArrayListRemoveAnimation animation;
         animator.runRemoveAnimation(index, randomizer != null ? randomizer.randomRemoveAnimation() : defaultRemoveAnimation);
     }
 
     public void remove(int index, JArrayListRemoveAnimation boxAnimation) {
+        Code.markCurrentLine();
         arr.remove(index);
         animator.runRemoveAnimation(index, boxAnimation);
     }
 
-
-
-
     public Integer get(int index) {
+        Code.markCurrentLine();
+        animator.runHighlightAnimation(index);
         return arr.get(index);
     }
 
+    public void set(int index, int value) {
+        Code.markCurrentLine();
+        animator.runHybridAnimation(index, value);
+        arr.set(index, value);
+    }
+
     public int size() {
+        Code.markCurrentLine();
         return arr.size();
     }
 
