@@ -62,4 +62,5 @@ Then ask for a live interaction mode ! Where rendering happens and is shown to u
 - LIVE RENDERING STARTS AT A VERY FAST RATE THAN PROGRESSIVELY SLOWS DOWN ITS SPEED
 
 ### Phase 6
+- LET THE SCREEN SCALE BE SET BY THE USER THROUGH CONSTRUCTOR CHAINING
 - 

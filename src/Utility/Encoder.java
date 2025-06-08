@@ -8,7 +8,7 @@ public class Encoder implements AutoCloseable {
     private static final String DEFAULT_OUTPUT_DIR = "output";
     private static final String DEFAULT_VIDEO_PREFIX = "video";
     private static final int DEFAULT_FPS = 25;
-    private static Encoder ONE_INSTANCE;
+    private static Encoder INSTANCE;
 
     private final Process ffmpegProcess;
     private final OutputStream ffmpegInput;
@@ -16,25 +16,23 @@ public class Encoder implements AutoCloseable {
 
     private static final AtomicBoolean shutdownHookRegistered = new AtomicBoolean(false);
 
-    public static Encoder initializeEncoder() {
+    public static Encoder initializeEncoder(double scale) {
         try {
-            if(ONE_INSTANCE == null){
-                int width = Screen.getWidth();
-                int height = Screen.getHeight();
-                ONE_INSTANCE = new Encoder(width, height, DEFAULT_FPS, generateUniqueOutputPath());
-                registerShutdownHook(ONE_INSTANCE);
-            }
-            return ONE_INSTANCE;
+                int width = (int) (Screen.getWidth() * scale);
+                int height = (int) (Screen.getHeight() * scale);
+                INSTANCE = new Encoder(width, height, DEFAULT_FPS, generateUniqueOutputPath());
+                registerShutdownHook(INSTANCE);
+            return INSTANCE;
         } catch (IOException e) {
             throw new RuntimeException("Failed to initialize encoder", e);
         }
     }
 
 
-    public static Encoder initializeEncoder(String userVideoPrefix) {
+    public static Encoder initializeEncoder(String userVideoPrefix, double scale) {
         try {
-                int width = Screen.getWidth();
-                int height = Screen.getHeight();
+                int width = (int) (Screen.getWidth() * scale);
+                int height = (int) (Screen.getHeight() * scale);
                 Encoder encoder = new Encoder(width, height, DEFAULT_FPS, generateUniqueOutputPath(userVideoPrefix));
                 registerShutdownHook(encoder);
             return encoder;
@@ -51,6 +49,31 @@ public class Encoder implements AutoCloseable {
         while (true) {
             File outputFile = new File(outputDir, String.format("%s.mp4", userVideoPrefix));
             if (!outputFile.exists()) {
+                try {
+                    outputFile.createNewFile();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                return outputFile.getAbsolutePath();
+            }
+        }
+    }
+
+    private static String generateUniqueOutputPath() {
+        File outputDir = new File(DEFAULT_OUTPUT_DIR);
+        if (!outputDir.exists() && !outputDir.mkdirs()) {
+            throw new RuntimeException("Failed to create output directory: " + outputDir.getAbsolutePath());
+        }
+
+        int index = 1;
+        while (true) {
+            File outputFile = new File(outputDir, String.format("%s_%03d.mp4", DEFAULT_VIDEO_PREFIX, index++));
+            if (!outputFile.exists()) {
+                try {
+                    outputFile.createNewFile();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
                 return outputFile.getAbsolutePath();
             }
         }
@@ -66,21 +89,6 @@ public class Encoder implements AutoCloseable {
                     System.err.println("Error during shutdown: " + e.getMessage());
                 }
             }));
-        }
-    }
-
-    private static String generateUniqueOutputPath() {
-        File outputDir = new File(DEFAULT_OUTPUT_DIR);
-        if (!outputDir.exists() && !outputDir.mkdirs()) {
-            throw new RuntimeException("Failed to create output directory: " + outputDir.getAbsolutePath());
-        }
-
-        int index = 1;
-        while (true) {
-            File outputFile = new File(outputDir, String.format("%s_%03d.mp4", DEFAULT_VIDEO_PREFIX, index++));
-            if (!outputFile.exists()) {
-                return outputFile.getAbsolutePath();
-            }
         }
     }
 

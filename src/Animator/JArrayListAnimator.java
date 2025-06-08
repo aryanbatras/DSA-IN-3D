@@ -26,8 +26,10 @@ public class JArrayListAnimator {
     private final BoxAnimator boxAnimator;
 
     private Render mode;
+    private double scale;
 
     public JArrayListAnimator() {
+        this.scale = 0.5;
         this.positionAlongX = 0;
         this.framesPerSecond = 25;
         this.camera = new Camera();
@@ -48,13 +50,19 @@ public class JArrayListAnimator {
         renderer.setEncoder(encoder);
     }
 
-    public void runAddAnimation(int value, JArrayListInsertAnimation animation) {
+    public void setScale(double scale){
+        this.scale = scale;
+        renderer.setScale("/Resources/lake.jpg", scale);
+    }
 
-        Window.invokeReferences(renderer, camera, world, subtitle, mode);
+    public void runAddAnimation(int value, JArrayListInsertAnimation animation) {
 
         if (mode == Render.STEP_WISE || mode == Render.STEP_WISE_INTERACTIVE) {
             Window.waitUntilNextStep();
+            Window.setScale(scale);
         }
+
+        Window.invokeReferences(renderer, camera, world, subtitle, mode);
 
         double finalX = positionAlongX;
         double finalY = 0;
@@ -81,11 +89,12 @@ public class JArrayListAnimator {
 
     public void runRemoveAnimation(int index, JArrayListRemoveAnimation animation) {
 
-        Window.invokeReferences(renderer, camera, world, subtitle, mode);
-
         if (mode == Render.STEP_WISE || mode == Render.STEP_WISE_INTERACTIVE) {
             Window.waitUntilNextStep();
+            Window.setScale(scale);
         }
+
+        Window.invokeReferences(renderer, camera, world, subtitle, mode);
 
         Box box = (Box) world.get(index);
         double originalX = box.center.x;
@@ -106,11 +115,12 @@ public class JArrayListAnimator {
 
     public void runHighlightAnimation(int index) {
 
-        Window.invokeReferences(renderer, camera, world, subtitle, mode);
-
         if (mode == Render.STEP_WISE || mode == Render.STEP_WISE_INTERACTIVE) {
             Window.waitUntilNextStep();
+            Window.setScale(scale);
         }
+
+        Window.invokeReferences(renderer, camera, world, subtitle, mode);
 
         Box box = (Box) world.get(index);
         subtitle.setMode("Getting");
@@ -121,11 +131,12 @@ public class JArrayListAnimator {
 
     public void runHybridAnimation(int index, int value) {
 
-        Window.invokeReferences(renderer, camera, world, subtitle, mode);
 
         if (mode == Render.STEP_WISE || mode == Render.STEP_WISE_INTERACTIVE) {
             Window.waitUntilNextStep();
+            Window.setScale(scale);
         }
+        Window.invokeReferences(renderer, camera, world, subtitle, mode);
 
         Box box = (Box) world.get(index);
         subtitle.setMode("Updating");

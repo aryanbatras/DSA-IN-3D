@@ -21,14 +21,26 @@ public class Renderer {
 
     private Encoder encoder;
     BufferedImage BEINGRENDERED, ENVIRONMENT, ACTUALFRAME;
+    private double scale;
 
     public Renderer(String environmentImagePath) {
-        int w = (int) (Screen.getWidth( ));
-        int h = (int) (Screen.getHeight( ));
+        this.scale = 0.5;
+        int w = ((int)(Screen.getWidth() * scale)) & ~1;
+        int h = ((int)(Screen.getHeight() * scale)) & ~1;
         this.BEINGRENDERED = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
         this.ENVIRONMENT = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
         this.ACTUALFRAME = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
         setENVIRONMENT(environmentImagePath);
+    }
+
+    public void setScale(String environmentImagePath, double scale) {
+        int w = ((int)(Screen.getWidth() * scale)) & ~1;
+        int h = ((int)(Screen.getHeight() * scale)) & ~1;
+        this.BEINGRENDERED = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+        this.ENVIRONMENT = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+        this.ACTUALFRAME = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+        setENVIRONMENT(environmentImagePath);
+        this.scale = scale;
     }
 
     public void setEncoder(Encoder encoder) {
@@ -44,7 +56,7 @@ public class Renderer {
     }
 
     public void drawImage(Camera camera, ArrayList<Shape> world, Subtitle subtitle, Render mode) {
-//        long startTime = System.nanoTime( );
+
         final int width = BEINGRENDERED.getWidth( );
         final int height = BEINGRENDERED.getHeight( );
         final int[] pixels = ((DataBufferInt) BEINGRENDERED.getRaster( ).getDataBuffer( )).getData( );
@@ -108,20 +120,13 @@ public class Renderer {
             }
         }
 
-//        long renderTime = System.nanoTime( ) - startTime;
-
         Graphics2D g2d = ACTUALFRAME.createGraphics();
         g2d.drawImage(BEINGRENDERED, 0, 0, null);
-
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g2d.setColor(new java.awt.Color(0, 0, 0, 80));
-        g2d.fillRoundRect(20, height - 60, width / 2, 40, 32, 32);
-        g2d.setColor(java.awt.Color.lightGray);
-        g2d.setFont(new Font(Font.SERIF, Font.BOLD, Math.min(16, (int)(16 / Screen.getScale()))));
-        g2d.drawString(subtitle.getSubtitle(), ( width / 4 ) - Math.min(16, (int)(16 / Screen.getScale())) - 20, height - 35);
 
-        Code.render(g2d, Screen.getWidth());
-        VariableTracker.render(g2d);
+        drawSubtitles(width, height, g2d, subtitle);
+        Code.render(g2d, Screen.getWidth(), scale);
+        Variable.render(g2d, scale);
 
         g2d.dispose();
 
@@ -138,13 +143,49 @@ public class Renderer {
         } else if (mode == Render.STEP_WISE_INTERACTIVE) {
             Window.updateWindow(ACTUALFRAME);
         }
-//        System.out.printf("Rendered in %.2f ms%n", renderTime / 1_000_000.0);
 
     }
+
+    private void drawSubtitles(int width, int height, Graphics2D g2d, Subtitle subtitle) {
+
+        String subtitleText = subtitle.getSubtitle();
+        if (subtitleText != null && !subtitleText.isEmpty()) {
+
+            g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+            int baseFontSize = 18;
+            int fontSize = Math.max(10, (int)(baseFontSize * scale));
+            Font font = new Font("SansSerif", Font.BOLD, fontSize);
+            g2d.setFont(font);
+
+            FontMetrics fm = g2d.getFontMetrics();
+            int textWidth = fm.stringWidth(subtitleText);
+            int textHeight = fm.getHeight();
+
+            int paddingX = (int)(20 * scale);
+            int paddingY = (int)(12 * scale);
+
+            int boxWidth = textWidth + 2 * paddingX;
+            int boxHeight = textHeight + 2 * paddingY;
+
+            int boxX = Math.max(20, (width - boxWidth) / 2);
+
+            int bottomMargin = 30;
+            int boxY = height - boxHeight - bottomMargin;
+
+            g2d.setColor(new java.awt.Color(0, 0, 0, 100));
+            g2d.fillRoundRect(boxX, boxY, boxWidth, boxHeight, 24, 24);
+
+            g2d.setColor(java.awt.Color.LIGHT_GRAY);
+            int textX = boxX + paddingX;
+            int textY = boxY + paddingY + fm.getAscent() - 2;
+            g2d.drawString(subtitleText, textX, textY);
+        }
+    }
+
 
     public BufferedImage getActualFrame() {
         return ACTUALFRAME;
     }
-
 
 }

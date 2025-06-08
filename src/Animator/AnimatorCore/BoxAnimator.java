@@ -24,6 +24,10 @@ public class BoxAnimator {
         this.world = world;
     }
 
+    public void setMode(Render mode) {
+        this.mode = mode;
+    }
+
     public void highlight(Box box) {
         Color c = box.color;
         for (int i = 0; i < frames; i++) {
@@ -230,9 +234,5 @@ public class BoxAnimator {
             box.center.y -= deltaY;
             renderer.drawImage(camera, world, subtitle, mode);
         }
-    }
-
-    public void setMode(Render mode) {
-        this.mode = mode;
     }
 }

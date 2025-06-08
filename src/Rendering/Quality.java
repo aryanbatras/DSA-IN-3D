@@ -1,8 +1,10 @@
 package Rendering;
 
 public enum Quality {
-    BEST,
-    GOOD,
-    BALANCE,
-    FASTEST
+    BEST(1.0),
+    GOOD(0.75),
+    BALANCE(0.5),
+    FASTEST(0.25);
+
+    Quality(double v) {}
 }

@@ -19,10 +19,13 @@ public class JArrayList {
     private JArrayListInsertAnimation defaultInsertAnimation;
     private JArrayListRemoveAnimation defaultRemoveAnimation;
 
+    private double scale;
+    private String userOutput;
     private boolean built = false;
     private boolean userProvidedOutput = false;
 
     public JArrayList() {
+        this.scale = 0.5;
         this.encoder = null;
         this.mode = Render.DISABLED;
         this.arr = new ArrayList<>();
@@ -57,25 +60,34 @@ public class JArrayList {
         this.built = false;
         return this;
     }
-//
-//    public JArrayList withQuality(Quality quality) {
-//        Screen.setQuality(quality);
-//        return this;
-//    }
+
+    public JArrayList withQuality(Quality quality) {
+        switch (quality) {
+            case BEST -> scale = 1.0;
+            case GOOD -> scale = 0.75;
+            case BALANCE -> scale = 0.5;
+            case FASTEST -> scale = 0.25;
+        }
+        animator.setScale(scale);
+        this.built = false;
+        return this;
+    }
 
     public JArrayList withOutput(String userOutput) {
-        if (mode == Render.VIDEO) {
-            encoder = Encoder.initializeEncoder(userOutput);
-            animator.setEncoder(encoder);
-            userProvidedOutput = true;
-        }
+        this.userOutput = userOutput;
+        userProvidedOutput = true;
+        this.built = false;
         return this;
     }
 
     public JArrayList build() {
 
+        if(mode == Render.VIDEO && userProvidedOutput == true){
+            encoder = Encoder.initializeEncoder(userOutput, scale);
+            animator.setEncoder(encoder);
+        }
         if (mode == Render.VIDEO && userProvidedOutput == false) {
-            encoder = Encoder.initializeEncoder();
+            encoder = Encoder.initializeEncoder(scale);
             animator.setEncoder(encoder);
         }
         if (mode == Render.LIVE) {
@@ -91,14 +103,13 @@ public class JArrayList {
         this.built = true;
         return this;
     }
-
     private void checkBuilt() {
         if (built == false) { throw new IllegalStateException("JArrayList not built! Call .build() before use."); }
     }
 
     public void add(int value) {
         Code.markCurrentLine(); checkBuilt();
-        VariableTracker.update("add", value);
+        Variable.update("add", value);
 
         arr.add(value);
         if (mode != Render.DISABLED) { animator.runAddAnimation(value, randomizer != null ? randomizer.randomInsertAnimation() : defaultInsertAnimation); }
@@ -106,7 +117,7 @@ public class JArrayList {
 
     public void add(int value, JArrayListInsertAnimation boxAnimation) {
         Code.markCurrentLine(); checkBuilt();
-        VariableTracker.update("add", value);
+        Variable.update("add", value);
 
         arr.add(value);
         if(mode != Render.DISABLED){ animator.runAddAnimation(value, boxAnimation);}
@@ -114,7 +125,7 @@ public class JArrayList {
 
     public void remove(int index) {
         Code.markCurrentLine(); checkBuilt();
-        VariableTracker.update("remove", index, arr.get(index));
+        Variable.update("remove", index, arr.get(index));
 
         arr.remove(index);
         if(mode != Render.DISABLED){ animator.runRemoveAnimation(index, randomizer != null ? randomizer.randomRemoveAnimation() : defaultRemoveAnimation);}
@@ -122,7 +133,7 @@ public class JArrayList {
 
     public void remove(int index, JArrayListRemoveAnimation boxAnimation) {
         Code.markCurrentLine(); checkBuilt();
-        VariableTracker.update("remove", index, arr.get(index));
+        Variable.update("remove", index, arr.get(index));
 
         arr.remove(index);
         if(mode != Render.DISABLED){animator.runRemoveAnimation(index, boxAnimation);}
@@ -130,7 +141,7 @@ public class JArrayList {
 
     public Integer get(int index) {
         Code.markCurrentLine(); checkBuilt();
-        VariableTracker.update("get", index, arr.get(index));
+        Variable.update("get", index, arr.get(index));
 
         if(mode != Render.DISABLED){ animator.runHighlightAnimation(index); }
         return arr.get(index);
@@ -138,7 +149,7 @@ public class JArrayList {
 
     public void set(int index, int value) {
         Code.markCurrentLine(); checkBuilt();
-        VariableTracker.update("set", index, value);
+        Variable.update("set", index, value);
 
         if(mode != Render.DISABLED){ animator.runHybridAnimation(index, value); }
         arr.set(index, value);

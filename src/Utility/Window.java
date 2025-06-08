@@ -4,7 +4,6 @@ import Rendering.Render;
 import Shapes.Shape;
 
 import java.awt.*;
-import java.awt.Color;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -22,19 +21,16 @@ public class Window {
     private static JButton nextStepButton;
     private static JLayeredPane layeredPane;
 
-    // --- Camera and Interaction State ---
     private static double yaw = 0.25, pitch = 0, radius = 2.5;
     private static double mx = 0, my = 0, mz = 0;
     private static double latestX = 0, latestY = 0;
-
 
     private static Renderer renderer;
     private static Camera camera;
     private static ArrayList<Shape> world;
     private static Subtitle subtitle;
     private static Render mode;
-
-//    private final Renderer renderer;
+    private static double scale;
 
     public static void initializeWindow() {
         if (initialized) return;
@@ -42,8 +38,8 @@ public class Window {
         frame = new JFrame("3D Visualizer");
         frame.setSize(Screen.getWidth(), Screen.getHeight());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setBackground(java.awt.Color.BLACK);
-        frame.setForeground(java.awt.Color.BLACK);
+        frame.setBackground(java.awt.Color.black);
+        frame.setForeground(java.awt.Color.black);
         frame.setLocationRelativeTo(null);
         frame.setAlwaysOnTop(true);
 
@@ -60,15 +56,15 @@ public class Window {
         nextStepButton.setFocusable(false);
         nextStepButton.setVisible(false);
 
-        nextStepButton.setSize(Screen.getWidth() / 8, Screen.getHeight() / 16);
+        nextStepButton.setSize(Screen.getWidth() / 3, Screen.getHeight() / 4 ) ;
         nextStepButton.setLocation(
-                Screen.getWidth() - nextStepButton.getWidth() - Screen.getWidth() / 16,
-                Screen.getHeight() - 60
+                ( Screen.getWidth() / 2 ) - ( nextStepButton.getWidth() / 2 ),
+                Screen.getHeight() / 3
         );
 
         nextStepButton.setBackground(new java.awt.Color(40, 40, 40, 50));
         nextStepButton.setForeground(java.awt.Color.lightGray);
-        nextStepButton.setFont(new Font("SansSerif", Font.BOLD, 10));
+        nextStepButton.setFont(new Font("SansSerif", Font.BOLD, 12));
         nextStepButton.setBorder(BorderFactory.createEmptyBorder());
         nextStepButton.setOpaque(true);
         nextStepButton.setFocusPainted(false);
@@ -97,6 +93,30 @@ public class Window {
         Window.world = world;
         Window.subtitle = subtitle;
         Window.mode = mode;
+    }
+
+    public static void setScale(double scale) {
+        frame.setSize((int) (Screen.getWidth() * scale), (int) (Screen.getHeight() * scale));
+        imageLabel.setBounds(0, 0, (int) (Screen.getWidth() * scale), (int) (Screen.getHeight() * scale));
+        layeredPane.setPreferredSize(new Dimension((int) (Screen.getWidth() * scale), (int) (Screen.getHeight() * scale)));
+        nextStepButton.setSize((int) (( Screen.getWidth() * scale ) / 8), (int) ((Screen.getHeight() * scale ) / 16));
+        nextStepButton.setLocation(
+                (int) ((Screen.getWidth() * scale) - nextStepButton.getWidth() - (Screen.getWidth() * scale) / 16),
+                (int) ((Screen.getHeight() * scale) - ( (Screen.getHeight() / 10.0 ) ) )
+        );
+
+        if (renderer != null && camera != null && world != null && subtitle != null) {
+            BufferedImage newImage = renderer.getActualFrame();
+            updateWindow(newImage);
+            frame.revalidate();
+            frame.repaint();
+        }
+
+        Window.scale = scale;
+    }
+
+    public static double getScale() {
+        return scale;
     }
 
 
@@ -178,5 +198,4 @@ public class Window {
         }
         enableStepWiseMode(false);
     }
-
 }

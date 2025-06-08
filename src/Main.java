@@ -5,38 +5,43 @@ public class Main {
 
     public static void main(String[] args) {
 
-        // QUALITY NOT SUPPORTED // CAUSES CONFLICT
+        // DYNAMIC MULTIPLE MODES ALL WORKING PERFECTLY
 
-//        JArrayList arr = new JArrayList().withRenderMode(Render.VIDEO).withQuality(Quality.FASTEST).build();
-//        JArrayList arr2 = new JArrayList().withRenderMode(Render.STEP_WISE).withQuality(Quality.GOOD).build();
+        JArrayList arr = new JArrayList().withRenderMode(Render.VIDEO).withQuality(Quality.FASTEST).build();
+        JArrayList arr2 = new JArrayList().withRenderMode(Render.VIDEO).withQuality(Quality.BALANCE).build();
+        JArrayList arr3 = new JArrayList().withRenderMode(Render.VIDEO).withQuality(Quality.GOOD).build();
+        JArrayList arr4 = new JArrayList().withRenderMode(Render.VIDEO).withQuality(Quality.BEST).build();
+        JArrayList arr5 = new JArrayList().withRenderMode(Render.VIDEO).build();
 
-//        for (int i = 0; i < 5; i++) {
-//            arr.add(i);
-//            arr2.add(i * 2);
-//            arr2.add(i * 3);
-//        }
+        JArrayList arr6 = new JArrayList().withRenderMode(Render.VIDEO).withOutput("arr6").build();
+        JArrayList arr7 = new JArrayList().withRenderMode(Render.VIDEO).withOutput("arr7").build();
+        JArrayList arr8 = new JArrayList().withRenderMode(Render.VIDEO).withOutput("arr8").withQuality(Quality.FASTEST).build();
+        JArrayList arr9 = new JArrayList().withRenderMode(Render.VIDEO).withOutput("arr9").withQuality(Quality.BEST).build();
 
-        // LET THE SCREEN SCALE BE SET BY THE USER THROUGH CONSTRUCTOR CHAINING
+        JArrayList arr10 = new JArrayList().withRenderMode(Render.STEP_WISE).withQuality(Quality.FASTEST).build();
+        JArrayList arr11 = new JArrayList().withRenderMode(Render.STEP_WISE).withQuality(Quality.BALANCE).build();
+        JArrayList arr12 = new JArrayList().withRenderMode(Render.STEP_WISE).withQuality(Quality.GOOD).build();
+        JArrayList arr13 = new JArrayList().withRenderMode(Render.STEP_WISE).withQuality(Quality.BEST).build();
+        JArrayList arr14 = new JArrayList().withRenderMode(Render.STEP_WISE).build();
+
+        JArrayList arr15 = new JArrayList().withRenderMode(Render.STEP_WISE_INTERACTIVE).withQuality(Quality.FASTEST).build();
+        JArrayList arr16 = new JArrayList().withRenderMode(Render.STEP_WISE_INTERACTIVE).withQuality(Quality.BALANCE).build();
+        JArrayList arr17 = new JArrayList().withRenderMode(Render.STEP_WISE_INTERACTIVE).withQuality(Quality.GOOD).build();
+        JArrayList arr18 = new JArrayList().withRenderMode(Render.STEP_WISE_INTERACTIVE).withQuality(Quality.BEST).build();
+        JArrayList arr19 = new JArrayList().withRenderMode(Render.STEP_WISE_INTERACTIVE).build();
+
+        JArrayList arr20 = new JArrayList().withRenderMode(Render.LIVE).withQuality(Quality.FASTEST).build();
+        JArrayList arr21 = new JArrayList().withRenderMode(Render.LIVE).withQuality(Quality.BALANCE).build();
+        JArrayList arr22 = new JArrayList().withRenderMode(Render.LIVE).withQuality(Quality.GOOD).build();
+        JArrayList arr23 = new JArrayList().withRenderMode(Render.LIVE).withQuality(Quality.BEST).build();
+        JArrayList arr24 = new JArrayList().withRenderMode(Render.LIVE).build();
+
+
 
         // THEN WE HAVE TO CHANGE HOW IT LOOKS OVERALL
-        // OUR FINAL VERDICT
-
         // THEN WE MOVE ON TO PUSHING MORE DATA STRUCTURES
 
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 

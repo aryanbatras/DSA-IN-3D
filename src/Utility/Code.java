@@ -10,17 +10,20 @@ import java.awt.Color;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Code {
+
     public static List<String> sourceLines;
-    private static final AtomicInteger currentLine = new AtomicInteger(-1);
     public static boolean enabled = false;
 
-    private static final int PADDING = 8;
+    private static double scale;
+    private static final int PADDING = 4;
     private static final Font CODE_FONT = new Font("Monospaced", Font.PLAIN, Math.min(18, (int)(10 / Screen.getScale())));
 
     private static final Color BG = new Color(20, 20, 30, 230);
     private static final Color TEXT = new Color(230, 230, 240);
     private static final Color CURRENT_LINE_BG = new Color(80, 130, 255, 80);
     private static final Color LINE_NO = new Color(120, 120, 150);
+
+    private static final AtomicInteger currentLine = new AtomicInteger(-1);
 
     static {
         try {
@@ -61,8 +64,18 @@ public class Code {
     }
 
     private static int getMaxVisibleLines() {
-        double scale = Screen.getScale();
-        return (scale <= 0.25) ? 1 : 3;
+        double scale = Code.scale;
+        int maxLines;
+        if (scale <= 0.25) {
+            maxLines = 1;
+        } else if (scale <= 0.5) {
+            maxLines = 3;
+        } else if (scale <= 0.75) {
+            maxLines = 5;
+        } else {
+            maxLines = 10;
+        }
+        return maxLines;
     }
 
     private static List<String> wrapText(FontMetrics fm, String text, int maxWidth) {
@@ -89,7 +102,11 @@ public class Code {
         return lines;
     }
 
-    public static void render(Graphics2D g2d, int canvasWidth) {
+    public static void render(Graphics2D g2d, int canvasWidth, double scale)
+    {
+        canvasWidth = (int) (canvasWidth * scale);
+        Code.scale = scale;
+
         if (!enabled || sourceLines == null || currentLine.get() < 0) return;
 
         int lineIndex = currentLine.get();
@@ -97,22 +114,20 @@ public class Code {
 
         g2d.setFont(CODE_FONT);
         FontMetrics fm = g2d.getFontMetrics();
-        int lineHeight = fm.getHeight() + 2;
+        int lineHeight = fm.getHeight();
 
-        int overlayWidth = Math.max(300, Math.min(600, canvasWidth / 2));
+        int overlayWidth = (int) Math.max(50, Math.min(600, (double) canvasWidth / 2));
         int contentWidth = overlayWidth - 2 * PADDING - 30;
         int availableHeight = Math.max(100, Screen.getHeight() / 4);
-        int maxPossibleLines = Math.max(1, (availableHeight - 2 * PADDING) / lineHeight);
-        int maxVisibleLines = Math.min(getMaxVisibleLines(), maxPossibleLines);
+        int maxVisibleLines = getMaxVisibleLines();
 
         List<Integer> visibleLineIndices = new ArrayList<>();
         List<List<String>> wrappedLines = new ArrayList<>();
         int totalLines = 0;
         int startLine = Math.max(0, lineIndex - maxVisibleLines / 2);
 
-        for (int i = startLine; i < sourceLines.size() && totalLines < maxPossibleLines; i++) {
+        for (int i = startLine; i < sourceLines.size() && visibleLineIndices.size() < getMaxVisibleLines(); i++) {
             List<String> wrapped = wrapText(fm, sourceLines.get(i).strip(), contentWidth);
-            if (totalLines + wrapped.size() > maxPossibleLines) break;
             visibleLineIndices.add(i);
             wrappedLines.add(wrapped);
             totalLines += wrapped.size();
