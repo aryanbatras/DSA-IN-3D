@@ -169,7 +169,6 @@ public class BoxAnimator {
             renderer.drawImage(camera, world, subtitle, mode);
         }
 
-        // Restore original color (optional)
         box.color = new Color(box.color.r, box.color.g, box.color.b);
     }
 

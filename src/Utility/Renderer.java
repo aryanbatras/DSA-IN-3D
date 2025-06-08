@@ -48,7 +48,21 @@ public class Renderer {
         final int width = BEINGRENDERED.getWidth( );
         final int height = BEINGRENDERED.getHeight( );
         final int[] pixels = ((DataBufferInt) BEINGRENDERED.getRaster( ).getDataBuffer( )).getData( );
-        final Camera finalCamera = camera.setCameraPerspective(width, height);
+        final Camera finalCamera;
+
+        if (mode == Render.STEP_WISE_INTERACTIVE) {
+            finalCamera = new Camera(
+                    Window.getRadius(),
+                    Window.getYaw(),
+                    Window.getPitch(),
+                    (int) Window.getMX(),
+                    (int) Window.getMY(),
+                    (int) Window.getMZ()
+            ).setCameraPerspective(width, height);
+        } else {
+            finalCamera = camera.setCameraPerspective(width, height);
+        }
+
         final ExecutorService executor = Executors.newFixedThreadPool(MAX_THREADS);
         final CountDownLatch latch = new CountDownLatch((width / TILE_SIZE + 1) * (height / TILE_SIZE + 1));
         for (int tileY = 0; tileY < height; tileY += TILE_SIZE) {
@@ -97,21 +111,17 @@ public class Renderer {
 //        long renderTime = System.nanoTime( ) - startTime;
 
         Graphics2D g2d = ACTUALFRAME.createGraphics();
-
         g2d.drawImage(BEINGRENDERED, 0, 0, null);
+
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-
-        // Draw subtitle panel
-        g2d.setColor(new java.awt.Color(0, 0, 0, 150));
-        g2d.fillRoundRect(20, height - 80, width - 40, 60, 15, 15);
-
-        // Draw subtitle text
-        g2d.setColor(java.awt.Color.WHITE);
-        g2d.setFont(new Font(Font.SERIF, Font.BOLD, 16));
-        g2d.drawString(subtitle.getSubtitle(), 40, height - 40);
-
+        g2d.setColor(new java.awt.Color(0, 0, 0, 80));
+        g2d.fillRoundRect(20, height - 60, width / 2, 40, 32, 32);
+        g2d.setColor(java.awt.Color.lightGray);
+        g2d.setFont(new Font(Font.SERIF, Font.BOLD, Math.min(16, (int)(16 / Screen.getScale()))));
+        g2d.drawString(subtitle.getSubtitle(), ( width / 4 ) - Math.min(16, (int)(16 / Screen.getScale())) - 20, height - 35);
 
         Code.render(g2d, Screen.getWidth());
+        VariableTracker.render(g2d);
 
         g2d.dispose();
 
@@ -124,10 +134,16 @@ public class Renderer {
         } else if (mode == Render.LIVE) {
             Window.updateWindow(ACTUALFRAME);
         } else if (mode == Render.STEP_WISE) {
-            // Do something here in window class itself
+            Window.updateWindow(ACTUALFRAME);
+        } else if (mode == Render.STEP_WISE_INTERACTIVE) {
+            Window.updateWindow(ACTUALFRAME);
         }
 //        System.out.printf("Rendered in %.2f ms%n", renderTime / 1_000_000.0);
 
+    }
+
+    public BufferedImage getActualFrame() {
+        return ACTUALFRAME;
     }
 
 

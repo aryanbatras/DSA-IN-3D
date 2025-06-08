@@ -5,6 +5,7 @@ import Utility.Camera;
 import Utility.Renderer;
 import Rendering.Render;
 import Utility.Subtitle;
+import Utility.Window;
 
 import java.util.ArrayList;
 
@@ -32,6 +33,7 @@ public class CameraAnimator {
             camera.setM_X(camera.getM_X() + delta);
             renderer.drawImage(camera, world, subtitle, mode);
         }
+        Window.invokeReferences(renderer, camera, world, subtitle, mode);
     }
 
     public void setMode(Render mode) {

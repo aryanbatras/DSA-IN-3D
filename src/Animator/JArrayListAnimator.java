@@ -49,8 +49,11 @@ public class JArrayListAnimator {
     }
 
     public void runAddAnimation(int value, JArrayListInsertAnimation animation) {
-        if(mode == Render.STEP_WISE){
-            // do something pause or whatever wait for next button
+
+        Window.invokeReferences(renderer, camera, world, subtitle, mode);
+
+        if (mode == Render.STEP_WISE || mode == Render.STEP_WISE_INTERACTIVE) {
+            Window.waitUntilNextStep();
         }
 
         double finalX = positionAlongX;
@@ -77,6 +80,13 @@ public class JArrayListAnimator {
     }
 
     public void runRemoveAnimation(int index, JArrayListRemoveAnimation animation) {
+
+        Window.invokeReferences(renderer, camera, world, subtitle, mode);
+
+        if (mode == Render.STEP_WISE || mode == Render.STEP_WISE_INTERACTIVE) {
+            Window.waitUntilNextStep();
+        }
+
         Box box = (Box) world.get(index);
         double originalX = box.center.x;
         subtitle.setMode("Removing");
@@ -95,6 +105,13 @@ public class JArrayListAnimator {
     }
 
     public void runHighlightAnimation(int index) {
+
+        Window.invokeReferences(renderer, camera, world, subtitle, mode);
+
+        if (mode == Render.STEP_WISE || mode == Render.STEP_WISE_INTERACTIVE) {
+            Window.waitUntilNextStep();
+        }
+
         Box box = (Box) world.get(index);
         subtitle.setMode("Getting");
         subtitle.setValue(String.valueOf(box.val));
@@ -103,6 +120,13 @@ public class JArrayListAnimator {
     }
 
     public void runHybridAnimation(int index, int value) {
+
+        Window.invokeReferences(renderer, camera, world, subtitle, mode);
+
+        if (mode == Render.STEP_WISE || mode == Render.STEP_WISE_INTERACTIVE) {
+            Window.waitUntilNextStep();
+        }
+
         Box box = (Box) world.get(index);
         subtitle.setMode("Updating");
         subtitle.setValue(String.format("%d → %d", box.val, value));

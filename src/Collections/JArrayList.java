@@ -1,10 +1,8 @@
 package Collections;
 
-import Utility.Code;
-import Utility.Window;
-import Utility.Encoder;
-import Utility.Renderer;
+import Utility.*;
 import Rendering.Render;
+import Rendering.Quality;
 
 import Animations.*;
 import java.util.ArrayList;
@@ -59,6 +57,11 @@ public class JArrayList {
         this.built = false;
         return this;
     }
+//
+//    public JArrayList withQuality(Quality quality) {
+//        Screen.setQuality(quality);
+//        return this;
+//    }
 
     public JArrayList withOutput(String userOutput) {
         if (mode == Render.VIDEO) {
@@ -70,12 +73,20 @@ public class JArrayList {
     }
 
     public JArrayList build() {
+
         if (mode == Render.VIDEO && userProvidedOutput == false) {
             encoder = Encoder.initializeEncoder();
             animator.setEncoder(encoder);
         }
         if (mode == Render.LIVE) {
             Window.initializeWindow();
+        }
+        if(mode == Render.STEP_WISE) {
+            Window.initializeWindow();
+        }
+        if(mode == Render.STEP_WISE_INTERACTIVE){
+            Window.initializeWindow();
+            Window.setupInteractivity();
         }
         this.built = true;
         return this;
@@ -87,6 +98,7 @@ public class JArrayList {
 
     public void add(int value) {
         Code.markCurrentLine(); checkBuilt();
+        VariableTracker.update("add", value);
 
         arr.add(value);
         if (mode != Render.DISABLED) { animator.runAddAnimation(value, randomizer != null ? randomizer.randomInsertAnimation() : defaultInsertAnimation); }
@@ -94,31 +106,40 @@ public class JArrayList {
 
     public void add(int value, JArrayListInsertAnimation boxAnimation) {
         Code.markCurrentLine(); checkBuilt();
-        arr.add(value);
+        VariableTracker.update("add", value);
 
+        arr.add(value);
         if(mode != Render.DISABLED){ animator.runAddAnimation(value, boxAnimation);}
     }
 
     public void remove(int index) {
         Code.markCurrentLine(); checkBuilt();
+        VariableTracker.update("remove", index, arr.get(index));
+
         arr.remove(index);
         if(mode != Render.DISABLED){ animator.runRemoveAnimation(index, randomizer != null ? randomizer.randomRemoveAnimation() : defaultRemoveAnimation);}
     }
 
     public void remove(int index, JArrayListRemoveAnimation boxAnimation) {
         Code.markCurrentLine(); checkBuilt();
+        VariableTracker.update("remove", index, arr.get(index));
+
         arr.remove(index);
         if(mode != Render.DISABLED){animator.runRemoveAnimation(index, boxAnimation);}
     }
 
     public Integer get(int index) {
         Code.markCurrentLine(); checkBuilt();
+        VariableTracker.update("get", index, arr.get(index));
+
         if(mode != Render.DISABLED){ animator.runHighlightAnimation(index); }
         return arr.get(index);
     }
 
     public void set(int index, int value) {
         Code.markCurrentLine(); checkBuilt();
+        VariableTracker.update("set", index, value);
+
         if(mode != Render.DISABLED){ animator.runHybridAnimation(index, value); }
         arr.set(index, value);
     }
