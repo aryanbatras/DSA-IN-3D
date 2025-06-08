@@ -52,11 +52,11 @@ Then ask for a live interaction mode ! Where rendering happens and is shown to u
 - Implemented Randomized Animations in JArrayList [Done]
 - The coolest feature ! Subtitles in video generation [Done]
 - Make the subtitles sync with the video [The Challenge is to sync subtitles with video]
-- Make the subtitles look more natural [The challenge is to make subtitles look more natural]
-- Make the subtitles look more beautiful [The challenge is to make subtitles look more beautiful]
-- Make the subtitles look more realistic [The challenge is to make subtitles look more realistic]
-- Make the subtitles look more humanistic [The challenge is to make subtitles look more humanistic]
 
 - GIVE A OPTION TO USER TO CHANGE THE MODE; WHETHER VIDEO GENERATION OR LIVE INTERACTION MODE OR TEACHING MODE
 - DO NOT RENDER ANIMATIONS UNLESS THE MODE IS SPECIFIED SPECIFICALLY !
 
+### Phase 5
+- SOME CURRENT ISSUES AFTER DEBUGGING AND FIXING THE RENDER THING
+- RENDER.VIDEO FOR 2 ARRAYS CREATING 2 FFMPEG INSTANCES AND OVERRIDING THE WRITE OPERATION
+- LIVE RENDERING STARTS AT A VERY FAST RATE THAN PROGRESSIVELY SLOWS DOWN ITS SPEED

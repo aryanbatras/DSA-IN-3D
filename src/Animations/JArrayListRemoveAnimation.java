@@ -1,4 +1,4 @@
-package Collections.Animations;
+package Animations;
 
 public enum JArrayListRemoveAnimation {
         SLIDE_UP,

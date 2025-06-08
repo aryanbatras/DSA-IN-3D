@@ -1,6 +1,4 @@
-package Collections;
-
-import Utility.Screen;
+package Utility;
 
 import java.awt.*;
 import java.io.IOException;
@@ -12,9 +10,9 @@ import java.awt.Color;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Code {
-    private static List<String> sourceLines;
+    public static List<String> sourceLines;
     private static final AtomicInteger currentLine = new AtomicInteger(-1);
-    private static boolean enabled = false;
+    public static boolean enabled = false;
 
     private static final int PADDING = 8;
     private static final Font CODE_FONT = new Font("Monospaced", Font.PLAIN, Math.min(18, (int)(10 / Screen.getScale())));
@@ -24,20 +22,19 @@ public class Code {
     private static final Color CURRENT_LINE_BG = new Color(80, 130, 255, 80);
     private static final Color LINE_NO = new Color(120, 120, 150);
 
-
     static {
         try {
             String mainFile = findMainFile();
             if (mainFile != null) {
-                sourceLines = Files.readAllLines(Paths.get(mainFile));
-                enabled = true;
+                Utility.Code.sourceLines = Files.readAllLines(Paths.get(mainFile));
+                Utility.Code.enabled = true;
             }
         } catch (IOException e) {
             System.err.println("CodeOverlay: Auto-load failed: " + e.getMessage());
         }
     }
 
-    private static String findMainFile() {
+    public static String findMainFile() {
         String dir = System.getProperty("user.dir");
         String[] candidates = {
                 "/src/Main.java",

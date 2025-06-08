@@ -1,18 +1,21 @@
 package Animator;
-import Animator.Core.BoxAnimator;
-import Animator.Core.CameraAnimator;
+import Animator.AnimatorCore.BoxAnimator;
+import Animator.AnimatorCore.CameraAnimator;
 
-import Collections.Animations.*;
+import Animations.*;
 
 import Shapes.Box;
 import Shapes.Shape;
 import Utility.*;
+import Utility.Renderer;
+
+import Rendering.*;
 
 import java.util.ArrayList;
 
 public class JArrayListAnimator {
     private final ArrayList<Shape> world;
-    private final Render renderer;
+    private final Renderer renderer;
     private final Camera camera;
     private Subtitle subtitle;
 
@@ -22,18 +25,34 @@ public class JArrayListAnimator {
     private final CameraAnimator cameraAnimator;
     private final BoxAnimator boxAnimator;
 
+    private Render mode;
+
     public JArrayListAnimator() {
         this.positionAlongX = 0;
         this.framesPerSecond = 25;
         this.camera = new Camera();
         this.world = new ArrayList<>();
         this.subtitle = new Subtitle("ArrayList");
-        this.renderer = new Render("/Resources/lake.jpg");
+        this.renderer = new Renderer("/Resources/lake.jpg");
         this.cameraAnimator = new CameraAnimator(renderer, camera, world, subtitle, framesPerSecond);
         this.boxAnimator = new BoxAnimator(renderer, camera, world, subtitle, framesPerSecond);
     }
 
+    public void setMode(Render mode) {
+        this.mode = mode;
+        cameraAnimator.setMode(mode);
+        boxAnimator.setMode(mode);
+    }
+
+    public void setEncoder(Encoder encoder) {
+        renderer.setEncoder(encoder);
+    }
+
     public void runAddAnimation(int value, JArrayListInsertAnimation animation) {
+        if(mode == Render.STEP_WISE){
+            // do something pause or whatever wait for next button
+        }
+
         double finalX = positionAlongX;
         double finalY = 0;
         Box box = new Box(

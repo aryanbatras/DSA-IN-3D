@@ -1,6 +1,6 @@
 package Utility;
 
-import Collections.Code;
+import Rendering.Render;
 import Shapes.Shape;
 
 import javax.imageio.ImageIO;
@@ -13,21 +13,26 @@ import java.util.concurrent.*;
 
 import static Utility.Tracer.rayColor;
 
-public class Render {
+public class Renderer {
 
     private static final int TILE_SIZE = 32;
     private static final int MAX_RECURSION_DEPTH = 3;
-    public static volatile Encoder PREVIEW_FFMPEG = null;
     private static final int MAX_THREADS = Math.max(1, Runtime.getRuntime( ).availableProcessors( ) - 1);
 
-    BufferedImage BEINGRENDERED, ENVIRONMENT;
+    private Encoder encoder;
+    BufferedImage BEINGRENDERED, ENVIRONMENT, ACTUALFRAME;
 
-    public Render(String environmentImagePath) {
+    public Renderer(String environmentImagePath) {
         int w = (int) (Screen.getWidth( ));
         int h = (int) (Screen.getHeight( ));
         this.BEINGRENDERED = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
         this.ENVIRONMENT = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+        this.ACTUALFRAME = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
         setENVIRONMENT(environmentImagePath);
+    }
+
+    public void setEncoder(Encoder encoder) {
+        this.encoder = encoder;
     }
 
     public void setENVIRONMENT(String filePath) {
@@ -38,7 +43,7 @@ public class Render {
         }
     }
 
-    public void drawImage(Camera camera, ArrayList<Shape> world, Subtitle subtitle) {
+    public void drawImage(Camera camera, ArrayList<Shape> world, Subtitle subtitle, Render mode) {
 //        long startTime = System.nanoTime( );
         final int width = BEINGRENDERED.getWidth( );
         final int height = BEINGRENDERED.getHeight( );
@@ -91,8 +96,9 @@ public class Render {
 
 //        long renderTime = System.nanoTime( ) - startTime;
 
-        Graphics2D g2d = BEINGRENDERED.createGraphics();
+        Graphics2D g2d = ACTUALFRAME.createGraphics();
 
+        g2d.drawImage(BEINGRENDERED, 0, 0, null);
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
         // Draw subtitle panel
@@ -109,14 +115,16 @@ public class Render {
 
         g2d.dispose();
 
-
-
-        if (PREVIEW_FFMPEG != null) {
+        if (mode == Render.VIDEO) {
             try {
-                PREVIEW_FFMPEG.writeFrame(BEINGRENDERED);
+                encoder.writeFrame(ACTUALFRAME);
             } catch (IOException e) {
-                e.printStackTrace( );
+                throw new RuntimeException(e);
             }
+        } else if (mode == Render.LIVE) {
+            Window.updateWindow(ACTUALFRAME);
+        } else if (mode == Render.STEP_WISE) {
+            // Do something here in window class itself
         }
 //        System.out.printf("Rendered in %.2f ms%n", renderTime / 1_000_000.0);
 

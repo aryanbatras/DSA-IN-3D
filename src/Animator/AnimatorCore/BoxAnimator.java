@@ -1,5 +1,6 @@
-package Animator.Core;
+package Animator.AnimatorCore;
 
+import Rendering.Render;
 import Shapes.Box;
 import Shapes.Shape;
 import Utility.*;
@@ -7,14 +8,15 @@ import Utility.*;
 import java.util.ArrayList;
 
 public class BoxAnimator {
+    private static final double BOUNCE_HEIGHT = 0.5;
     private final ArrayList<Shape> world;
     private final Subtitle subtitle;
-    private final Render renderer;
+    private final Renderer renderer;
     private final Camera camera;
     private final int frames;
-    private static final double BOUNCE_HEIGHT = 0.5;
+    private Render mode;
 
-    public BoxAnimator(Render renderer, Camera camera, ArrayList<Shape> world, Subtitle subtitle, int framesPerSecond) {
+    public BoxAnimator(Renderer renderer, Camera camera, ArrayList<Shape> world, Subtitle subtitle, int framesPerSecond) {
         this.frames = framesPerSecond;
         this.subtitle = subtitle;
         this.renderer = renderer;
@@ -30,7 +32,7 @@ public class BoxAnimator {
                     Math.abs((float)Math.sin(i * 0.1)),
                     box.color.b
             );
-            renderer.drawImage(camera, world, subtitle);
+            renderer.drawImage(camera, world, subtitle, mode);
         }
         box.color = c;
     }
@@ -46,7 +48,7 @@ public class BoxAnimator {
                 1.0f
             );
             box.center.x = originalPos + (Math.random() - 0.5) * 0.1;
-            renderer.drawImage(camera, world, subtitle);
+            renderer.drawImage(camera, world, subtitle, mode);
         }
         box.center.x = originalPos;
         box.color = originalColor;
@@ -59,7 +61,7 @@ public class BoxAnimator {
 
         for (int i = 0; i < frames; i++) {
             box.center.x += delta;
-            renderer.drawImage(camera, world, subtitle);
+            renderer.drawImage(camera, world, subtitle, mode);
         }
         box.center.x = finalX;
     }
@@ -70,7 +72,7 @@ public class BoxAnimator {
         box.center.x = initialX;
         for (int i = 0; i < frames; i++) {
             box.center.x += delta;
-            renderer.drawImage(camera, world, subtitle);
+            renderer.drawImage(camera, world, subtitle, mode);
         }
         box.center.x = finalX;
     }
@@ -81,7 +83,7 @@ public class BoxAnimator {
         box.center.y = initialY;
         for (int i = 0; i < frames; i++) {
             box.center.y += delta;
-            renderer.drawImage(camera, world, subtitle);
+            renderer.drawImage(camera, world, subtitle, mode);
         }
         box.center.y = finalY;
     }
@@ -91,7 +93,7 @@ public class BoxAnimator {
         double delta = (finalY - initialY) / frames;
         for (int i = 0; i < frames; i++) {
             box.center.y += delta;
-            renderer.drawImage(camera, world, subtitle);
+            renderer.drawImage(camera, world, subtitle, mode);
         }
         box.center.y = finalY;
     }
@@ -107,7 +109,7 @@ public class BoxAnimator {
                 box.center.y = baseY;
                 velocity = -velocity * 0.6; // dampen bounce
             }
-            renderer.drawImage(camera, world, subtitle);
+            renderer.drawImage(camera, world, subtitle, mode);
         }
         box.center.y = baseY;
     }
@@ -116,7 +118,7 @@ public class BoxAnimator {
         double originalX = box.center.x;
         for (int i = 0; i < frames; i++) {
             box.center.x = originalX + Math.sin(i * 0.5) * 0.2;
-            renderer.drawImage(camera, world, subtitle);
+            renderer.drawImage(camera, world, subtitle, mode);
         }
         box.center.x = originalX;
     }
@@ -125,7 +127,7 @@ public class BoxAnimator {
      double originalX = box.center.x;
      for (int i = 0; i < frames / 2; i++) {
          box.center.x = originalX + Math.sin(i * 0.5) * 0.05;
-         renderer.drawImage(camera, world, subtitle);
+         renderer.drawImage(camera, world, subtitle, mode);
      }
      box.center.x = originalX;
  }
@@ -139,14 +141,14 @@ public class BoxAnimator {
             double scale = 1 + (maxScale - 1) * i / (frames / 2);
             box.width = originalWidth * scale;
             box.height = originalHeight * scale;
-            renderer.drawImage(camera, world, subtitle);
+            renderer.drawImage(camera, world, subtitle, mode);
         }
 
         for (int i = 0; i < frames / 2; i++) {
             double scale = maxScale - (maxScale - 1) * i / (frames / 2);
             box.width = originalWidth * scale;
             box.height = originalHeight * scale;
-            renderer.drawImage(camera, world, subtitle);
+            renderer.drawImage(camera, world, subtitle, mode);
         }
 
         box.width = originalWidth;
@@ -164,7 +166,7 @@ public class BoxAnimator {
             alpha -= fadeRate;
             float clampedAlpha = Math.max(0, alpha);
             box.color = new Color(box.color.r * clampedAlpha, box.color.g * clampedAlpha, box.color.b * clampedAlpha);
-            renderer.drawImage(camera, world, subtitle);
+            renderer.drawImage(camera, world, subtitle, mode);
         }
 
         // Restore original color (optional)
@@ -175,7 +177,7 @@ public class BoxAnimator {
         double delta = 1.0 / frames;
         for (int i = 0; i < frames; i++) {
             box.center.x += delta;
-            renderer.drawImage(camera, world, subtitle);
+            renderer.drawImage(camera, world, subtitle, mode);
         }
     }
 
@@ -196,7 +198,7 @@ public class BoxAnimator {
             double scale = 1 - (double) i / frames;
             box.width = originalWidth * scale;
             box.height = originalHeight * scale;
-            renderer.drawImage(camera, world, subtitle);
+            renderer.drawImage(camera, world, subtitle, mode);
         }
     }
 
@@ -213,7 +215,7 @@ public class BoxAnimator {
                     box.color.g * Math.max(0, alpha),
                     box.color.b * Math.max(0, alpha)
             );
-            renderer.drawImage(camera, world, subtitle);
+            renderer.drawImage(camera, world, subtitle, mode);
         }
     }
 
@@ -227,8 +229,11 @@ public class BoxAnimator {
             box.width = originalWidth * scale;
             box.height = originalHeight * scale;
             box.center.y -= deltaY;
-            renderer.drawImage(camera, world, subtitle);
+            renderer.drawImage(camera, world, subtitle, mode);
         }
     }
 
+    public void setMode(Render mode) {
+        this.mode = mode;
+    }
 }

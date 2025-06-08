@@ -1,9 +1,13 @@
 package Collections;
 
+import Utility.Code;
+import Utility.Window;
 import Utility.Encoder;
+import Utility.Renderer;
+import Rendering.Render;
 
+import Animations.*;
 import java.util.ArrayList;
-import Collections.Animations.*;
 import Animator.JArrayListAnimator;
 
 public class JArrayList {
@@ -11,137 +15,116 @@ public class JArrayList {
     private final ArrayList<Integer> arr;
     private final JArrayListAnimator animator;
 
-    private final JArrayListRandomAnimation randomizer;
-    private final JArrayListInsertAnimation defaultInsertAnimation;
-    private final JArrayListRemoveAnimation defaultRemoveAnimation;
+    private Render mode;
+    private Encoder encoder;
+    private JArrayListRandomAnimation randomizer;
+    private JArrayListInsertAnimation defaultInsertAnimation;
+    private JArrayListRemoveAnimation defaultRemoveAnimation;
 
-
-    //
-    // CONSTRUCTORS
-    //
+    private boolean built = false;
+    private boolean userProvidedOutput = false;
 
     public JArrayList() {
-        this(
-                JArrayListInsertAnimation.SLIDE_FROM_RIGHT,
-                JArrayListRemoveAnimation.SLIDE_UP
-        );
-    }
-
-    public JArrayList(JArrayListInsertAnimation insertAnimation) {
-        this(
-                insertAnimation,
-                JArrayListRemoveAnimation.SLIDE_UP
-        );
-    }
-
-    public JArrayList(JArrayListRemoveAnimation removeAnimation) {
-        this(
-                JArrayListInsertAnimation.SLIDE_FROM_RIGHT,
-                removeAnimation
-        );
-    }
-
-    public JArrayList(
-            JArrayListInsertAnimation insertAnimation,
-            JArrayListRemoveAnimation removeAnimation
-    ) {
-        Encoder.initializeEncoder();
+        this.encoder = null;
+        this.mode = Render.DISABLED;
         this.arr = new ArrayList<>();
         this.animator = new JArrayListAnimator();
-        this.defaultInsertAnimation = insertAnimation;
-        this.defaultRemoveAnimation = removeAnimation;
+        this.defaultInsertAnimation = JArrayListInsertAnimation.SLIDE_FROM_RIGHT;
+        this.defaultRemoveAnimation = JArrayListRemoveAnimation.SLIDE_UP;
         this.randomizer = null;
+        this.built = true;
     }
 
-
-
-//    //
-//    // CONSTRUCTORS WITH RANDOMIZER
-//    //
-
-    public JArrayList(JArrayListRandomAnimation randomizer) {
-        this(
-                JArrayListInsertAnimation.SLIDE_FROM_RIGHT,
-                JArrayListRemoveAnimation.SLIDE_UP,
-                randomizer
-        );
-    }
-
-    public JArrayList(JArrayListInsertAnimation insertAnimation, JArrayListRandomAnimation randomizer) {
-        this(
-                insertAnimation,
-                JArrayListRemoveAnimation.SLIDE_UP,
-                randomizer
-        );
-    }
-
-    public JArrayList(JArrayListRemoveAnimation removeAnimation, JArrayListRandomAnimation randomizer) {
-        this(
-                JArrayListInsertAnimation.SLIDE_FROM_RIGHT,
-                removeAnimation,
-                randomizer
-        );
-    }
-
-    public JArrayList(
-            JArrayListInsertAnimation insertAnimation,
-            JArrayListRemoveAnimation removeAnimation,
-            JArrayListRandomAnimation randomizer
-    ) {
-        Encoder.initializeEncoder();
-        this.arr = new ArrayList<>();
-        this.animator = new JArrayListAnimator();
+    public JArrayList withInsertAnimation(JArrayListInsertAnimation insertAnimation) {
         this.defaultInsertAnimation = insertAnimation;
-        this.defaultRemoveAnimation = removeAnimation;
-        this.randomizer = randomizer;
+        this.built = false;
+        return this;
     }
 
+    public JArrayList withRemoveAnimation(JArrayListRemoveAnimation removeAnimation) {
+        this.defaultRemoveAnimation = removeAnimation;
+        this.built = false;
+        return this;
+    }
 
+    public JArrayList withRandomizer(JArrayListRandomAnimation randomizer) {
+        this.randomizer = randomizer;
+        this.built = false;
+        return this;
+    }
 
+    public JArrayList withRenderMode(Render mode) {
+        this.mode = mode;
+        animator.setMode(mode);
+        this.built = false;
+        return this;
+    }
 
+    public JArrayList withOutput(String userOutput) {
+        if (mode == Render.VIDEO) {
+            encoder = Encoder.initializeEncoder(userOutput);
+            animator.setEncoder(encoder);
+            userProvidedOutput = true;
+        }
+        return this;
+    }
 
-    //
-    // METHODS ADD REMOVE
-    //
+    public JArrayList build() {
+        if (mode == Render.VIDEO && userProvidedOutput == false) {
+            encoder = Encoder.initializeEncoder();
+            animator.setEncoder(encoder);
+        }
+        if (mode == Render.LIVE) {
+            Window.initializeWindow();
+        }
+        this.built = true;
+        return this;
+    }
+
+    private void checkBuilt() {
+        if (built == false) { throw new IllegalStateException("JArrayList not built! Call .build() before use."); }
+    }
 
     public void add(int value) {
-        Code.markCurrentLine();
+        Code.markCurrentLine(); checkBuilt();
+
         arr.add(value);
-        animator.runAddAnimation(value, randomizer != null ? randomizer.randomInsertAnimation() : defaultInsertAnimation);
+        if (mode != Render.DISABLED) { animator.runAddAnimation(value, randomizer != null ? randomizer.randomInsertAnimation() : defaultInsertAnimation); }
     }
 
     public void add(int value, JArrayListInsertAnimation boxAnimation) {
-        Code.markCurrentLine();
+        Code.markCurrentLine(); checkBuilt();
         arr.add(value);
-        animator.runAddAnimation(value, boxAnimation);
+
+        if(mode != Render.DISABLED){ animator.runAddAnimation(value, boxAnimation);}
     }
 
     public void remove(int index) {
-        Code.markCurrentLine();
+        Code.markCurrentLine(); checkBuilt();
         arr.remove(index);
-        animator.runRemoveAnimation(index, randomizer != null ? randomizer.randomRemoveAnimation() : defaultRemoveAnimation);
+        if(mode != Render.DISABLED){ animator.runRemoveAnimation(index, randomizer != null ? randomizer.randomRemoveAnimation() : defaultRemoveAnimation);}
     }
 
     public void remove(int index, JArrayListRemoveAnimation boxAnimation) {
-        Code.markCurrentLine();
+        Code.markCurrentLine(); checkBuilt();
         arr.remove(index);
-        animator.runRemoveAnimation(index, boxAnimation);
+        if(mode != Render.DISABLED){animator.runRemoveAnimation(index, boxAnimation);}
     }
 
     public Integer get(int index) {
-        Code.markCurrentLine();
-        animator.runHighlightAnimation(index);
+        Code.markCurrentLine(); checkBuilt();
+        if(mode != Render.DISABLED){ animator.runHighlightAnimation(index); }
         return arr.get(index);
     }
 
     public void set(int index, int value) {
-        Code.markCurrentLine();
-        animator.runHybridAnimation(index, value);
+        Code.markCurrentLine(); checkBuilt();
+        if(mode != Render.DISABLED){ animator.runHybridAnimation(index, value); }
         arr.set(index, value);
     }
 
     public int size() {
-        Code.markCurrentLine();
+        Code.markCurrentLine(); checkBuilt();
         return arr.size();
     }
 

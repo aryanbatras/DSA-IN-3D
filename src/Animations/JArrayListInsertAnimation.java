@@ -1,4 +1,4 @@
-package Collections.Animations;
+package Animations;
 
 public enum JArrayListInsertAnimation {
     SLIDE_FROM_TOP,
