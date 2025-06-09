@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.*;
 
 import static Utility.Tracer.rayColor;
@@ -22,9 +23,13 @@ public class Renderer {
     private Encoder encoder;
     BufferedImage BEINGRENDERED, ENVIRONMENT, ACTUALFRAME;
     private double scale;
+    private double antiAliasing;
+
+    private static final Random RAND = new Random();
 
     public Renderer(String environmentImagePath) {
         this.scale = 0.5;
+        this.antiAliasing = 1.0;
         int w = ((int)(Screen.getWidth() * scale)) & ~1;
         int h = ((int)(Screen.getHeight() * scale)) & ~1;
         this.BEINGRENDERED = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
@@ -41,6 +46,14 @@ public class Renderer {
         this.ACTUALFRAME = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
         setENVIRONMENT(environmentImagePath);
         this.scale = scale;
+    }
+
+    public void setAntialiasing(double antiAliasing) {
+        this.antiAliasing = antiAliasing;
+    }
+
+    public void setBackground(String background) {
+        setENVIRONMENT(background);
     }
 
     public void setEncoder(Encoder encoder) {
@@ -86,16 +99,36 @@ public class Renderer {
                 executor.submit(() -> {
                     try {
                         Ray ray = new Ray( );
+
                         for (int y = ty; y < ty + tileH; y++) {
-                            final double v = (double) (height - y) / (height - 1);
                             final int rowOffset = y * width;
                             for (int x = tx; x < tx + tileW; x++) {
-                                final double u = (double) x / (width - 1);
-                                ray = finalCamera.getRay(u, v);
-                                Color pixelColor = rayColor(world, ray, ENVIRONMENT, MAX_RECURSION_DEPTH);
-                                pixels[rowOffset + x] = pixelColor.colorToInteger( );
+
+                                float r = 0, g = 0, b = 0;
+                                int samples = (int) antiAliasing;
+                                int sqrtSamples = (int) Math.sqrt(samples);
+
+                                for (int sy = 0; sy < sqrtSamples; sy++) {
+                                    for (int sx = 0; sx < sqrtSamples; sx++) {
+                                        double u = (x + (sx + 0.5) / sqrtSamples) / (width - 1);
+                                        double v = (height - y - 1 + (sy + 0.5) / sqrtSamples) / (height - 1);
+                                        ray = finalCamera.getRay(u, v);
+                                        Color color = rayColor(world, ray, ENVIRONMENT, MAX_RECURSION_DEPTH);
+                                        r += color.r;
+                                        g += color.g;
+                                        b += color.b;
+                                    }
+                                }
+
+                                float scale = 1.0f / (samples);
+                                Color averaged = new Color(r * scale, g * scale, b * scale);
+                                pixels[rowOffset + x] = averaged.colorToInteger();
                             }
                         }
+
+
+
+
                     } finally {
                         latch.countDown( );
                     }
@@ -122,6 +155,9 @@ public class Renderer {
 
         Graphics2D g2d = ACTUALFRAME.createGraphics();
         g2d.drawImage(BEINGRENDERED, 0, 0, null);
+
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
         drawSubtitles(width, height, g2d, subtitle);
@@ -145,6 +181,9 @@ public class Renderer {
         }
 
     }
+
+
+
 
     private void drawSubtitles(int width, int height, Graphics2D g2d, Subtitle subtitle) {
 

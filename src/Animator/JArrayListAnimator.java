@@ -61,11 +61,15 @@ public class JArrayListAnimator {
 
     public void setBackground(String background) {
         this.background = background;
-        renderer.setScale(background, scale);
+        renderer.setBackground(background);
     }
 
     public void setMaterial(Material material) {
         this.material = material;
+    }
+
+    public void setAntiAliasing(double antiAliasing) {
+        renderer.setAntialiasing(antiAliasing);
     }
 
     public void runAddAnimation(int value, JArrayListInsertAnimation animation) {

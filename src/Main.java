@@ -6,15 +6,13 @@ public class Main {
     public static void main(String[] args) {
 
         JArrayList arr = new JArrayList()
+                .withBackground(Background.LAKE)
                 .withRenderMode(Render.VIDEO)
                 .withQuality(Quality.FASTEST)
-                .withBackground(Background.SUNSET)
                 .build();
 
         arr.add(50);
-        arr.add(10);
-        arr.add(20);
-
+        arr.add(100);
 
         /*
         * PHASE BEAUTY OF UI MODE

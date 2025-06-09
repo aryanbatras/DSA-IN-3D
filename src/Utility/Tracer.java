@@ -43,10 +43,13 @@ public class Tracer {
                                 Point reflected = reflect(r.getDirection( ).normalize( ), normal)
                                         .add(randomInUnitSphere( ).mul(fuzz * 0.1));
                                 Color bounce = rayColor(world, new Ray(hitPoint, reflected), environmentMap, depth - 1);
+                                float glow = (float) Math.pow(1.0f - Math.abs(normal.z), 3);
+                                float edge = (float) Math.pow(Math.abs(Math.sin(hitPoint.x * 8) * Math.cos(hitPoint.y * 8)), 4);
+
                                 return new Color(
-                                        Math.min(1f, hitColor.r * bounce.r * 0.7f + 0.2f),
-                                        Math.min(1f, hitColor.g * bounce.g * 0.8f + 0.3f),
-                                        Math.min(1f, hitColor.b * bounce.b * 1.2f + 0.4f)
+                                        Math.min(1f, hitColor.r * 0.5f + bounce.r * 0.4f + glow * 0.1f + edge * 0.1f),
+                                        Math.min(1f, hitColor.g * 0.5f + bounce.g * 0.4f + glow * 0.2f + edge * 0.1f),
+                                        Math.min(1f, hitColor.b * 0.5f + bounce.b * 0.5f + glow * 0.3f + edge * 0.2f)
                                 );
                             }
                         }
@@ -79,6 +82,7 @@ public class Tracer {
                 float re = 0, g = 0, b = 0;
                 for (Point light : lightsource) {
                     double intensity = Math.max(0, normal.dot(light));
+
                     re += hitColor.r * (float) intensity;
                     g += hitColor.g * (float) intensity;
                     b += hitColor.b * (float) intensity;

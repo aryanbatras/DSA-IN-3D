@@ -1,10 +1,7 @@
 package Collections;
 
-import Rendering.Background;
-import Rendering.Material;
+import Rendering.*;
 import Utility.*;
-import Rendering.Render;
-import Rendering.Quality;
 
 import Animations.*;
 import java.util.ArrayList;
@@ -91,6 +88,19 @@ public class JArrayList {
     public JArrayList withBackground(Background bg) {
         String background = bg.toString();
         animator.setBackground(background);
+        this.built = false;
+        return this;
+    }
+
+    public JArrayList withAntiAliasing(AntiAliasing antiAliasing) {
+        double alias = 0;
+        switch (antiAliasing) {
+            case NONE -> alias = 1.0;
+            case X2 -> alias = 2.0;
+            case X4 -> alias = 4.0;
+            case X8 -> alias = 8.0;
+        }
+        animator.setAntiAliasing(alias);
         this.built = false;
         return this;
     }

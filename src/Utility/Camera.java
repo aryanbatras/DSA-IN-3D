@@ -4,7 +4,7 @@ public class Camera {
     private Point lowerLeftCorner;
     private Point horizontal;
     private Point vertical;
-    private Point u, v, w;
+    public Point u, v, w;
     private Point origin;
     private double M_X;
     private double M_Y;
