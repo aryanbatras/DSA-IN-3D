@@ -1,5 +1,7 @@
 package Collections;
 
+import Rendering.Background;
+import Rendering.Material;
 import Utility.*;
 import Rendering.Render;
 import Rendering.Quality;
@@ -80,6 +82,19 @@ public class JArrayList {
         return this;
     }
 
+    public JArrayList withMaterial(Material material) {
+        animator.setMaterial(material);
+        this.built = false;
+        return this;
+    }
+
+    public JArrayList withBackground(Background bg) {
+        String background = bg.toString();
+        animator.setBackground(background);
+        this.built = false;
+        return this;
+    }
+
     public JArrayList build() {
 
         if(mode == Render.VIDEO && userProvidedOutput == true){
@@ -100,9 +115,11 @@ public class JArrayList {
             Window.initializeWindow();
             Window.setupInteractivity();
         }
+
         this.built = true;
         return this;
     }
+
     private void checkBuilt() {
         if (built == false) { throw new IllegalStateException("JArrayList not built! Call .build() before use."); }
     }
@@ -159,5 +176,4 @@ public class JArrayList {
         Code.markCurrentLine(); checkBuilt();
         return arr.size();
     }
-
 }

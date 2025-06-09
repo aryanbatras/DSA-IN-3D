@@ -1,5 +1,6 @@
 package Shapes;
 
+import Rendering.Material;
 import Utility.*;
 
 public class Box extends Shape {

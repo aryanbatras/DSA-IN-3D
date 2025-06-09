@@ -1,5 +1,6 @@
 package Utility;
 
+import Rendering.Material;
 import Shapes.Box;
 import Shapes.Shape;
 
@@ -69,6 +70,107 @@ public class Tracer {
                         (float) (hitColor.b * 0.2 + reflectedColor.b * 0.8)
                 );
             }
+
+            else if(material == Material.LAMBERTIAN){
+                ArrayList<Point> lightsource = new ArrayList<>();
+                lightsource.add(new Point(1,1,-1).normalize());
+                lightsource.add(new Point(-1,1,-1).normalize());
+                lightsource.add(new Point(0,-1,-1).normalize());
+                float re = 0, g = 0, b = 0;
+                for (Point light : lightsource) {
+                    double intensity = Math.max(0, normal.dot(light));
+                    re += hitColor.r * (float) intensity;
+                    g += hitColor.g * (float) intensity;
+                    b += hitColor.b * (float) intensity;
+                }
+                re = Math.min(1, re);
+                g = Math.min(1, g);
+                b = Math.min(1, b);
+                return new Color(re, g, b);
+
+            }
+
+            else if(material == Material.METAL){
+                Point ref = reflect(r.getDirection().normalize(), normal);
+                ref = ref.add(randomInUnitSphere().mul(fuzz));
+                if(ref.dot(normal) > 0){
+                    Ray refray = new Ray(hitPoint, ref);
+                    Color refcolor = rayColor(world, refray, environmentMap, depth - 1);
+                    return new Color(
+                            hitColor.r * refcolor.r,
+                            hitColor.g * refcolor.g,
+                            hitColor.b * refcolor.b
+                    );
+                } else {
+                    return new Color(0,0,0);
+                }
+
+            }
+
+            else if (material == Material.GLOSSY) {
+                Point reflected = reflect(r.getDirection().normalize(), normal);
+                reflected = reflected.add(randomInUnitSphere().mul(fuzz * 0.5));
+                Ray glossyRay = new Ray(hitPoint, reflected);
+                Color glossyColor = rayColor(world, glossyRay, environmentMap, depth - 1);
+                return new Color(
+                        (hitColor.r * glossyColor.r + hitColor.r * 0.3f) / 1.3f,
+                        (hitColor.g * glossyColor.g + hitColor.g * 0.3f) / 1.3f,
+                        (hitColor.b * glossyColor.b + hitColor.b * 0.3f) / 1.3f
+                );
+            }
+
+            else if (material == Material.MATTE) {
+                ArrayList<Point> lightsource = new ArrayList<>();
+                lightsource.add(new Point(1,1,-1).normalize());
+                lightsource.add(new Point(-1,1,-1).normalize());
+                float re = 0, g = 0, b = 0;
+                for (Point light : lightsource) {
+                    double intensity = Math.max(0, normal.dot(light));
+                    re += hitColor.r * 0.9f * (float) intensity;
+                    g += hitColor.g * 0.9f * (float) intensity;
+                    b += hitColor.b * 0.9f * (float) intensity;
+                }
+                return new Color(Math.min(1, re), Math.min(1, g), Math.min(1, b));
+            }
+
+            else if (material == Material.MIRROR) {
+                Point reflected = reflect(r.getDirection().normalize( ), normal);
+                Ray reflectedRay = new Ray(hitPoint, reflected);
+                Color reflectedColor = rayColor(world, reflectedRay, environmentMap, depth - 1);
+                return new Color(
+                        reflectedColor.r,
+                        reflectedColor.g,
+                        reflectedColor.b
+                );
+            }
+
+            else if (material == Material.ANODIZED_METAL) {
+                Point refl = reflect(r.getDirection().normalize(), normal).add(randomInUnitSphere().mul(fuzz));
+                Ray rayAnodized = new Ray(hitPoint, refl);
+                Color reflColor = rayColor(world, rayAnodized, environmentMap, depth - 1);
+                float shift = (float)Math.abs(Math.sin(hitPoint.y * 3));
+                Color anodize = new Color(0.5f + shift * 0.5f, 0.3f, 0.7f);
+                return new Color(
+                        hitColor.r * reflColor.r * anodize.r,
+                        hitColor.g * reflColor.g * anodize.g,
+                        hitColor.b * reflColor.b * anodize.b
+                );
+            }
+
+            else if (material == Material.MIST) {
+                float fade = (float)Math.exp(-0.1 * hitPoint.length());
+                fade = Math.max(0.50f, fade);
+                return new Color(
+                        hitColor.r * fade,
+                        hitColor.g * fade,
+                        hitColor.b * fade
+                );
+            }
+
+
+
+
+
             return hitColor;
         }
         return sampleEnvironment(r, environmentMap);

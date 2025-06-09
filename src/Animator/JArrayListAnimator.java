@@ -27,6 +27,8 @@ public class JArrayListAnimator {
 
     private Render mode;
     private double scale;
+    private Material material;
+    private String background;
 
     public JArrayListAnimator() {
         this.scale = 0.5;
@@ -34,8 +36,10 @@ public class JArrayListAnimator {
         this.framesPerSecond = 25;
         this.camera = new Camera();
         this.world = new ArrayList<>();
+        this.material = Material.METAL;
+        this.background = "/Resources/lake.jpg";
+        this.renderer = new Renderer(background);
         this.subtitle = new Subtitle("ArrayList");
-        this.renderer = new Renderer("/Resources/lake.jpg");
         this.cameraAnimator = new CameraAnimator(renderer, camera, world, subtitle, framesPerSecond);
         this.boxAnimator = new BoxAnimator(renderer, camera, world, subtitle, framesPerSecond);
     }
@@ -52,7 +56,16 @@ public class JArrayListAnimator {
 
     public void setScale(double scale){
         this.scale = scale;
-        renderer.setScale("/Resources/lake.jpg", scale);
+        renderer.setScale(background, scale);
+    }
+
+    public void setBackground(String background) {
+        this.background = background;
+        renderer.setScale(background, scale);
+    }
+
+    public void setMaterial(Material material) {
+        this.material = material;
     }
 
     public void runAddAnimation(int value, JArrayListInsertAnimation animation) {
@@ -70,7 +83,7 @@ public class JArrayListAnimator {
                 new Point(finalX, finalY, 0),
                 1, 1, 0.1,
                 new Color(0.4f, 0.7f, 1.0f),
-                Material.CHROME, 0, value
+                material, 0, value
         );
         world.add(box);
         subtitle.setMode("Inserting");
@@ -146,6 +159,5 @@ public class JArrayListAnimator {
         box.val = value; box.setDigitsFromNumber(value);
         boxAnimator.shakeSlow(box);
     }
-
 }
 

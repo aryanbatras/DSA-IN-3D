@@ -1,4 +1,5 @@
 package Shapes;
+import Rendering.Material;
 import Utility.*;
 
 public class Sphere extends Shape {
