@@ -92,6 +92,12 @@ public class JArrayList {
         return this;
     }
 
+    public JArrayList withParticle(Particle particle) {
+        animator.setParticle(particle);
+        this.built = false;
+        return this;
+    }
+
     public JArrayList withAntiAliasing(AntiAliasing antiAliasing) {
         double alias = 0;
         switch (antiAliasing) {

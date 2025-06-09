@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.*;
 
-import static Utility.Tracer.rayColor;
+import static Utility.RayTracer.rayColor;
 
 public class Renderer {
 
@@ -75,18 +75,30 @@ public class Renderer {
         final int[] pixels = ((DataBufferInt) BEINGRENDERED.getRaster( ).getDataBuffer( )).getData( );
         final Camera finalCamera;
 
+//        if (mode == Render.STEP_WISE_INTERACTIVE) {
+//            finalCamera = new Camera(
+//                    Window.getRadius(),
+//                    Window.getYaw(),
+//                    Window.getPitch(),
+//                    (int) Window.getMX(),
+//                    (int) Window.getMY(),
+//                    (int) Window.getMZ()
+//            ).setCameraPerspective(width, height);
+//        } else {
+//            finalCamera = camera.setCameraPerspective(width, height);
+//        }
+
         if (mode == Render.STEP_WISE_INTERACTIVE) {
-            finalCamera = new Camera(
-                    Window.getRadius(),
-                    Window.getYaw(),
-                    Window.getPitch(),
-                    (int) Window.getMX(),
-                    (int) Window.getMY(),
-                    (int) Window.getMZ()
-            ).setCameraPerspective(width, height);
-        } else {
-            finalCamera = camera.setCameraPerspective(width, height);
+            camera.setRadius(Window.getRadius());
+            camera.setYaw(Window.getYaw());
+            camera.setPitch(Window.getPitch());
+            camera.setM_X(Window.getMX());
+            camera.setM_Y(Window.getMY());
+            camera.setM_Z(Window.getMZ());
         }
+
+        finalCamera = camera.setCameraPerspective(width, height);
+
 
         final ExecutorService executor = Executors.newFixedThreadPool(MAX_THREADS);
         final CountDownLatch latch = new CountDownLatch((width / TILE_SIZE + 1) * (height / TILE_SIZE + 1));
@@ -113,7 +125,7 @@ public class Renderer {
                                         double u = (x + (sx + 0.5) / sqrtSamples) / (width - 1);
                                         double v = (height - y - 1 + (sy + 0.5) / sqrtSamples) / (height - 1);
                                         ray = finalCamera.getRay(u, v);
-                                        Color color = rayColor(world, ray, ENVIRONMENT, MAX_RECURSION_DEPTH);
+                                        Color color = rayColor(mode, finalCamera, world, ray, ENVIRONMENT, MAX_RECURSION_DEPTH);
                                         r += color.r;
                                         g += color.g;
                                         b += color.b;

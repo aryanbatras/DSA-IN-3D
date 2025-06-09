@@ -1,9 +1,12 @@
 package Shapes;
 
 import Rendering.Material;
+import Rendering.Particle;
 import Utility.*;
+import java.util.LinkedList;
 
 public class Box extends Shape {
+    public Particle particleEffect;
     public Point center;
     public double width, height, depth;
     public Color color;
@@ -13,13 +16,14 @@ public class Box extends Shape {
 
     private Integer[] digits;
 
-    public Box(Point center, double width, double height, double depth, Color color, Material material, double fuzz, int value) {
+    public Box(Point center, double width, double height, double depth, Color color, Material material, double fuzz, int value, Particle particles) {
+        this.particleEffect = particles;
         this.center = new Point(center);
-        this.width = width;
-        this.height = height;
-        this.depth = depth;
         this.color = new Color(color);
         this.material = material;
+        this.height = height;
+        this.width = width;
+        this.depth = depth;
         this.fuzz = fuzz;
         this.val = value;
         setDigitsFromNumber(value);

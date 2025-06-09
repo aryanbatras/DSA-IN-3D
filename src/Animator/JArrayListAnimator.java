@@ -29,6 +29,7 @@ public class JArrayListAnimator {
     private double scale;
     private Material material;
     private String background;
+    private Particle particle;
 
     public JArrayListAnimator() {
         this.scale = 0.5;
@@ -37,6 +38,7 @@ public class JArrayListAnimator {
         this.camera = new Camera();
         this.world = new ArrayList<>();
         this.material = Material.METAL;
+        this.particle = Particle.NONE;
         this.background = "/Resources/lake.jpg";
         this.renderer = new Renderer(background);
         this.subtitle = new Subtitle("ArrayList");
@@ -68,6 +70,10 @@ public class JArrayListAnimator {
         this.material = material;
     }
 
+    public void setParticle(Particle particle) {
+        this.particle = particle;
+    }
+
     public void setAntiAliasing(double antiAliasing) {
         renderer.setAntialiasing(antiAliasing);
     }
@@ -87,7 +93,8 @@ public class JArrayListAnimator {
                 new Point(finalX, finalY, 0),
                 1, 1, 0.1,
                 new Color(0.4f, 0.7f, 1.0f),
-                material, 0, value
+                material, 0, value,
+                particle
         );
         world.add(box);
         subtitle.setMode("Inserting");

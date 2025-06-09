@@ -5,14 +5,20 @@ public class Main {
 
     public static void main(String[] args) {
 
-        JArrayList arr = new JArrayList()
+        JArrayList arr = new JArrayList( )
                 .withBackground(Background.LAKE)
+                .withMaterial(Material.MIST)
                 .withRenderMode(Render.VIDEO)
-                .withQuality(Quality.FASTEST)
-                .build();
+                .withQuality(Quality.BALANCE)
+                .withParticle(Particle.GRADIENT)
+                .build( );
+
 
         arr.add(50);
         arr.add(100);
+        arr.add(150);
+        arr.add(200);
+
 
         /*
         * PHASE BEAUTY OF UI MODE
