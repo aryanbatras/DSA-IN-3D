@@ -36,6 +36,10 @@ public class CameraAnimator {
         Window.invokeReferences(renderer, camera, world, subtitle, mode);
     }
 
+    public void setFPS(int fps) {
+        this.frames = fps;
+    }
+
     public void setMode(Render mode) {
         this.mode = mode;
     }

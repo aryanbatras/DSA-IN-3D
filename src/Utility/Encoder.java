@@ -1,5 +1,8 @@
 package Utility;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -7,7 +10,7 @@ import java.io.*;
 public class Encoder implements AutoCloseable {
     private static final String DEFAULT_OUTPUT_DIR = "output";
     private static final String DEFAULT_VIDEO_PREFIX = "video";
-    private static final int DEFAULT_FPS = 25;
+    private static final int DEFAULT_FPS = 60;
     private static Encoder INSTANCE;
 
     private final Process ffmpegProcess;
@@ -15,6 +18,47 @@ public class Encoder implements AutoCloseable {
     private final int width, height, fps;
 
     private static final AtomicBoolean shutdownHookRegistered = new AtomicBoolean(false);
+
+    private static class NamedEncoderKey {
+        private final String name;
+        private final double scale;
+
+        public NamedEncoderKey(String name, double scale) {
+            this.name = name;
+            this.scale = scale;
+        }
+
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            NamedEncoderKey that = (NamedEncoderKey) o;
+            return Double.compare(that.scale, scale) == 0 &&
+                   Objects.equals(name, that.name);
+        }
+
+        public int hashCode() {
+            return Objects.hash(name, scale);
+        }
+    }
+
+    private static final Map<Double, Encoder> sharedEncoders = new HashMap<>();
+    private static final Map<NamedEncoderKey, Encoder> namedEncoders = new HashMap<>();
+
+    public static Encoder getOrCreateSharedEncoder(double scale) {
+        return sharedEncoders.computeIfAbsent(scale, s -> {
+            System.out.println("Creating shared encoder for scale: " + s);
+            return initializeEncoder(s);
+        });
+    }
+
+    public static Encoder getOrCreateNamedEncoder(String name, double scale) {
+        NamedEncoderKey key = new NamedEncoderKey(name, scale);
+        return namedEncoders.computeIfAbsent(key, k -> {
+            System.out.println(" Creating named encoder for: " + name + " @ scale: " + scale);
+            return initializeEncoder(name, scale);
+        });
+    }
+
 
     public static Encoder initializeEncoder(double scale) {
         try {

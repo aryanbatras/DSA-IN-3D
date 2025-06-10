@@ -34,7 +34,7 @@ public class JArrayListAnimator {
     public JArrayListAnimator() {
         this.scale = 0.5;
         this.positionAlongX = 0;
-        this.framesPerSecond = 25;
+        this.framesPerSecond = 20;
         this.camera = new Camera();
         this.world = new ArrayList<>();
         this.material = Material.METAL;
@@ -44,6 +44,12 @@ public class JArrayListAnimator {
         this.subtitle = new Subtitle("ArrayList");
         this.cameraAnimator = new CameraAnimator(renderer, camera, world, subtitle, framesPerSecond);
         this.boxAnimator = new BoxAnimator(renderer, camera, world, subtitle, framesPerSecond);
+    }
+
+    public void setFPS(int fps) {
+        this.framesPerSecond = fps;
+        cameraAnimator.setFPS(fps);
+        boxAnimator.setFPS(fps);
     }
 
     public void setMode(Render mode) {

@@ -22,6 +22,8 @@ public class JArrayList {
     private String userOutput;
     private boolean built = false;
     private boolean userProvidedOutput = false;
+    private boolean preferSharedEncoder = false;
+
 
     public JArrayList() {
         this.scale = 0.5;
@@ -79,6 +81,12 @@ public class JArrayList {
         return this;
     }
 
+    public JArrayList withSharedEncoder(boolean shared) {
+        this.preferSharedEncoder = shared;
+        this.built = false;
+        return this;
+    }
+
     public JArrayList withMaterial(Material material) {
         animator.setMaterial(material);
         this.built = false;
@@ -94,6 +102,13 @@ public class JArrayList {
 
     public JArrayList withParticle(Particle particle) {
         animator.setParticle(particle);
+        this.built = false;
+        return this;
+    }
+
+    public JArrayList withFPS(int fps) {
+        if(fps <= 1) fps = 1;
+        animator.setFPS(fps);
         this.built = false;
         return this;
     }
@@ -114,19 +129,35 @@ public class JArrayList {
     public JArrayList build() {
 
         if(mode == Render.VIDEO && userProvidedOutput == true){
-            encoder = Encoder.initializeEncoder(userOutput, scale);
+
+            if(preferSharedEncoder){
+                encoder = Encoder.getOrCreateNamedEncoder(userOutput, scale);
+            } else {
+                encoder = Encoder.initializeEncoder(userOutput, scale);
+            }
+
             animator.setEncoder(encoder);
         }
+
         if (mode == Render.VIDEO && userProvidedOutput == false) {
-            encoder = Encoder.initializeEncoder(scale);
+
+            if(preferSharedEncoder){
+                encoder = Encoder.getOrCreateSharedEncoder(scale);
+            } else {
+                encoder = Encoder.initializeEncoder(scale);
+            }
+
             animator.setEncoder(encoder);
         }
+
         if (mode == Render.LIVE) {
             Window.initializeWindow();
         }
+
         if(mode == Render.STEP_WISE) {
             Window.initializeWindow();
         }
+
         if(mode == Render.STEP_WISE_INTERACTIVE){
             Window.initializeWindow();
             Window.setupInteractivity();
@@ -193,3 +224,7 @@ public class JArrayList {
         return arr.size();
     }
 }
+
+
+
+

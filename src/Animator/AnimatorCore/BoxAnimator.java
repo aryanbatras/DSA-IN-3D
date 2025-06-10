@@ -13,7 +13,7 @@ public class BoxAnimator {
     private final Subtitle subtitle;
     private final Renderer renderer;
     private final Camera camera;
-    private final int frames;
+    private int frames;
     private Render mode;
 
     public BoxAnimator(Renderer renderer, Camera camera, ArrayList<Shape> world, Subtitle subtitle, int framesPerSecond) {
@@ -22,6 +22,10 @@ public class BoxAnimator {
         this.renderer = renderer;
         this.camera = camera;
         this.world = world;
+    }
+
+    public void setFPS(int fps) {
+        this.frames = fps;
     }
 
     public void setMode(Render mode) {

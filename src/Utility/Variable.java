@@ -10,7 +10,7 @@ public class Variable {
     private static final LinkedHashMap<String, String> variableMap = new LinkedHashMap<>();
     private static final LinkedList<String> recentKeys = new LinkedList<>();
 
-    private static final int MAX_VISIBLE_VARS = 3;
+    private static final int MAX_VISIBLE_VARS = 1;
 
     private static final java.awt.Color BACKGROUND_COLOR = new java.awt.Color(30, 30, 40, 220);
     private static final java.awt.Color TEXT_COLOR = new java.awt.Color(240, 240, 250);
@@ -54,7 +54,7 @@ public class Variable {
 
         int lineHeight = metrics.getHeight() + 2;
         int padding = (int) (10 * scale);
-        int width = (int) (360 * scale);
+        int width = (int) (660 * scale);
         int height = Math.min(MAX_VISIBLE_VARS, recentKeys.size()) * lineHeight + 2 * padding;
 
         int x = padding;

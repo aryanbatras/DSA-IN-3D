@@ -11,6 +11,8 @@ public class Main {
                 .withBackground(Background.LAKE)
                 .withQuality(Quality.FASTEST)
                 .withRenderMode(Render.VIDEO)
+                .withSharedEncoder(true)
+                .withFPS(1)
                 .build();
 
         // Lapa background
@@ -19,6 +21,8 @@ public class Main {
                 .withBackground(Background.LAPA)
                 .withQuality(Quality.FASTEST)
                 .withRenderMode(Render.VIDEO)
+                .withSharedEncoder(true)
+                .withFPS(1)
                 .build();
 
         // Pool background
@@ -27,6 +31,8 @@ public class Main {
                 .withBackground(Background.POOL)
                 .withQuality(Quality.FASTEST)
                 .withRenderMode(Render.VIDEO)
+                .withSharedEncoder(true)
+                .withFPS(1)
                 .build();
 
         // Sunset background
@@ -35,6 +41,8 @@ public class Main {
                 .withBackground(Background.SUNSET)
                 .withQuality(Quality.FASTEST)
                 .withRenderMode(Render.VIDEO)
+                .withSharedEncoder(true)
+                .withFPS(1)
                 .build();
 
         // Lake Pier background
@@ -43,6 +51,8 @@ public class Main {
                 .withBackground(Background.LAKE_PIER)
                 .withQuality(Quality.FASTEST)
                 .withRenderMode(Render.VIDEO)
+                .withSharedEncoder(true)
+                .withFPS(1)
                 .build();
 
         // Lilienstein background
@@ -51,6 +61,8 @@ public class Main {
                 .withBackground(Background.LILIENSTEIN)
                 .withQuality(Quality.FASTEST)
                 .withRenderMode(Render.VIDEO)
+                .withSharedEncoder(true)
+                .withFPS(1)
                 .build();
 
         // Cinema Lobby background
@@ -59,6 +71,8 @@ public class Main {
                 .withBackground(Background.CINEMA_LOBBY)
                 .withQuality(Quality.FASTEST)
                 .withRenderMode(Render.VIDEO)
+                .withSharedEncoder(true)
+                .withFPS(1)
                 .build();
 
         // Shanghai Bund background
@@ -67,6 +81,8 @@ public class Main {
                 .withBackground(Background.SHANGHAI_BUND)
                 .withQuality(Quality.FASTEST)
                 .withRenderMode(Render.VIDEO)
+                .withSharedEncoder(true)
+                .withFPS(1)
                 .build();
 
         // Studio Garden background
@@ -75,6 +91,8 @@ public class Main {
                 .withBackground(Background.STUDIO_GARDEN)
                 .withQuality(Quality.FASTEST)
                 .withRenderMode(Render.VIDEO)
+                .withSharedEncoder(true)
+                .withFPS(1)
                 .build();
 
         // Glass Passage background
@@ -83,6 +101,8 @@ public class Main {
                 .withBackground(Background.GLASS_PASSAGE)
                 .withQuality(Quality.FASTEST)
                 .withRenderMode(Render.VIDEO)
+                .withSharedEncoder(true)
+                .withFPS(1)
                 .build();
 
         // Artist Workshop background
@@ -91,6 +111,8 @@ public class Main {
                 .withBackground(Background.ARTIST_WORKSHOP)
                 .withQuality(Quality.FASTEST)
                 .withRenderMode(Render.VIDEO)
+                .withSharedEncoder(true)
+                .withFPS(1)
                 .build();
 
         // The Sky is on Fire background
@@ -99,6 +121,8 @@ public class Main {
                 .withBackground(Background.THE_SKY_IS_ON_FIRE)
                 .withQuality(Quality.FASTEST)
                 .withRenderMode(Render.VIDEO)
+                .withSharedEncoder(true)
+                .withFPS(1)
                 .build();
 
         // Adams Place Bridge background
@@ -107,6 +131,8 @@ public class Main {
                 .withBackground(Background.ADAMS_PLACE_BRIDGE)
                 .withQuality(Quality.FASTEST)
                 .withRenderMode(Render.VIDEO)
+                .withSharedEncoder(true)
+                .withFPS(1)
                 .build();
 
         // Pedestrian Overpass background
@@ -115,6 +141,8 @@ public class Main {
                 .withBackground(Background.PEDESTRIAN_OVERPASS)
                 .withQuality(Quality.FASTEST)
                 .withRenderMode(Render.VIDEO)
+                .withSharedEncoder(true)
+                .withFPS(1)
                 .build();
 
         // Voortrekker Interior background
@@ -123,6 +151,8 @@ public class Main {
                 .withBackground(Background.VOORTREKKER_INTERIOR)
                 .withQuality(Quality.FASTEST)
                 .withRenderMode(Render.VIDEO)
+                .withSharedEncoder(true)
+                .withFPS(1)
                 .build();
 
         // Brown Photostudio 02 background
@@ -131,6 +161,8 @@ public class Main {
                 .withBackground(Background.BROWN_PHOTOSTUDIO_02)
                 .withQuality(Quality.FASTEST)
                 .withRenderMode(Render.VIDEO)
+                .withSharedEncoder(true)
+                .withFPS(1)
                 .build();
 
         // Symmetrical Garden 02 background
@@ -139,6 +171,8 @@ public class Main {
                 .withBackground(Background.SYMMETRICAL_GARDEN_02)
                 .withQuality(Quality.FASTEST)
                 .withRenderMode(Render.VIDEO)
+                .withSharedEncoder(true)
+                .withFPS(1)
                 .build();
 
         // Little Paris Under Tower background
@@ -147,6 +181,8 @@ public class Main {
                 .withBackground(Background.LITTLE_PARIS_UNDER_TOWER)
                 .withQuality(Quality.FASTEST)
                 .withRenderMode(Render.VIDEO)
+                .withSharedEncoder(true)
+                .withFPS(1)
                 .build();
 
         // Kloofendal background
@@ -155,30 +191,32 @@ public class Main {
                 .withBackground(Background.KLOOFENDAL_48D_PARTLY_CLOUDY_PURESKY)
                 .withQuality(Quality.FASTEST)
                 .withRenderMode(Render.VIDEO)
+                .withSharedEncoder(true)
+                .withFPS(1)
                 .build();
 
         // Add elements to all lists
-        for (int i = 0; i < 10; i++) {
-            lakeList.add(50);
-            lapaList.add(50);
-            poolList.add(50);
-            sunsetList.add(50);
-            lakePierList.add(50);
-            liliensteinList.add(50);
-            cinemaLobbyList.add(50);
-            shanghaiBundList.add(50);
-            studioGardenList.add(50);
-            glassPassageList.add(50);
-            artistWorkshopList.add(50);
-            skyOnFireList.add(50);
-            adamsPlaceBridgeList.add(50);
-            pedestrianOverpassList.add(50);
-            voortrekkerInteriorList.add(50);
-            brownPhotostudioList.add(50);
-            symmetricalGardenList.add(50);
-            littleParisList.add(50);
-            kloofendalList.add(50);
-        }
+            int i = 2;
+            lakeList.add(50 * i++);
+            lapaList.add(50 * i++);
+            poolList.add(50 * i++);
+            sunsetList.add(50 * i++);
+            lakePierList.add(50 * i++);
+            liliensteinList.add(50 * i++);
+            cinemaLobbyList.add(50 * i++);
+            shanghaiBundList.add(50 * i++);
+            studioGardenList.add(50 * i++);
+            glassPassageList.add(50 * i++);
+            artistWorkshopList.add(50 * i++);
+            skyOnFireList.add(50 * i++);
+            adamsPlaceBridgeList.add(50 * i++);
+            pedestrianOverpassList.add(50 * i++);
+            voortrekkerInteriorList.add(50 * i++);
+            brownPhotostudioList.add(50 * i++);
+            symmetricalGardenList.add(50 * i++);
+            littleParisList.add(50 * i++);
+            kloofendalList.add(50 * i++);
+
 
 
 
