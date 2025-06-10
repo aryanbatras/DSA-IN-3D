@@ -6,7 +6,7 @@
 - Minimal Setup [Done]
 - Pick minimal shapes material no gui [Done]
 - Generate boxes based on array inputs [Done]
-- every box is associated with a value show that [Done]
+- every JBox is associated with a value show that [Done]
 - fix bugs make numbers look beautiful [Done]
 - make a line of chain between the boxes [Done]
 - show insertion animation in array [Done]
@@ -22,7 +22,7 @@
  
 And I am gonna build the bonus tools like scene builder and stuff ! But before starting up to advance the project ! There's an issue over here, that our 3D Visualizations are full of mirror reflections and a HDRI background of mountains and lake, though it looks very beautiful, but suppose I want to show an array size of 100, or even 100 elements, how would that every fit in a frame or photo, the boxes beyond an array size of 5 looks so small, that their numbers are unreadable, so static image generation is not possible here, only video and stuff ! But imagine the user asked for the showing the visualizing the values of data structure first before calling any functions, he called JArrayList<Integer> arr = new JArrayList<>(), and then he called, arr.show() or arr.visualize() then what do I do? Another issue is that a 2D visualisation is clearly visible from a white board background perspective, though it doesn't look beautiful, how would I able to balance the beauty of my 3D Visualisation and clear visibility underneath together? These are my current challenges?
 
-It is going to add this value to the world [with value displayed on it]. By default, the new value will always come sliding from left. And it will take the starting position it is currently on then increment. What we have to do is make sure that. We are separating camera animations with box animations. And for that we are going to create two separate classes for that
+It is going to add this value to the world [with value displayed on it]. By default, the new value will always come sliding from left. And it will take the starting position it is currently on then increment. What we have to do is make sure that. We are separating camera animations with JBox animations. And for that we are going to create two separate classes for that
 
 Functions of this class will be internally called ! We start by going into the defaults of this ! Let's call it from JArrayList. Screen size will be common. Camera will be unique for every animator. And renderer engine will be unique as well. World itself will be unique to each array we create
 

@@ -6,18 +6,30 @@ import Collections.*;
 public class Main {
     public static void main(String[] args) {
 
-        JArrayList jArrayList = new JArrayList( )
-                .withRandomizer(JArrayListRandomAnimation.INSTANCE)
-                .withInsertAnimation(JArrayListInsertAnimation.SLIDE_FROM_RIGHT)
-                .withRemoveAnimation(JArrayListRandomAnimation.randomRemoveAnimation())
+        JLinkedList list = new JLinkedList()
+                .withRandomizer(JLinkedListRandomizer.INSTANCE.withCrazyMode())
+                .withBackgroundChangeOnEveryOperation(true)
+                .withStepsPerAnimation(Steps.VERY_SLOW)
+                .withParticle(Particle.GALAXY)
+                .withQuality(Quality.BALANCE)
                 .withRenderMode(Render.LIVE)
                 .build();
 
-        jArrayList.add(1);
-        jArrayList.add(2);
-        jArrayList.add(4);
-        jArrayList.set(1, 3);
-        jArrayList.remove(0);
+            list.add(10);
+            list.add(50);
+            list.add(100);
+            list.remove(2);
+            list.remove(1);
+            list.remove(0);
+
+            list.add(10);
+            list.add(50);
+            list.add(100);
+            list.remove(2);
+            list.remove(1);
+            list.remove(0);
+
+
     }
 }
 

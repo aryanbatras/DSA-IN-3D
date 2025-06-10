@@ -3,8 +3,8 @@ package Utility;
 import Rendering.Material;
 import Rendering.Particle;
 import Rendering.Render;
-import Shapes.Box;
-import Shapes.Shape;
+import Shapes.JBox;
+import Shapes.Core.Shape;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -26,18 +26,18 @@ public class RayTracer {
         for (Shape shape : world) {
             double t = shape.hit(r);
             if (t > 0.001 && t < nearest) {
-                if (shape instanceof Box box) {
+                if (shape instanceof JBox JBox) {
                     nearest = t;
                     hitPoint = r.at(t);
-                    normal = box.getNormal(hitPoint);
-                    hitColor = box.color;
-                    fuzz = box.fuzz;
-                    material = box.material;
+                    normal = JBox.getNormal(hitPoint);
+                    hitColor = JBox.color;
+                    fuzz = JBox.fuzz;
+                    material = JBox.material;
 
-                    if (box.particleEffect == Particle.GRADIENT) {
+                    if (JBox.particleEffect == Particle.GRADIENT) {
 
                         float flicker = 0.8f + RAND.nextFloat( ) * 0.4f;
-                        float glow = (float) Math.pow(Math.max(0, 1 - (hitPoint.y - box.getMax().y)), 2);
+                        float glow = (float) Math.pow(Math.max(0, 1 - (hitPoint.y - JBox.getMax().y)), 2);
 
                         float red = Math.min(1f, flicker);
                         float green = Math.min(1f, 0.4f * flicker + 0.2f * glow);
@@ -50,7 +50,7 @@ public class RayTracer {
                         );
                     }
 
-                    else if (box.particleEffect == Particle.WATER) {
+                    else if (JBox.particleEffect == Particle.WATER) {
                         float ripple = (float) Math.sin(hitPoint.y * 10 + RAND.nextFloat() * 5);
                         float blueShift = 0.6f + 0.4f * ripple;
                         hitColor = new Color(
@@ -60,7 +60,7 @@ public class RayTracer {
                         );
                     }
 
-                    else if (box.particleEffect == Particle.MAGIC) {
+                    else if (JBox.particleEffect == Particle.MAGIC) {
                         float phase = (float)(Math.sin(System.nanoTime() * 1e-9 + hitPoint.x + hitPoint.z) * 0.5 + 0.5);
                         hitColor = new Color(
                                 (float)(hitColor.r * 0.3 + 0.4f * phase),
@@ -69,7 +69,7 @@ public class RayTracer {
                         );
                     }
 
-                    else if (box.particleEffect == Particle.FIREWORKS) {
+                    else if (JBox.particleEffect == Particle.FIREWORKS) {
                         float flicker = 0.9f + RAND.nextFloat() * 0.2f;
                         hitColor = new Color(
                                 Math.min(1f, hitColor.r + 0.4f * flicker),
@@ -79,7 +79,7 @@ public class RayTracer {
                     }
 
 
-                    if (box.particleEffect == Particle.ELECTRIC_SHOCK) {
+                    if (JBox.particleEffect == Particle.ELECTRIC_SHOCK) {
                         float pulse = RAND.nextFloat();
                         if (pulse > 0.97f) {
                             hitColor = new Color(1f, 1f, 1f); // bright flash
@@ -93,7 +93,7 @@ public class RayTracer {
                     }
 
 
-                    if (box.particleEffect == Particle.BLOOD_DRIP) {
+                    if (JBox.particleEffect == Particle.BLOOD_DRIP) {
                         float drip = (float)(Math.abs(Math.sin(hitPoint.y * 10 + System.nanoTime() * 1e-9)));
                         hitColor = new Color(
                                 0.6f + drip * 0.3f,
@@ -102,12 +102,71 @@ public class RayTracer {
                         );
                     }
 
+                    else if (JBox.particleEffect == Particle.GALAXY) {
+                        float time = (float)(System.nanoTime() * 1e-9);
+                        float noise = (float)Math.sin(hitPoint.x * 10 + hitPoint.z * 5 + time) * 0.5f + 0.5f;
+                        float rr = 0.2f + 0.3f * (float)Math.sin(time * 0.5f);
+                        float g = 0.1f + 0.2f * (float)Math.cos(time * 0.3f);
+                        float b = 0.7f + 0.3f * (float)Math.sin(time * 0.2f);
+                        hitColor = new Color(
+                                hitColor.r * 0.6f + rr * noise * 0.4f,
+                                hitColor.g * 0.6f + g * noise * 0.4f,
+                                hitColor.b * 0.8f + b * noise * 0.2f
+                        );
+                    }
 
-                    if (normal.z != 0 && box.getDigits( ) != null) {
-                        Point boxMin = box.getMin( ), boxMax = box.getMax( ), boxSize = boxMax.sub(boxMin);
+                    else if (JBox.particleEffect == Particle.AURORA) {
+                        float time = (float)(System.nanoTime() * 1e-9);
+                        float wave = (float)Math.sin(hitPoint.y * 3 + time * 0.5f) * 0.5f + 0.5f;
+                        float intensity = (float)Math.sin(hitPoint.x * 2 + hitPoint.z * 2) * 0.5f + 0.5f;
+                        hitColor = new Color(
+                                hitColor.r * 0.6f + 0.3f * wave * intensity,
+                                hitColor.g * 0.8f + 0.7f * wave * intensity,
+                                hitColor.b * 0.9f + 0.5f * wave * intensity
+                        );
+                    }
+
+                    else if (JBox.particleEffect == Particle.NEON_GRID) {
+                        float time = (float)(System.nanoTime() * 1e-9);
+                        float gridX = (float)(Math.sin(hitPoint.x * 20 + time) + 1) * 0.5f;
+                        float gridZ = (float)(Math.cos(hitPoint.z * 20 + time * 0.7f) + 1) * 0.5f;
+                        float intensity = Math.min(1.0f, gridX + gridZ);
+                        hitColor = new Color(
+                                hitColor.r * 0.7f + 0.3f * (1 - intensity),
+                                hitColor.g * 0.7f + 0.8f * intensity,
+                                hitColor.b * 0.7f + 0.9f * intensity
+                        );
+                    }
+
+                    else if (JBox.particleEffect == Particle.COSMIC_DUST) {
+                        float time = (float)(System.nanoTime() * 1e-9);
+                        float noise1 = (float)Math.sin(hitPoint.x * 15 + time * 0.3f) * 0.5f + 0.5f;
+                        float noise2 = (float)Math.sin(hitPoint.y * 20 + time * 0.4f) * 0.5f + 0.5f;
+                        float noise3 = (float)Math.sin(hitPoint.z * 15 + time * 0.5f) * 0.5f + 0.5f;
+                        float intensity = (noise1 * noise2 * noise3) * 0.8f + 0.2f;
+                        hitColor = new Color(
+                                hitColor.r * 0.5f + 0.5f * intensity * (0.7f + 0.3f * noise1),
+                                hitColor.g * 0.5f + 0.5f * intensity * (0.5f + 0.5f * noise2),
+                                hitColor.b * 0.5f + 0.5f * intensity * (0.3f + 0.7f * noise3)
+                        );
+                    }
+
+                    else if (JBox.particleEffect == Particle.CLOUDS) {
+                        float time = (float)(System.nanoTime() * 1e-9);
+                        float wave = (float)Math.sin(hitPoint.y * 3 + time * 0.5f) * 0.5f + 0.5f;
+                        float intensity = (float)Math.sin(hitPoint.x * 2 + hitPoint.z * 2) * 0.5f + 0.5f;
+                        hitColor = new Color(
+                                hitColor.r * 0.6f + 0.3f * wave * intensity,
+                                hitColor.g * 0.8f + 0.7f * wave * intensity,
+                                hitColor.b * 0.9f + 0.5f * wave * intensity
+                        );
+                    }
+
+                    if (normal.z != 0 && JBox.getDigits( ) != null) {
+                        Point boxMin = JBox.getMin( ), boxMax = JBox.getMax( ), boxSize = boxMax.sub(boxMin);
                         double u = 1.0 - (hitPoint.x - boxMin.x) / boxSize.x;
                         double v = (hitPoint.y - boxMin.y) / boxSize.y;
-                        Integer[] digits = box.getDigits( );
+                        Integer[] digits = JBox.getDigits( );
                         double digitWidth = 1.0 / digits.length;
                         for (int i = 0; i < digits.length; i++) {
                             double startU = i * digitWidth, endU = (i + 1) * digitWidth;
@@ -146,25 +205,6 @@ public class RayTracer {
                 );
             }
 
-            else if(material == Material.LAMBERTIAN){
-                ArrayList<Point> lightsource = new ArrayList<>();
-                lightsource.add(new Point(1,1,-1).normalize());
-                lightsource.add(new Point(-1,1,-1).normalize());
-                lightsource.add(new Point(0,-1,-1).normalize());
-                float re = 0, g = 0, b = 0;
-                for (Point light : lightsource) {
-                    double intensity = Math.max(0, normal.dot(light));
-
-                    re += hitColor.r * (float) intensity;
-                    g += hitColor.g * (float) intensity;
-                    b += hitColor.b * (float) intensity;
-                }
-                re = Math.min(1, re);
-                g = Math.min(1, g);
-                b = Math.min(1, b);
-                return new Color(re, g, b);
-
-            }
 
             else if(material == Material.METAL){
                 Point ref = reflect(r.getDirection().normalize(), normal);
@@ -195,19 +235,6 @@ public class RayTracer {
                 );
             }
 
-            else if (material == Material.MATTE) {
-                ArrayList<Point> lightsource = new ArrayList<>();
-                lightsource.add(new Point(1,1,-1).normalize());
-                lightsource.add(new Point(-1,1,-1).normalize());
-                float re = 0, g = 0, b = 0;
-                for (Point light : lightsource) {
-                    double intensity = Math.max(0, normal.dot(light));
-                    re += hitColor.r * 0.9f * (float) intensity;
-                    g += hitColor.g * 0.9f * (float) intensity;
-                    b += hitColor.b * 0.9f * (float) intensity;
-                }
-                return new Color(Math.min(1, re), Math.min(1, g), Math.min(1, b));
-            }
 
             else if (material == Material.MIRROR) {
                 Point reflected = reflect(r.getDirection().normalize( ), normal);
@@ -232,17 +259,6 @@ public class RayTracer {
                         hitColor.b * reflColor.b * anodize.b
                 );
             }
-
-            else if (material == Material.MIST) {
-                float fade = (float)Math.exp(-0.1 * hitPoint.length());
-                fade = Math.max(0.50f, fade);
-                return new Color(
-                        hitColor.r * fade,
-                        hitColor.g * fade,
-                        hitColor.b * fade
-                );
-            }
-
 
 
 

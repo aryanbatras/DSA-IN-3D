@@ -1,12 +1,16 @@
 package Collections;
 
-import Randomizer.JArrayListRandomAnimation;
+import Randomizer.JArrayListRandomizer;
+import Randomizer.JArrayListRandomizer;
 import Rendering.*;
 import Rendering.Camera;
 import Utility.*;
 
 import Animations.*;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
 import Animator.JArrayListAnimator;
 
 public class JArrayList {
@@ -16,7 +20,7 @@ public class JArrayList {
 
     private Render mode;
     private Encoder encoder;
-    private JArrayListRandomAnimation randomizer;
+    private JArrayListRandomizer randomizer;
     private JArrayListInsertAnimation defaultInsertAnimation;
     private JArrayListRemoveAnimation defaultRemoveAnimation;
 
@@ -25,6 +29,7 @@ public class JArrayList {
     private boolean built = false;
     private boolean userProvidedOutput = false;
     private boolean preferSharedEncoder = false;
+    private final Set<String> explicitlySetProperties;
 
     public JArrayList() {
         this.scale = 0.5;
@@ -32,6 +37,7 @@ public class JArrayList {
         this.mode = Render.DISABLED;
         this.arr = new ArrayList<>();
         this.animator = new JArrayListAnimator();
+        this.explicitlySetProperties = new HashSet<>();
         this.defaultInsertAnimation = JArrayListInsertAnimation.SLIDE_FROM_RIGHT;
         this.defaultRemoveAnimation = JArrayListRemoveAnimation.SLIDE_UP;
         this.randomizer = null;
@@ -40,17 +46,19 @@ public class JArrayList {
 
     public JArrayList withInsertAnimation(JArrayListInsertAnimation insertAnimation) {
         this.defaultInsertAnimation = insertAnimation;
+        explicitlySetProperties.add("insertAnimation");
         this.built = false;
         return this;
     }
 
     public JArrayList withRemoveAnimation(JArrayListRemoveAnimation removeAnimation) {
         this.defaultRemoveAnimation = removeAnimation;
+        explicitlySetProperties.add("removeAnimation");
         this.built = false;
         return this;
     }
 
-    public JArrayList withRandomizer(JArrayListRandomAnimation randomizer) {
+    public JArrayList withRandomizer(JArrayListRandomizer randomizer) {
         this.randomizer = randomizer;
         this.built = false;
         return this;
@@ -59,6 +67,7 @@ public class JArrayList {
     public JArrayList withRenderMode(Render mode) {
         this.mode = mode;
         animator.setMode(mode);
+        explicitlySetProperties.add("renderMode");
         this.built = false;
         return this;
     }
@@ -71,6 +80,7 @@ public class JArrayList {
             case FASTEST -> scale = 0.25;
         }
         animator.setScale(scale);
+        explicitlySetProperties.add("quality");
         this.built = false;
         return this;
     }
@@ -90,6 +100,7 @@ public class JArrayList {
 
     public JArrayList withMaterial(Material material) {
         animator.setMaterial(material);
+        explicitlySetProperties.add("material");
         this.built = false;
         return this;
     }
@@ -97,12 +108,14 @@ public class JArrayList {
     public JArrayList withBackground(Background bg) {
         String background = bg.toString();
         animator.setBackground(background);
+        explicitlySetProperties.add("background");
         this.built = false;
         return this;
     }
 
     public JArrayList withParticle(Particle particle) {
         animator.setParticle(particle);
+        explicitlySetProperties.add("particle");
         this.built = false;
         return this;
     }
@@ -110,6 +123,7 @@ public class JArrayList {
     public JArrayList withStepsPerAnimation(Steps step) {
         int steps = step.getFrames();
         animator.setFPS(steps);
+        explicitlySetProperties.add("steps");
         this.built = false;
         return this;
     }
@@ -117,6 +131,7 @@ public class JArrayList {
 
     public JArrayList withCameraRotations(Camera rotationType) {
         animator.setCameraRotation(rotationType);
+        explicitlySetProperties.add("cameraRotation");
         return this;
     }
 
@@ -136,10 +151,51 @@ public class JArrayList {
     public JArrayList withCameraSpeed(Speed cs){
         double speed = cs.getMultiplier( );
         animator.setCameraSpeed(speed);
+        explicitlySetProperties.add("cameraSpeed");
         return this;
     }
 
+
+    public JArrayList withBackgroundChangeOnEveryOperation(boolean change) {
+        animator.setRandomizeBackgroundAsTrue();
+        return this;
+    }
+
+
     public JArrayList build() {
+
+        if (randomizer != null) {
+            if (randomizer.shouldRandomizeInsertAnimation()  && !explicitlySetProperties.contains("insertAnimation")) {
+                this.defaultInsertAnimation = JArrayListRandomizer.randomInsertAnimation();
+            }
+            if (randomizer.shouldRandomizeRemoveAnimation()  && !explicitlySetProperties.contains("removeAnimation")) {
+                this.defaultRemoveAnimation = JArrayListRandomizer.randomRemoveAnimation();
+            }
+            if (randomizer.shouldRandomizeRenderMode() && !explicitlySetProperties.contains("renderMode")) {
+                withRenderMode(JArrayListRandomizer.randomRenderMode());
+            }
+            if (randomizer.shouldRandomizeQuality() && !explicitlySetProperties.contains("quality")) {
+                withQuality(JArrayListRandomizer.randomQuality());
+            }
+            if (randomizer.shouldRandomizeMaterial() && !explicitlySetProperties.contains("material")) {
+                withMaterial(JArrayListRandomizer.randomMaterial());
+            }
+            if (randomizer.shouldRandomizeBackground() && !explicitlySetProperties.contains("background")) {
+                withBackground(JArrayListRandomizer.randomBackground());
+            }
+            if (randomizer.shouldRandomizeParticle() && !explicitlySetProperties.contains("particle")) {
+                withParticle(JArrayListRandomizer.randomParticle());
+            }
+            if (randomizer.shouldRandomizeSteps() && !explicitlySetProperties.contains("steps")) {
+                withStepsPerAnimation(JArrayListRandomizer.randomSteps());
+            }
+            if (randomizer.shouldRandomizeCameraRotation() && !explicitlySetProperties.contains("cameraRotation")) {
+                withCameraRotations(JArrayListRandomizer.randomCameraRotation());
+            }
+            if (randomizer.shouldRandomizeCameraSpeed() && !explicitlySetProperties.contains("cameraSpeed")) {
+                withCameraSpeed(JArrayListRandomizer.randomCameraSpeed());
+            }
+        }
 
         if(mode == Render.VIDEO && userProvidedOutput == true){
 

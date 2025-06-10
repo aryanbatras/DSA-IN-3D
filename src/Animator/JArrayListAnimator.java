@@ -5,14 +5,15 @@ import Animator.AnimatorCore.CameraAnimator;
 import Animations.*;
 
 import Rendering.Camera;
-import Shapes.Box;
-import Shapes.Shape;
+import Shapes.JBox;
+import Shapes.Core.Shape;
 import Utility.*;
 import Utility.Renderer;
 
 import Rendering.*;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class JArrayListAnimator {
     private final ArrayList<Shape> world;
@@ -31,6 +32,8 @@ public class JArrayListAnimator {
     private Material material;
     private String background;
     private Particle particle;
+    private boolean randomBackground;
+    private Random rand;
 
     public JArrayListAnimator() {
         this.scale = 0.5;
@@ -45,6 +48,8 @@ public class JArrayListAnimator {
         this.subtitle = new Subtitle("ArrayList");
         this.cameraAnimator = new CameraAnimator(renderer, camera, world, subtitle, framesPerSecond);
         this.boxAnimator = new BoxAnimator(renderer, camera, world, subtitle, framesPerSecond);
+        this.randomBackground = false;
+        rand = new Random();
     }
 
     public void setFPS(int fps) {
@@ -95,7 +100,17 @@ public class JArrayListAnimator {
         boxAnimator.setSpeed(i);
     }
 
+    public void setRandomizeBackgroundAsTrue(){
+        this.randomBackground = true;
+    }
+
+    private void setRandomBackground() {
+        Background randomBg = Background.values()[rand.nextInt(Background.values().length)];
+        setBackground(randomBg.toString());
+    }
+
     public void runAddAnimation(int value, JArrayListInsertAnimation animation) {
+        if(randomBackground){ setRandomBackground(); }
 
         if (mode == Render.STEP_WISE || mode == Render.STEP_WISE_INTERACTIVE) {
             Window.waitUntilNextStep();
@@ -106,29 +121,30 @@ public class JArrayListAnimator {
 
         double finalX = positionAlongX;
         double finalY = 0;
-        Box box = new Box(
+        JBox JBox = new JBox(
                 new Point(finalX, finalY, 0),
                 1, 1, 0.1,
                 new Color(0.4f, 0.7f, 1.0f),
                 material, 0, value,
                 particle
         );
-        world.add(box);
+        world.add(JBox);
         subtitle.setMode("Inserting");
         subtitle.setValue(String.valueOf(value));
         switch (animation) {
-            case BOUNCE -> boxAnimator.bounceIn(box, finalY);
-            case SLIDE_FROM_TOP -> boxAnimator.slideFromTop(box, finalY);
-            case SLIDE_FROM_LEFT -> boxAnimator.slideFromLeft(box, finalX);
-            case SLIDE_FROM_RIGHT -> boxAnimator.slideFromRight(box, finalX);
-            case SCALE_POP -> boxAnimator.scalePop(box);
-            case SHAKE -> boxAnimator.shake(box);
+            case BOUNCE -> boxAnimator.bounceIn(JBox, finalY);
+            case SLIDE_FROM_TOP -> boxAnimator.slideFromTop(JBox, finalY);
+            case SLIDE_FROM_LEFT -> boxAnimator.slideFromLeft(JBox, finalX);
+            case SLIDE_FROM_RIGHT -> boxAnimator.slideFromRight(JBox, finalX);
+            case SCALE_POP -> boxAnimator.scalePop(JBox);
+            case SHAKE -> boxAnimator.shake(JBox);
         }
         cameraAnimator.slideAlongX(positionAlongX);
         positionAlongX--;
     }
 
     public void runRemoveAnimation(int index, JArrayListRemoveAnimation animation) {
+        if(randomBackground){ setRandomBackground(); }
 
         if (mode == Render.STEP_WISE || mode == Render.STEP_WISE_INTERACTIVE) {
             Window.waitUntilNextStep();
@@ -137,24 +153,25 @@ public class JArrayListAnimator {
 
         Window.invokeReferences(renderer, camera, world, subtitle, mode);
 
-        Box box = (Box) world.get(index);
-        double originalX = box.center.x;
+        JBox JBox = (JBox) world.get(index);
+        double originalX = JBox.center.x;
         subtitle.setMode("Removing");
-        subtitle.setValue(String.valueOf(box.val));
+        subtitle.setValue(String.valueOf(JBox.val));
         cameraAnimator.slideAlongX(originalX);
         switch (animation) {
-            case FADE_UP -> boxAnimator.fadeOutAndUp(box, box.center.y + 5);
-            case SLIDE_UP -> boxAnimator.slideUp(box, box.center.y + 5);
-            case SCALE_DOWN -> boxAnimator.scaleDown(box);
-            case SHAKE_AND_FADE -> boxAnimator.shakeAndFade(box);
-            case SHRINK_AND_DROP -> boxAnimator.shrinkAndDrop(box);
+            case FADE_UP -> boxAnimator.fadeOutAndUp(JBox, JBox.center.y + 5);
+            case SLIDE_UP -> boxAnimator.slideUp(JBox, JBox.center.y + 5);
+            case SCALE_DOWN -> boxAnimator.scaleDown(JBox);
+            case SHAKE_AND_FADE -> boxAnimator.shakeAndFade(JBox);
+            case SHRINK_AND_DROP -> boxAnimator.shrinkAndDrop(JBox);
         }
-        world.remove(box);
+        world.remove(JBox);
         boxAnimator.shiftElementsLeft(index);
         positionAlongX++;
     }
 
     public void runHighlightAnimation(int index) {
+        if(randomBackground){ setRandomBackground(); }
 
         if (mode == Render.STEP_WISE || mode == Render.STEP_WISE_INTERACTIVE) {
             Window.waitUntilNextStep();
@@ -163,15 +180,15 @@ public class JArrayListAnimator {
 
         Window.invokeReferences(renderer, camera, world, subtitle, mode);
 
-        Box box = (Box) world.get(index);
+        JBox JBox = (JBox) world.get(index);
         subtitle.setMode("Getting");
-        subtitle.setValue(String.valueOf(box.val));
-        cameraAnimator.slideAlongX(box.center.x);
-        boxAnimator.highlight(box);
+        subtitle.setValue(String.valueOf(JBox.val));
+        cameraAnimator.slideAlongX(JBox.center.x);
+        boxAnimator.highlight(JBox);
     }
 
     public void runHybridAnimation(int index, int value) {
-
+        if(randomBackground){ setRandomBackground(); }
 
         if (mode == Render.STEP_WISE || mode == Render.STEP_WISE_INTERACTIVE) {
             Window.waitUntilNextStep();
@@ -179,13 +196,15 @@ public class JArrayListAnimator {
         }
         Window.invokeReferences(renderer, camera, world, subtitle, mode);
 
-        Box box = (Box) world.get(index);
+        JBox JBox = (JBox) world.get(index);
         subtitle.setMode("Updating");
-        subtitle.setValue(String.format("%d → %d", box.val, value));
-        cameraAnimator.slideAlongX(box.center.x);
-        boxAnimator.updateValue(box, value);
-        box.val = value; box.setDigitsFromNumber(value);
-        boxAnimator.shakeSlow(box);
+        subtitle.setValue(String.format("%d → %d", JBox.val, value));
+        cameraAnimator.slideAlongX(JBox.center.x);
+        boxAnimator.updateValue(JBox, value);
+        JBox.val = value; JBox.setDigitsFromNumber(value);
+        boxAnimator.shakeSlow(JBox);
     }
+
+
 }
 

@@ -7,6 +7,10 @@ public enum Particle {
     GRADIENT,
     FIREWORKS,
     BLOOD_DRIP,
-    ELECTRIC_SHOCK
-
+    ELECTRIC_SHOCK,
+    GALAXY,
+    AURORA,
+    NEON_GRID,
+    COSMIC_DUST,
+    CLOUDS
 }

@@ -1,7 +1,6 @@
 package Animator.AnimatorCore;
 
-import Animator.JArrayListAnimator;
-import Shapes.Shape;
+import Shapes.Core.Shape;
 import Utility.Camera;
 import Utility.Renderer;
 import Rendering.Render;

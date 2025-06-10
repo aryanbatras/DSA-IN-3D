@@ -1,7 +1,7 @@
 package Utility;
 
 import Rendering.Render;
-import Shapes.Shape;
+import Shapes.Core.Shape;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -135,6 +135,8 @@ public class Window {
                 (int) ((Screen.getHeight() * scale) - ( (Screen.getHeight() / 10.0 ) ) )
         );
 
+        frame.setLocationRelativeTo(null);
+
         if (renderer != null && camera != null && world != null && subtitle != null) {
             BufferedImage newImage = renderer.getActualFrame();
             updateWindow(newImage);
@@ -155,7 +157,7 @@ public class Window {
 
         frame.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
-                double moveSpeed = 2.5;
+                double moveSpeed = 1;
                 double yawRad = Math.toRadians(yaw), pitchRad = Math.toRadians(pitch);
                 Point   forward = new Point(Math.cos(pitchRad) * Math.sin(yawRad), Math.sin(pitchRad), Math.cos(pitchRad) * Math.cos(yawRad)).normalize(),
                         right = forward.cross(new Point(0, 1, 0)).normalize(),

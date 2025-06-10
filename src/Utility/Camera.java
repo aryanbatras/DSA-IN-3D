@@ -12,7 +12,7 @@ public class Camera {
     private double M_X, M_Y, M_Z;
 
     public Camera() {
-        this.radius = new Point(1, 2, -3).length();
+        this.radius = new Point(1, 2, -3).length( );
         this.yaw = 0.25;
         this.pitch = 0.00;
         this.M_X = this.M_Y = this.M_Z = 0.00;

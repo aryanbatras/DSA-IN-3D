@@ -1,7 +1,7 @@
 package Utility;
 
 import Rendering.Render;
-import Shapes.Shape;
+import Shapes.Core.Shape;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
