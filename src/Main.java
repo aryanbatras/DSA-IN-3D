@@ -5,89 +5,183 @@ public class Main {
 
     public static void main(String[] args) {
 
-        JArrayList arr = new JArrayList( )
-                .withBackground(Background.LAKE)
-                .withMaterial(Material.MIST)
-                .withRenderMode(Render.VIDEO)
-                .withQuality(Quality.BALANCE)
+        // Lake background
+        JArrayList lakeList = new JArrayList()
                 .withParticle(Particle.GRADIENT)
-                .build( );
+                .withBackground(Background.LAKE)
+                .withQuality(Quality.FASTEST)
+                .withRenderMode(Render.VIDEO)
+                .build();
+
+        // Lapa background
+        JArrayList lapaList = new JArrayList()
+                .withParticle(Particle.GRADIENT)
+                .withBackground(Background.LAPA)
+                .withQuality(Quality.FASTEST)
+                .withRenderMode(Render.VIDEO)
+                .build();
+
+        // Pool background
+        JArrayList poolList = new JArrayList()
+                .withParticle(Particle.GRADIENT)
+                .withBackground(Background.POOL)
+                .withQuality(Quality.FASTEST)
+                .withRenderMode(Render.VIDEO)
+                .build();
+
+        // Sunset background
+        JArrayList sunsetList = new JArrayList()
+                .withParticle(Particle.GRADIENT)
+                .withBackground(Background.SUNSET)
+                .withQuality(Quality.FASTEST)
+                .withRenderMode(Render.VIDEO)
+                .build();
+
+        // Lake Pier background
+        JArrayList lakePierList = new JArrayList()
+                .withParticle(Particle.GRADIENT)
+                .withBackground(Background.LAKE_PIER)
+                .withQuality(Quality.FASTEST)
+                .withRenderMode(Render.VIDEO)
+                .build();
+
+        // Lilienstein background
+        JArrayList liliensteinList = new JArrayList()
+                .withParticle(Particle.GRADIENT)
+                .withBackground(Background.LILIENSTEIN)
+                .withQuality(Quality.FASTEST)
+                .withRenderMode(Render.VIDEO)
+                .build();
+
+        // Cinema Lobby background
+        JArrayList cinemaLobbyList = new JArrayList()
+                .withParticle(Particle.GRADIENT)
+                .withBackground(Background.CINEMA_LOBBY)
+                .withQuality(Quality.FASTEST)
+                .withRenderMode(Render.VIDEO)
+                .build();
+
+        // Shanghai Bund background
+        JArrayList shanghaiBundList = new JArrayList()
+                .withParticle(Particle.GRADIENT)
+                .withBackground(Background.SHANGHAI_BUND)
+                .withQuality(Quality.FASTEST)
+                .withRenderMode(Render.VIDEO)
+                .build();
+
+        // Studio Garden background
+        JArrayList studioGardenList = new JArrayList()
+                .withParticle(Particle.GRADIENT)
+                .withBackground(Background.STUDIO_GARDEN)
+                .withQuality(Quality.FASTEST)
+                .withRenderMode(Render.VIDEO)
+                .build();
+
+        // Glass Passage background
+        JArrayList glassPassageList = new JArrayList()
+                .withParticle(Particle.GRADIENT)
+                .withBackground(Background.GLASS_PASSAGE)
+                .withQuality(Quality.FASTEST)
+                .withRenderMode(Render.VIDEO)
+                .build();
+
+        // Artist Workshop background
+        JArrayList artistWorkshopList = new JArrayList()
+                .withParticle(Particle.GRADIENT)
+                .withBackground(Background.ARTIST_WORKSHOP)
+                .withQuality(Quality.FASTEST)
+                .withRenderMode(Render.VIDEO)
+                .build();
+
+        // The Sky is on Fire background
+        JArrayList skyOnFireList = new JArrayList()
+                .withParticle(Particle.GRADIENT)
+                .withBackground(Background.THE_SKY_IS_ON_FIRE)
+                .withQuality(Quality.FASTEST)
+                .withRenderMode(Render.VIDEO)
+                .build();
+
+        // Adams Place Bridge background
+        JArrayList adamsPlaceBridgeList = new JArrayList()
+                .withParticle(Particle.GRADIENT)
+                .withBackground(Background.ADAMS_PLACE_BRIDGE)
+                .withQuality(Quality.FASTEST)
+                .withRenderMode(Render.VIDEO)
+                .build();
+
+        // Pedestrian Overpass background
+        JArrayList pedestrianOverpassList = new JArrayList()
+                .withParticle(Particle.GRADIENT)
+                .withBackground(Background.PEDESTRIAN_OVERPASS)
+                .withQuality(Quality.FASTEST)
+                .withRenderMode(Render.VIDEO)
+                .build();
+
+        // Voortrekker Interior background
+        JArrayList voortrekkerInteriorList = new JArrayList()
+                .withParticle(Particle.GRADIENT)
+                .withBackground(Background.VOORTREKKER_INTERIOR)
+                .withQuality(Quality.FASTEST)
+                .withRenderMode(Render.VIDEO)
+                .build();
+
+        // Brown Photostudio 02 background
+        JArrayList brownPhotostudioList = new JArrayList()
+                .withParticle(Particle.GRADIENT)
+                .withBackground(Background.BROWN_PHOTOSTUDIO_02)
+                .withQuality(Quality.FASTEST)
+                .withRenderMode(Render.VIDEO)
+                .build();
+
+        // Symmetrical Garden 02 background
+        JArrayList symmetricalGardenList = new JArrayList()
+                .withParticle(Particle.GRADIENT)
+                .withBackground(Background.SYMMETRICAL_GARDEN_02)
+                .withQuality(Quality.FASTEST)
+                .withRenderMode(Render.VIDEO)
+                .build();
+
+        // Little Paris Under Tower background
+        JArrayList littleParisList = new JArrayList()
+                .withParticle(Particle.GRADIENT)
+                .withBackground(Background.LITTLE_PARIS_UNDER_TOWER)
+                .withQuality(Quality.FASTEST)
+                .withRenderMode(Render.VIDEO)
+                .build();
+
+        // Kloofendal background
+        JArrayList kloofendalList = new JArrayList()
+                .withParticle(Particle.GRADIENT)
+                .withBackground(Background.KLOOFENDAL_48D_PARTLY_CLOUDY_PURESKY)
+                .withQuality(Quality.FASTEST)
+                .withRenderMode(Render.VIDEO)
+                .build();
+
+        // Add elements to all lists
+        for (int i = 0; i < 10; i++) {
+            lakeList.add(50);
+            lapaList.add(50);
+            poolList.add(50);
+            sunsetList.add(50);
+            lakePierList.add(50);
+            liliensteinList.add(50);
+            cinemaLobbyList.add(50);
+            shanghaiBundList.add(50);
+            studioGardenList.add(50);
+            glassPassageList.add(50);
+            artistWorkshopList.add(50);
+            skyOnFireList.add(50);
+            adamsPlaceBridgeList.add(50);
+            pedestrianOverpassList.add(50);
+            voortrekkerInteriorList.add(50);
+            brownPhotostudioList.add(50);
+            symmetricalGardenList.add(50);
+            littleParisList.add(50);
+            kloofendalList.add(50);
+        }
 
 
-        arr.add(50);
-        arr.add(100);
-        arr.add(150);
-        arr.add(200);
 
-
-        /*
-        * PHASE BEAUTY OF UI MODE
-        * GET DIFFERENT BACKGROUNDS AND ADD OPTION WITH BACKGROUND FOR EVERY DATA STRUCTURE !
-        * ALSO ADD CUSTOM MATERIALS FOR EVERY DATA STRUCTURE !
-        * ALSO ADD MORE CUSOMIZATIONS FOR DATA STRUCTURE !
-        * */
-
-        // NEXT PHASE : MORE DATA STRUCTURES !
-        // THEN ADVANCED DATA STRUCTURES !
-
-        // THAT'S IT NOTHING MORE !
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // DYNAMIC MULTIPLE MODES ALL WORKING PERFECTLY
-
-//        JArrayList arr = new JArrayList().withRenderMode(Render.VIDEO).withQuality(Quality.FASTEST).build();
-//        JArrayList arr2 = new JArrayList().withRenderMode(Render.VIDEO).withQuality(Quality.BALANCE).build();
-//        JArrayList arr3 = new JArrayList().withRenderMode(Render.VIDEO).withQuality(Quality.GOOD).build();
-//        JArrayList arr4 = new JArrayList().withRenderMode(Render.VIDEO).withQuality(Quality.BEST).build();
-//        JArrayList arr5 = new JArrayList().withRenderMode(Render.VIDEO).build();
-//
-//        JArrayList arr6 = new JArrayList().withRenderMode(Render.VIDEO).withOutput("arr6").build();
-//        JArrayList arr7 = new JArrayList().withRenderMode(Render.VIDEO).withOutput("arr7").build();
-//        JArrayList arr8 = new JArrayList().withRenderMode(Render.VIDEO).withOutput("arr8").withQuality(Quality.FASTEST).build();
-//        JArrayList arr9 = new JArrayList().withRenderMode(Render.VIDEO).withOutput("arr9").withQuality(Quality.BEST).build();
-
-//        JArrayList arr10 = new JArrayList().withRenderMode(Render.STEP_WISE).withQuality(Quality.BEST).build();
-//        JArrayList arr11 = new JArrayList().withRenderMode(Render.STEP_WISE).withQuality(Quality.BALANCE).build();
-//        JArrayList arr12 = new JArrayList().withRenderMode(Render.STEP_WISE).withQuality(Quality.GOOD).build();
-//        JArrayList arr13 = new JArrayList().withRenderMode(Render.STEP_WISE).withQuality(Quality.BEST).build();
-//        JArrayList arr14 = new JArrayList().withRenderMode(Render.STEP_WISE).build();
-//
-//        JArrayList arr15 = new JArrayList().withRenderMode(Render.STEP_WISE_INTERACTIVE).withQuality(Quality.FASTEST).build();
-//        JArrayList arr16 = new JArrayList().withRenderMode(Render.STEP_WISE_INTERACTIVE).withQuality(Quality.BALANCE).build();
-//        JArrayList arr17 = new JArrayList().withRenderMode(Render.STEP_WISE_INTERACTIVE).withQuality(Quality.GOOD).build();
-//        JArrayList arr18 = new JArrayList().withRenderMode(Render.STEP_WISE_INTERACTIVE).withQuality(Quality.BEST).build();
-//        JArrayList arr19 = new JArrayList().withRenderMode(Render.STEP_WISE_INTERACTIVE).build();
-//
-//        JArrayList arr20 = new JArrayList().withRenderMode(Render.LIVE).withQuality(Quality.FASTEST).build();
-//        JArrayList arr21 = new JArrayList().withRenderMode(Render.LIVE).withQuality(Quality.BALANCE).build();
-//        JArrayList arr22 = new JArrayList().withRenderMode(Render.LIVE).withQuality(Quality.GOOD).build();
-//        JArrayList arr23 = new JArrayList().withRenderMode(Render.LIVE).withQuality(Quality.BEST).build();
-//        JArrayList arr24 = new JArrayList().withRenderMode(Render.LIVE).build();
-
-        // THEN WE HAVE TO CHANGE HOW IT LOOKS OVERALL
-        // THEN WE MOVE ON TO PUSHING MORE DATA STRUCTURES
 
     }
 

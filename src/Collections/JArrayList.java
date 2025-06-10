@@ -108,7 +108,7 @@ public class JArrayList {
         }
         animator.setAntiAliasing(alias);
         this.built = false;
-        return this;
+    return this;
     }
 
     public JArrayList build() {
