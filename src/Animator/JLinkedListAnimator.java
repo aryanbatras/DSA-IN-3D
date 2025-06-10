@@ -125,6 +125,10 @@ public class JLinkedListAnimator {
         this.randomBackground = true;
     }
 
+    public void setCameraFocus(double focus) {
+        this.camera.setRadius(camera.getRadius() - focus);
+    }
+
     public void runAddAnimation(int value, JLinkedListInsertAnimation animation) {
 
         if(randomBackground){ setRandomBackground(); }
@@ -248,10 +252,9 @@ public class JLinkedListAnimator {
         subtitle.setValue(String.format("%d → %d", nodeBox.val, value));
         cameraAnimator.slideAlongX(nodeBox.center.x);
         boxAnimator.updateValue(nodeBox, value);
-        nodeBox.val = value; 
+        nodeBox.val = value;
         nodeBox.setDigitsFromNumber(value);
         boxAnimator.shakeSlow(nodeBox);
     }
-
 }
 

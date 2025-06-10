@@ -109,6 +109,10 @@ public class JArrayListAnimator {
         setBackground(randomBg.toString());
     }
 
+    public void setCameraFocus(double focus) {
+        this.camera.setRadius(camera.getRadius() - focus);
+    }
+
     public void runAddAnimation(int value, JArrayListInsertAnimation animation) {
         if(randomBackground){ setRandomBackground(); }
 
@@ -204,7 +208,6 @@ public class JArrayListAnimator {
         JBox.val = value; JBox.setDigitsFromNumber(value);
         boxAnimator.shakeSlow(JBox);
     }
-
 
 }
 

@@ -6,13 +6,14 @@ import Collections.*;
 public class Main {
     public static void main(String[] args) {
 
-        JLinkedList list = new JLinkedList()
-                .withRandomizer(JLinkedListRandomizer.INSTANCE.withCrazyMode())
+        JArrayList list = new JArrayList()
+                .withRandomizer(JArrayListRandomizer.INSTANCE.withCrazyMode())
                 .withBackgroundChangeOnEveryOperation(true)
-                .withStepsPerAnimation(Steps.VERY_SLOW)
+                .withStepsPerAnimation(Steps.SLOW)
                 .withParticle(Particle.GALAXY)
-                .withQuality(Quality.BALANCE)
+                .withQuality(Quality.FASTEST)
                 .withRenderMode(Render.LIVE)
+                .withCameraFocus(Focus.X16)
                 .build();
 
             list.add(10);

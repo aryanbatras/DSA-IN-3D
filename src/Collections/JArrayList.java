@@ -161,6 +161,13 @@ public class JArrayList {
         return this;
     }
 
+    public JArrayList withCameraFocus(Focus focus) {
+        double value = focus.getMultiplier();
+        animator.setCameraFocus(value);
+        this.built = false;
+        return this;
+    }
+
 
     public JArrayList build() {
 

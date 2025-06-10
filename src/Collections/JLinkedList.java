@@ -147,15 +147,23 @@ public class JLinkedList {
 
 
     public JLinkedList withCameraSpeed(Speed cs) {
+        explicitlySetProperties.add("cameraSpeed");
         double speed = cs.getMultiplier();
         animator.setCameraSpeed(speed);
-        explicitlySetProperties.add("cameraSpeed");
         this.built = false;
         return this;
     }
 
     public JLinkedList withBackgroundChangeOnEveryOperation(boolean change) {
         animator.setRandomizeBackgroundAsTrue();
+        this.built = false;
+        return this;
+    }
+
+    public JLinkedList withCameraFocus(Focus focus) {
+        double value = focus.getMultiplier();
+        animator.setCameraFocus(value);
+        this.built = false;
         return this;
     }
 
@@ -235,7 +243,7 @@ public class JLinkedList {
         Variable.update("add", value);
 
         list.add(value);
-        
+
         if (mode != Render.DISABLED) {
             animator.runAddAnimation(value, randomizer != null ? randomizer.randomInsertAnimation() : defaultInsertAnimation);
         }
@@ -247,7 +255,7 @@ public class JLinkedList {
         Variable.update("add", value);
 
         list.add(value);
-        
+
         if (mode != Render.DISABLED) {
             animator.runAddAnimation(value, animation);
         }
@@ -256,10 +264,10 @@ public class JLinkedList {
     public void remove(int index) {
         Code.markCurrentLine();
         checkBuilt();
-        
+
         int value = list.get(index);
         list.remove(index);
-        
+
         if (mode != Render.DISABLED) {
             animator.runRemoveAnimation(index, randomizer != null ? randomizer.randomRemoveAnimation() : defaultRemoveAnimation);
         }
@@ -269,10 +277,10 @@ public class JLinkedList {
     public void remove(int index, JLinkedListRemoveAnimation animation) {
         Code.markCurrentLine();
         checkBuilt();
-        
+
         int value = list.get(index);
         list.remove(index);
-        
+
         if (mode != Render.DISABLED) {
             animator.runRemoveAnimation(index, animation);
         }
@@ -282,9 +290,9 @@ public class JLinkedList {
     public int get(int index) {
         Code.markCurrentLine();
         checkBuilt();
-        
+
         int value = list.get(index);
-        
+
         if (mode != Render.DISABLED) {
             animator.runHighlightAnimation(index);
         }
@@ -295,9 +303,9 @@ public class JLinkedList {
     public void set(int index, int value) {
         Code.markCurrentLine();
         checkBuilt();
-        
+
         list.set(index, value);
-        
+
         if (mode != Render.DISABLED) {
             animator.runHybridAnimation(index, value);
         }
