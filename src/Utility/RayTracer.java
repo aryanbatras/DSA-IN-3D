@@ -276,8 +276,8 @@ public class RayTracer {
         double u = 1.0 + Math.atan2(dirInEnvSpace.z, dirInEnvSpace.x) / (2 * Math.PI);
         double v = 0.5 - Math.asin(dirInEnvSpace.y) / Math.PI;
 
-        double parallaxScaleU = 0.025;
-        double parallaxScaleV = 0.025;
+        double parallaxScaleU = 0.0052;
+        double parallaxScaleV = 0.0052;
 
         double uOffset = - (camera.getM_X() * parallaxScaleU);
         double vOffset = (camera.getM_Y() * parallaxScaleV);

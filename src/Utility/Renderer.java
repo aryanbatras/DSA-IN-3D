@@ -75,19 +75,6 @@ public class Renderer {
         final int[] pixels = ((DataBufferInt) BEINGRENDERED.getRaster( ).getDataBuffer( )).getData( );
         final Camera finalCamera;
 
-//        if (mode == Render.STEP_WISE_INTERACTIVE) {
-//            finalCamera = new Camera(
-//                    Window.getRadius(),
-//                    Window.getYaw(),
-//                    Window.getPitch(),
-//                    (int) Window.getMX(),
-//                    (int) Window.getMY(),
-//                    (int) Window.getMZ()
-//            ).setCameraPerspective(width, height);
-//        } else {
-//            finalCamera = camera.setCameraPerspective(width, height);
-//        }
-
         if (mode == Render.STEP_WISE_INTERACTIVE) {
             camera.setRadius(Window.getRadius());
             camera.setYaw(Window.getYaw());

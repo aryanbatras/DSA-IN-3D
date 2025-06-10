@@ -1,5 +1,6 @@
 package Animator.AnimatorCore;
 
+import Animator.JArrayListAnimator;
 import Rendering.Render;
 import Shapes.Box;
 import Shapes.Shape;
@@ -9,18 +10,24 @@ import java.util.ArrayList;
 
 public class BoxAnimator {
     private static final double BOUNCE_HEIGHT = 0.5;
+    private CameraAnimator rotationModeAnimator;
+    private Rendering.Camera rotationMode;
     private final ArrayList<Shape> world;
     private final Subtitle subtitle;
     private final Renderer renderer;
     private final Camera camera;
     private int frames;
     private Render mode;
+    private double speed;
 
     public BoxAnimator(Renderer renderer, Camera camera, ArrayList<Shape> world, Subtitle subtitle, int framesPerSecond) {
+        this.rotationMode = Rendering.Camera.NONE;
+        this.rotationModeAnimator = null;
         this.frames = framesPerSecond;
         this.subtitle = subtitle;
         this.renderer = renderer;
         this.camera = camera;
+        this.speed = 0.0052;
         this.world = world;
     }
 
@@ -28,8 +35,17 @@ public class BoxAnimator {
         this.frames = fps;
     }
 
+    public void setSpeed(double speed) {
+        this.speed = speed;
+    }
+
     public void setMode(Render mode) {
         this.mode = mode;
+    }
+
+    public void setCameraRotation(CameraAnimator cameraAnimator, Rendering.Camera rotationType) {
+        this.rotationMode = rotationType;
+        this.rotationModeAnimator = cameraAnimator;
     }
 
     public void highlight(Box box) {
@@ -81,6 +97,7 @@ public class BoxAnimator {
         for (int i = 0; i < frames; i++) {
             box.center.x += delta;
             renderer.drawImage(camera, world, subtitle, mode);
+            CameraAnimator.triggerOptionalCameraEffect(speed, rotationMode, rotationModeAnimator, camera);
         }
         box.center.x = finalX;
     }

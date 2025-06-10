@@ -1,4 +1,7 @@
-package Animations;
+package Randomizer;
+
+import Animations.JArrayListInsertAnimation;
+import Animations.JArrayListRemoveAnimation;
 
 import java.util.Random;
 

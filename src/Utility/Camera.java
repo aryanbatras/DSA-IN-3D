@@ -11,7 +11,6 @@ public class Camera {
     private double yaw, pitch, radius;
     private double M_X, M_Y, M_Z;
 
-    // --- Constructors ---
     public Camera() {
         this.radius = new Point(1, 2, -3).length();
         this.yaw = 0.25;
@@ -32,7 +31,6 @@ public class Camera {
         setup(lookfrom, lookat, vup, vfov, aspectRatio);
     }
 
-    // --- Core Setup Method ---
     private void setup(Point lookfrom, Point lookat, Point vup, double vfov, double aspectRatio) {
         double theta = Math.toRadians(vfov);
         double h = Math.tan(theta / 2);
@@ -52,7 +50,6 @@ public class Camera {
                 .sub(w);
     }
 
-    // --- Dynamic Perspective Setup ---
     public Camera setCameraPerspective(double width, double height) {
         double yawRad = Math.toRadians(yaw);
         double pitchRad = Math.toRadians(pitch);
@@ -71,7 +68,6 @@ public class Camera {
         return this;
     }
 
-    // --- Ray Generation ---
     public Ray getRay(double s, double t) {
         Point direction = lowerLeftCorner.add(horizontal.mul(s)).add(vertical.mul(t)).sub(origin);
         return new Ray(origin, direction);
@@ -82,7 +78,6 @@ public class Camera {
         ray.set(origin, dir);
     }
 
-    // --- Rotation Helper (for interactive motion) ---
     public Point inverseRotateDirection(Point dir) {
         double cosPitch = Math.cos(-pitch), sinPitch = Math.sin(-pitch);
         double cosYaw = Math.cos(-yaw), sinYaw = Math.sin(-yaw);
@@ -95,7 +90,6 @@ public class Camera {
         return new Point(x2, y1, z2);
     }
 
-    // --- Getters & Setters ---
     public double getPitch() { return pitch; }
     public double getYaw() { return yaw; }
     public double getM_X() { return M_X; }

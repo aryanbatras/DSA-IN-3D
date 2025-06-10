@@ -1,6 +1,8 @@
 package Collections;
 
+import Randomizer.JArrayListRandomAnimation;
 import Rendering.*;
+import Rendering.Camera;
 import Utility.*;
 
 import Animations.*;
@@ -23,7 +25,6 @@ public class JArrayList {
     private boolean built = false;
     private boolean userProvidedOutput = false;
     private boolean preferSharedEncoder = false;
-
 
     public JArrayList() {
         this.scale = 0.5;
@@ -106,10 +107,16 @@ public class JArrayList {
         return this;
     }
 
-    public JArrayList withFPS(int fps) {
-        if(fps <= 1) fps = 1;
-        animator.setFPS(fps);
+    public JArrayList withStepsPerAnimation(Steps step) {
+        int steps = step.getFrames();
+        animator.setFPS(steps);
         this.built = false;
+        return this;
+    }
+
+
+    public JArrayList withCameraRotations(Camera rotationType) {
+        animator.setCameraRotation(rotationType);
         return this;
     }
 
@@ -124,6 +131,12 @@ public class JArrayList {
         animator.setAntiAliasing(alias);
         this.built = false;
     return this;
+    }
+
+    public JArrayList withCameraSpeed(Speed cs){
+        double speed = cs.getMultiplier( );
+        animator.setCameraSpeed(speed);
+        return this;
     }
 
     public JArrayList build() {

@@ -4,6 +4,7 @@ import Animator.AnimatorCore.CameraAnimator;
 
 import Animations.*;
 
+import Rendering.Camera;
 import Shapes.Box;
 import Shapes.Shape;
 import Utility.*;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 public class JArrayListAnimator {
     private final ArrayList<Shape> world;
     private final Renderer renderer;
-    private final Camera camera;
+    private final Utility.Camera camera;
     private Subtitle subtitle;
 
     private int positionAlongX;
@@ -35,7 +36,7 @@ public class JArrayListAnimator {
         this.scale = 0.5;
         this.positionAlongX = 0;
         this.framesPerSecond = 20;
-        this.camera = new Camera();
+        this.camera = new Utility.Camera();
         this.world = new ArrayList<>();
         this.material = Material.METAL;
         this.particle = Particle.NONE;
@@ -82,6 +83,16 @@ public class JArrayListAnimator {
 
     public void setAntiAliasing(double antiAliasing) {
         renderer.setAntialiasing(antiAliasing);
+    }
+
+    public void setCameraRotation(Camera rotationType) {
+        cameraAnimator.setCameraRotation(rotationType);
+        boxAnimator.setCameraRotation(cameraAnimator, rotationType);
+    }
+
+    public void setCameraSpeed(double i) {
+        cameraAnimator.setSpeed(i);
+        boxAnimator.setSpeed(i);
     }
 
     public void runAddAnimation(int value, JArrayListInsertAnimation animation) {
