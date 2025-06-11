@@ -6,29 +6,29 @@ import Collections.*;
 public class Main {
     public static void main(String[] args) {
 
-        JArrayList list = new JArrayList()
-                .withRandomizer(JArrayListRandomizer.INSTANCE.withCrazyMode())
+        JArrayList arr = new JArrayList()
                 .withBackgroundChangeOnEveryOperation(true)
+                .withRenderMode(Render.STEP_WISE_INTERACTIVE)
+                .withBackground(Background.STUDIO_GARDEN)
                 .withStepsPerAnimation(Steps.SLOW)
-                .withParticle(Particle.GALAXY)
+                .withParticle(Particle.AURORA)
                 .withQuality(Quality.FASTEST)
-                .withRenderMode(Render.LIVE)
-                .withCameraFocus(Focus.X16)
+                .withMaterial(Material.METAL)
+                .withCameraFocus(Focus.X1)
                 .build();
 
-            list.add(10);
-            list.add(50);
-            list.add(100);
-            list.remove(2);
-            list.remove(1);
-            list.remove(0);
 
-            list.add(10);
-            list.add(50);
-            list.add(100);
-            list.remove(2);
-            list.remove(1);
-            list.remove(0);
+        arr.add(1);
+        arr.add(20);
+        arr.add(300);
+        arr.get(0);
+        arr.remove(0);
+        arr.remove(0);
+        arr.remove(0);
+
+
+
+
 
 
     }

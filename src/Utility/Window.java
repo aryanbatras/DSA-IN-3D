@@ -36,12 +36,6 @@ public class Window {
     public static void initializeWindow() {
         if (initialized) return;
 
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         frame = new JFrame("3D Visualizer");
         frame.setSize(Screen.getWidth(), Screen.getHeight());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -100,7 +94,6 @@ public class Window {
         nextStepButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         nextStepButton.addActionListener(e -> stepRequested.set(true));
 
-//        layeredPane.add(vignette, JLayeredPane.PALETTE_LAYER);
         layeredPane.add(nextStepButton, JLayeredPane.PALETTE_LAYER);
 
         frame.setContentPane(layeredPane);
@@ -175,7 +168,7 @@ public class Window {
                 mx += movement.x;
                 my += movement.y;
                 mz += movement.z;
-                renderer.drawImage(camera, world, subtitle, mode);
+                renderer.interactiveDrawImage(camera, world, subtitle, mode, 1);
             }
         });
 
@@ -195,13 +188,13 @@ public class Window {
                 pitch -= dy * 0.1;
                 latestX = e.getX();
                 latestY = e.getY();
-                renderer.drawImage(camera, world, subtitle, mode);
+                renderer.interactiveDrawImage(camera, world, subtitle, mode, 1);
             }
         });
 
         frame.addMouseWheelListener(e -> {
                 radius += e.getPreciseWheelRotation() * 0.25;
-                renderer.drawImage(camera, world, subtitle, mode);
+                renderer.interactiveDrawImage(camera, world, subtitle, mode, 1);
     });
 
         initializedInteractivity = true;

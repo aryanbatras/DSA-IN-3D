@@ -55,7 +55,7 @@ public class BoxAnimator {
                     Math.abs((float)Math.sin(i * 0.1)),
                     JBox.color.b
             );
-            renderer.drawImage(camera, world, subtitle, mode);
+            renderer.drawImage(camera, world, subtitle, mode, 0);
         }
         JBox.color = c;
     }
@@ -71,7 +71,7 @@ public class BoxAnimator {
                 1.0f
             );
             JBox.center.x = originalPos + (Math.random() - 0.5) * 0.1;
-            renderer.drawImage(camera, world, subtitle, mode);
+            renderer.drawImage(camera, world, subtitle, mode, 0);
         }
         JBox.center.x = originalPos;
         JBox.color = originalColor;
@@ -84,7 +84,7 @@ public class BoxAnimator {
 
         for (int i = 0; i < frames; i++) {
             JBox.center.x += delta;
-            renderer.drawImage(camera, world, subtitle, mode);
+            renderer.drawImage(camera, world, subtitle, mode, 0);
         }
         JBox.center.x = finalX;
     }
@@ -95,7 +95,7 @@ public class BoxAnimator {
         JBox.center.x = initialX;
         for (int i = 0; i < frames; i++) {
             JBox.center.x += delta;
-            renderer.drawImage(camera, world, subtitle, mode);
+            renderer.drawImage(camera, world, subtitle, mode, 0);
             CameraAnimator.triggerOptionalCameraEffect(speed, rotationMode, rotationModeAnimator, camera);
         }
         JBox.center.x = finalX;
@@ -107,7 +107,7 @@ public class BoxAnimator {
         JBox.center.y = initialY;
         for (int i = 0; i < frames; i++) {
             JBox.center.y += delta;
-            renderer.drawImage(camera, world, subtitle, mode);
+            renderer.drawImage(camera, world, subtitle, mode, 0);
         }
         JBox.center.y = finalY;
     }
@@ -117,7 +117,17 @@ public class BoxAnimator {
         double delta = (finalY - initialY) / frames;
         for (int i = 0; i < frames; i++) {
             JBox.center.y += delta;
-            renderer.drawImage(camera, world, subtitle, mode);
+            renderer.drawImage(camera, world, subtitle, mode, 0);
+        }
+        JBox.center.y = finalY;
+    }
+
+    public void slideDown(JBox JBox, int finalY) {
+        double initialY = JBox.center.y;
+        double delta = (initialY - finalY) / frames;
+        for (int i = 0; i < frames; i++) {
+            JBox.center.y -= delta;
+            renderer.drawImage(camera, world, subtitle, mode, 0);
         }
         JBox.center.y = finalY;
     }
@@ -133,7 +143,7 @@ public class BoxAnimator {
                 JBox.center.y = baseY;
                 velocity = -velocity * 0.6; // dampen bounce
             }
-            renderer.drawImage(camera, world, subtitle, mode);
+            renderer.drawImage(camera, world, subtitle, mode, 0);
         }
         JBox.center.y = baseY;
     }
@@ -142,7 +152,7 @@ public class BoxAnimator {
         double originalX = JBox.center.x;
         for (int i = 0; i < frames; i++) {
             JBox.center.x = originalX + Math.sin(i * 0.5) * 0.2;
-            renderer.drawImage(camera, world, subtitle, mode);
+            renderer.drawImage(camera, world, subtitle, mode, 0);
         }
         JBox.center.x = originalX;
     }
@@ -151,7 +161,7 @@ public class BoxAnimator {
      double originalX = JBox.center.x;
      for (int i = 0; i < frames / 2; i++) {
          JBox.center.x = originalX + Math.sin(i * 0.5) * 0.05;
-         renderer.drawImage(camera, world, subtitle, mode);
+         renderer.drawImage(camera, world, subtitle, mode, 0);
      }
      JBox.center.x = originalX;
  }
@@ -165,14 +175,14 @@ public class BoxAnimator {
             double scale = 1 + (maxScale - 1) * i / (frames / 2);
             JBox.width = originalWidth * scale;
             JBox.height = originalHeight * scale;
-            renderer.drawImage(camera, world, subtitle, mode);
+            renderer.drawImage(camera, world, subtitle, mode, 0);
         }
 
         for (int i = 0; i < frames / 2; i++) {
             double scale = maxScale - (maxScale - 1) * i / (frames / 2);
             JBox.width = originalWidth * scale;
             JBox.height = originalHeight * scale;
-            renderer.drawImage(camera, world, subtitle, mode);
+            renderer.drawImage(camera, world, subtitle, mode, 0);
         }
 
         JBox.width = originalWidth;
@@ -190,7 +200,7 @@ public class BoxAnimator {
             alpha -= fadeRate;
             float clampedAlpha = Math.max(0, alpha);
             JBox.color = new Color(JBox.color.r * clampedAlpha, JBox.color.g * clampedAlpha, JBox.color.b * clampedAlpha);
-            renderer.drawImage(camera, world, subtitle, mode);
+            renderer.drawImage(camera, world, subtitle, mode, 0);
         }
 
         JBox.color = new Color(JBox.color.r, JBox.color.g, JBox.color.b);
@@ -200,7 +210,7 @@ public class BoxAnimator {
         double delta = 1.0 / frames;
         for (int i = 0; i < frames; i++) {
             JBox.center.x += delta;
-            renderer.drawImage(camera, world, subtitle, mode);
+            renderer.drawImage(camera, world, subtitle, mode, 0);
         }
     }
 
@@ -221,7 +231,7 @@ public class BoxAnimator {
             double scale = 1 - (double) i / frames;
             JBox.width = originalWidth * scale;
             JBox.height = originalHeight * scale;
-            renderer.drawImage(camera, world, subtitle, mode);
+            renderer.drawImage(camera, world, subtitle, mode, 0);
         }
     }
 
@@ -238,7 +248,7 @@ public class BoxAnimator {
                     JBox.color.g * Math.max(0, alpha),
                     JBox.color.b * Math.max(0, alpha)
             );
-            renderer.drawImage(camera, world, subtitle, mode);
+            renderer.drawImage(camera, world, subtitle, mode, 0);
         }
     }
 
@@ -252,7 +262,8 @@ public class BoxAnimator {
             JBox.width = originalWidth * scale;
             JBox.height = originalHeight * scale;
             JBox.center.y -= deltaY;
-            renderer.drawImage(camera, world, subtitle, mode);
+            renderer.drawImage(camera, world, subtitle, mode, 0);
+
         }
     }
 }

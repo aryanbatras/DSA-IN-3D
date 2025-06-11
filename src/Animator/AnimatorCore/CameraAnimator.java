@@ -30,12 +30,23 @@ public class CameraAnimator {
         this.speed = 0.0052;
     }
 
+    public void slideAlongY(int cameraFinal) {
+        double cameraInitial = camera.getM_Y();
+        double delta = (cameraFinal - cameraInitial) / frames;
+        for (int i = 0; i < frames; i++) {
+            camera.setM_Y(camera.getM_Y() + delta);
+            renderer.drawImage(camera, world, subtitle, mode, 0);
+            CameraAnimator.triggerOptionalCameraEffect(speed, rotationMode, this, camera);
+        }
+        Window.invokeReferences(renderer, camera, world, subtitle, mode);
+    }
+
     public void slideAlongX(double cameraFinal){
         double cameraInitial = camera.getM_X();
         double delta = (cameraFinal - cameraInitial) / frames;
         for (int i = 0; i < frames; i++) {
             camera.setM_X(camera.getM_X() + delta);
-            renderer.drawImage(camera, world, subtitle, mode);
+            renderer.drawImage(camera, world, subtitle, mode, 0);
             CameraAnimator.triggerOptionalCameraEffect(speed, rotationMode, this, camera);
         }
         Window.invokeReferences(renderer, camera, world, subtitle, mode);

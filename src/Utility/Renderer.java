@@ -24,10 +24,14 @@ public class Renderer {
     BufferedImage BEINGRENDERED, ENVIRONMENT, ACTUALFRAME;
     private double scale;
     private double antiAliasing;
+    private int lastInteractiveCaller;
+    private Camera savedCameraState;
+
 
     private static final Random RAND = new Random();
 
     public Renderer(String environmentImagePath) {
+
         this.scale = 0.5;
         this.antiAliasing = 1.0;
         int w = ((int)(Screen.getWidth() * scale)) & ~1;
@@ -36,6 +40,8 @@ public class Renderer {
         this.ENVIRONMENT = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
         this.ACTUALFRAME = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
         setENVIRONMENT(environmentImagePath);
+        this.lastInteractiveCaller = -1;
+        this.savedCameraState = null;
     }
 
     public void setScale(String environmentImagePath, double scale) {
@@ -68,12 +74,7 @@ public class Renderer {
         }
     }
 
-    public void drawImage(Camera camera, ArrayList<Shape> world, Subtitle subtitle, Render mode) {
-
-        final int width = BEINGRENDERED.getWidth( );
-        final int height = BEINGRENDERED.getHeight( );
-        final int[] pixels = ((DataBufferInt) BEINGRENDERED.getRaster( ).getDataBuffer( )).getData( );
-        final Camera finalCamera;
+    public void interactiveDrawImage(Camera camera, ArrayList<Shape> world, Subtitle subtitle, Render mode, int interactive){
 
         if (mode == Render.STEP_WISE_INTERACTIVE) {
             camera.setRadius(Window.getRadius());
@@ -84,8 +85,31 @@ public class Renderer {
             camera.setM_Z(Window.getMZ());
         }
 
-        finalCamera = camera.setCameraPerspective(width, height);
+        drawImage(camera, world, subtitle, mode, 1);
+    }
 
+    public void drawImage(Camera camera, ArrayList<Shape> world, Subtitle subtitle, Render mode, int interactiveCaller) {
+
+        final int width = BEINGRENDERED.getWidth( );
+        final int height = BEINGRENDERED.getHeight( );
+        final int[] pixels = ((DataBufferInt) BEINGRENDERED.getRaster( ).getDataBuffer( )).getData( );
+        final Camera finalCamera;
+
+
+        // Track transition
+        boolean transitionedFrom1to0 = (lastInteractiveCaller == 1 && interactiveCaller == 0);
+        boolean transitionedFrom0to1 = (lastInteractiveCaller == 0 && interactiveCaller == 1);
+
+        if (mode == Render.STEP_WISE_INTERACTIVE && transitionedFrom0to1) {
+            savedCameraState = camera.clone();
+        }
+
+        // 🔁 Camera restore logic (1 ➝ 0 transition)
+        if (mode == Render.STEP_WISE_INTERACTIVE && transitionedFrom1to0 && savedCameraState != null) {
+            camera.copyFrom(savedCameraState);
+        }
+
+        finalCamera = camera.setCameraPerspective(width, height);
 
         final ExecutorService executor = Executors.newFixedThreadPool(MAX_THREADS);
         final CountDownLatch latch = new CountDownLatch((width / TILE_SIZE + 1) * (height / TILE_SIZE + 1));
@@ -178,6 +202,8 @@ public class Renderer {
         } else if (mode == Render.STEP_WISE_INTERACTIVE) {
             Window.updateWindow(ACTUALFRAME);
         }
+
+        lastInteractiveCaller = interactiveCaller;
 
     }
 

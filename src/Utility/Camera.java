@@ -31,6 +31,24 @@ public class Camera {
         setup(lookfrom, lookat, vup, vfov, aspectRatio);
     }
 
+    public Camera clone() {
+        return new Camera(this);
+    }
+
+    public Camera(Camera other) {
+        copyFrom(other);
+    }
+
+    public void copyFrom(Camera other) {
+        this.radius = other.radius;
+        this.yaw = other.yaw;
+        this.pitch = other.pitch;
+        this.M_X = other.M_X;
+        this.M_Y = other.M_Y;
+        this.M_Z = other.M_Z;
+    }
+
+
     private void setup(Point lookfrom, Point lookat, Point vup, double vfov, double aspectRatio) {
         double theta = Math.toRadians(vfov);
         double h = Math.tan(theta / 2);
