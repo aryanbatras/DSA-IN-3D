@@ -25,6 +25,7 @@ public class JLinkedList {
     private double scale;
     private boolean built = false;
     private String userOutput;
+    private Algorithms.LinkedList algo;
     private boolean userProvidedOutput = false;
     private boolean preferSharedEncoder = false;
     private final Set<String> explicitlySetProperties;
@@ -41,6 +42,25 @@ public class JLinkedList {
         this.randomizer = null;
         this.built = true;
     }
+
+    public JLinkedList withAlgoVisualizer(Algorithms.LinkedList algo){
+        this.algo = algo;
+        /*
+         you have to build functions to
+         sort the internal array as per algo
+         because what algo handles is external array
+         */
+        this.built = false;
+        return this;
+    }
+
+    public void run() {
+        if (algo == null) { throw new IllegalStateException(" No algo was given via .withAlgoVisualizer() "); }
+        if (list.isEmpty()) { throw new IllegalStateException(" List is empty "); }
+        algo.run(this);
+    }
+
+
 
     public JLinkedList withInsertAnimation(Entrance entrance) {
         this.defaultEntrance = entrance;

@@ -36,7 +36,7 @@ public class Window {
     public static void initializeWindow() {
         if (initialized) return;
 
-        frame = new JFrame("3D Visualizer");
+        frame = new JFrame("3D Algorithms");
         frame.setSize(Screen.getWidth(), Screen.getHeight());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setBackground(java.awt.Color.black);

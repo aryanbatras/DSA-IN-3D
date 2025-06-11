@@ -29,6 +29,7 @@ public class JQueue {
 
     private double scale;
     private String userOutput;
+    private Algorithms.Queue algo;
     private boolean built = false;
     private boolean userProvidedOutput = false;
     private boolean preferSharedEncoder = false;
@@ -48,6 +49,24 @@ public class JQueue {
         front = 0;
         rear = 0;
     }
+
+    public JQueue withAlgoVisualizer(Algorithms.Queue algo){
+        this.algo = algo;
+        /*
+         you have to build functions to
+         sort the internal array as per algo
+         because what algo handles is external array
+         */
+        this.built = false;
+        return this;
+    }
+
+    public void run() {
+        if (algo == null) { throw new IllegalStateException(" No algo was given via .withAlgoVisualizer() "); }
+        if (queue.isEmpty()) { throw new IllegalStateException(" Queue is empty "); }
+        algo.run(this);
+    }
+
 
     public JQueue withInsertAnimation(Entrance entrance) {
         this.defaultEntrance = entrance;
@@ -304,7 +323,7 @@ public class JQueue {
         return e;
     }
 
-    public boolean isempty() {
+    public boolean isEmpty() {
         Code.markCurrentLine(); checkBuilt();
         boolean e = queue.isEmpty();
 

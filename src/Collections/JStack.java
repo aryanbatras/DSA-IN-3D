@@ -1,5 +1,6 @@
 package Collections;
 
+import Algorithms.Array;
 import Animations.Dynamo;
 import Rendering.*;
 import Rendering.View;
@@ -27,6 +28,7 @@ public class JStack {
     private double scale;
     private String userOutput;
     private boolean built = false;
+    private Algorithms.Stack algo;
     private boolean userProvidedOutput = false;
     private boolean preferSharedEncoder = false;
     private final Set<String> explicitlySetProperties;
@@ -43,6 +45,25 @@ public class JStack {
         this.randomizer = null;
         this.built = true;
     }
+
+
+    public JStack withAlgoVisualizer(Algorithms.Stack algo){
+        this.algo = algo;
+        /*
+         you have to build functions to
+         sort the internal array as per algo
+         because what algo handles is external array
+         */
+        this.built = false;
+        return this;
+    }
+
+    public void run() {
+        if (algo == null) { throw new IllegalStateException(" No algo was given via .withAlgoVisualizer() "); }
+        if (stack.isEmpty()) { throw new IllegalStateException(" Stack is empty "); }
+        algo.run(this);
+    }
+
 
     public JStack withInsertAnimation(Entrance entrance) {
         this.defaultEntrance = entrance;
@@ -295,7 +316,7 @@ public class JStack {
         return e;
     }
 
-    public boolean isempty() {
+    public boolean isEmpty() {
         Code.markCurrentLine(); checkBuilt();
         boolean e = stack.isEmpty();
 
@@ -310,6 +331,7 @@ public class JStack {
         Variable.update("size", e);
         return e;
     }
+
 }
 
 

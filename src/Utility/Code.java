@@ -52,14 +52,47 @@ public class Code {
         return null;
     }
 
+    private static List<String> mainSource = null;
+    private static List<String> sortingSource = null;
+    
+    static {
+        try {
+            // Load Main.java
+            mainSource = Files.readAllLines(Paths.get(findMainFile()));
+            
+            // Load SortingAlgorithm.java - adjust path as needed
+            String sortingPath = "src/Algorithms/Stack.java";
+            if (Files.exists(Paths.get(sortingPath))) {
+                sortingSource = Files.readAllLines(Paths.get(sortingPath));
+            } else {
+                System.err.println("Warning: Could not load SortingAlgorithm.java");
+            }
+        } catch (Exception e) {
+            System.err.println("Error loading source files: " + e.getMessage());
+        }
+    }
+
     public static void markCurrentLine() {
         if (!enabled) return;
 
-        for (StackTraceElement el : Thread.currentThread().getStackTrace()) {
-            if ("Main.java".equals(el.getFileName())) {
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        for (int i = 1; i < stackTrace.length; i++) {
+            StackTraceElement el = stackTrace[i];
+            
+            // Check if we're in SortingAlgorithm
+            if (el.getClassName().startsWith("Algorithms.Array") && sortingSource != null ||
+                    el.getClassName().startsWith("Algorithms.Stack") && sortingSource != null) {
                 currentLine.set(el.getLineNumber() - 1);
+                sourceLines = sortingSource;
+                return;
+            } 
+            // Check if we're in Main
+            else if ("Main.java".equals(el.getFileName()) && mainSource != null) {
+                currentLine.set(el.getLineNumber() - 1);
+                sourceLines = mainSource;
                 return;
             }
+            // Add more conditions here for other classes if needed
         }
     }
 
@@ -67,13 +100,13 @@ public class Code {
         double scale = Code.scale;
         int maxLines;
         if (scale <= 0.25) {
-            maxLines = 1;
-        } else if (scale <= 0.5) {
             maxLines = 3;
-        } else if (scale <= 0.75) {
+        } else if (scale <= 0.5) {
             maxLines = 5;
-        } else {
+        } else if (scale <= 0.75) {
             maxLines = 10;
+        } else {
+            maxLines = 15;
         }
         return maxLines;
     }

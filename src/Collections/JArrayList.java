@@ -1,5 +1,6 @@
 package Collections;
 
+import Algorithms.Array;
 import Animations.Dynamo;
 import Rendering.*;
 import Rendering.View;
@@ -23,6 +24,7 @@ public class JArrayList {
     private Entrance defaultEntrance;
     private Exit defaultExit;
 
+    private Array algo;
     private double scale;
     private String userOutput;
     private boolean built = false;
@@ -42,6 +44,24 @@ public class JArrayList {
         this.randomizer = null;
         this.built = true;
     }
+
+    public JArrayList withAlgoVisualizer(Array algo){
+        this.algo = algo;
+        /*
+         you have to build functions to
+         sort the internal array as per algo
+         because what algo handles is external array
+         */
+        this.built = false;
+        return this;
+    }
+
+    public void run() {
+        if (algo == null) { throw new IllegalStateException(" No algo was given via .withAlgoVisualizer() "); }
+        if (arr.isEmpty()) { throw new IllegalStateException(" Array is empty "); }
+        algo.run(this);
+    }
+
 
     public JArrayList withInsertAnimation(Entrance entrance) {
         this.defaultEntrance = entrance;

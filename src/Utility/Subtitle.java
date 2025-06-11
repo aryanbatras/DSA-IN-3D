@@ -10,6 +10,12 @@ public class Subtitle {
         this.dataStructure = dataStructure;
     }
 
+    public Subtitle(Subtitle subtitle) {
+        this.mode = subtitle.mode;
+        this.value = subtitle.value;
+        this.dataStructure = subtitle.dataStructure;
+    }
+
     public String getSubtitle() {
         return mode + " " + "value " + value + " ";
     }

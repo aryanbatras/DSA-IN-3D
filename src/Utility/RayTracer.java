@@ -177,11 +177,16 @@ public class RayTracer {
                                 float glow = (float) Math.pow(1.0f - Math.abs(normal.z), 3);
                                 float edge = (float) Math.pow(Math.abs(Math.sin(hitPoint.x * 8) * Math.cos(hitPoint.y * 8)), 4);
 
+                                float base = 0.8f;
+                                float emission = 0.5f * glow + 0.3f * edge;
+                                float shineBoost = 0.3f;
+
                                 return new Color(
-                                        Math.min(1f, hitColor.r * 0.5f + bounce.r * 0.4f + glow * 0.1f + edge * 0.1f),
-                                        Math.min(1f, hitColor.g * 0.5f + bounce.g * 0.4f + glow * 0.2f + edge * 0.1f),
-                                        Math.min(1f, hitColor.b * 0.5f + bounce.b * 0.5f + glow * 0.3f + edge * 0.2f)
+                                        Math.min(1f, hitColor.r * base + bounce.r * 0.2f + emission + shineBoost),
+                                        Math.min(1f, hitColor.g * base + bounce.g * 0.2f + emission + shineBoost),
+                                        Math.min(1f, hitColor.b * base + bounce.b * 0.3f + emission + shineBoost)
                                 );
+
                             }
                         }
                     }
