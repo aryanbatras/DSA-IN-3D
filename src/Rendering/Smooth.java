@@ -1,6 +1,6 @@
 package Rendering;
 
-public enum AntiAliasing {
+public enum Smooth {
     NONE(1.0),
     X2(2.0),
     X4(4.0),
@@ -8,7 +8,7 @@ public enum AntiAliasing {
 
     private final double path;
 
-    AntiAliasing(double path) {
+    Smooth(double path) {
         this.path = path;
     }
 }

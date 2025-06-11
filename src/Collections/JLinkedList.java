@@ -1,13 +1,13 @@
 package Collections;
 
-import Randomizer.JLinkedListRandomizer;
-import Animator.JLinkedListAnimator;
+import Animations.Dynamo;
+import Animations.Animator.JLinkedListAnimator;
 
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-import Rendering.Camera;
+import Rendering.View;
 import Animations.*;
 import Rendering.*;
 import Utility.*;
@@ -18,9 +18,9 @@ public class JLinkedList {
 
     private Render mode;
     private Encoder encoder;
-    private JLinkedListRandomizer randomizer;
-    private JLinkedListInsertAnimation defaultInsertAnimation;
-    private JLinkedListRemoveAnimation defaultRemoveAnimation;
+    private Dynamo randomizer;
+    private Entrance defaultEntrance;
+    private Exit defaultExit;
 
     private double scale;
     private boolean built = false;
@@ -36,27 +36,27 @@ public class JLinkedList {
         this.list = new LinkedList<>();
         this.animator = new JLinkedListAnimator();
         this.explicitlySetProperties = new HashSet<>();
-        this.defaultInsertAnimation = JLinkedListInsertAnimation.SLIDE_FROM_RIGHT;
-        this.defaultRemoveAnimation = JLinkedListRemoveAnimation.SLIDE_UP;
+        this.defaultEntrance = Entrance.SLIDE_FROM_RIGHT;
+        this.defaultExit = Exit.SLIDE_UP;
         this.randomizer = null;
         this.built = true;
     }
 
-    public JLinkedList withInsertAnimation(JLinkedListInsertAnimation insertAnimation) {
-        this.defaultInsertAnimation = insertAnimation;
+    public JLinkedList withInsertAnimation(Entrance entrance) {
+        this.defaultEntrance = entrance;
         explicitlySetProperties.add("insertAnimation");
         this.built = false;
         return this;
     }
 
-    public JLinkedList withRemoveAnimation(JLinkedListRemoveAnimation removeAnimation) {
-        this.defaultRemoveAnimation = removeAnimation;
+    public JLinkedList withRemoveAnimation(Exit exit) {
+        this.defaultExit = exit;
         explicitlySetProperties.add("removeAnimation");
         this.built = false;
         return this;
     }
 
-    public JLinkedList withRandomizer(JLinkedListRandomizer randomizer) {
+    public JLinkedList withRandomizer(Dynamo randomizer) {
         this.randomizer = randomizer;
         this.built = false;
         return this;
@@ -70,7 +70,7 @@ public class JLinkedList {
         return this;
     }
 
-    public JLinkedList withQuality(Quality quality) {
+    public JLinkedList withQuality(Resolution quality) {
         switch (quality) {
             case BEST -> scale = 1.0;
             case GOOD -> scale = 0.75;
@@ -96,14 +96,14 @@ public class JLinkedList {
         return this;
     }
 
-    public JLinkedList withMaterial(Material material) {
+    public JLinkedList withMaterial(Texture material) {
         animator.setMaterial(material);
         explicitlySetProperties.add("material");
         this.built = false;
         return this;
     }
 
-    public JLinkedList withBackground(Background bg) {
+    public JLinkedList withBackground(Scenery bg) {
         String background = bg.toString();
         animator.setBackground(background);
         explicitlySetProperties.add("background");
@@ -111,14 +111,14 @@ public class JLinkedList {
         return this;
     }
 
-    public JLinkedList withParticle(Particle particle) {
+    public JLinkedList withParticle(Effect particle) {
         animator.setParticle(particle);
         explicitlySetProperties.add("particle");
         this.built = false;
         return this;
     }
 
-    public JLinkedList withStepsPerAnimation(Steps step) {
+    public JLinkedList withStepsPerAnimation(Frames step) {
         int steps = step.getFrames();
         animator.setFPS(steps);
         explicitlySetProperties.add("steps");
@@ -126,13 +126,13 @@ public class JLinkedList {
         return this;
     }
 
-    public JLinkedList withCameraRotations(Camera rotationType) {
+    public JLinkedList withCameraRotations(View rotationType) {
         animator.setCameraRotation(rotationType);
         explicitlySetProperties.add("cameraRotation");
         return this;
     }
 
-    public JLinkedList withAntiAliasing(AntiAliasing antiAliasing) {
+    public JLinkedList withAntiAliasing(Smooth antiAliasing) {
         double alias = 0;
         switch (antiAliasing) {
             case NONE -> alias = 1.0;
@@ -146,7 +146,7 @@ public class JLinkedList {
     }
 
 
-    public JLinkedList withCameraSpeed(Speed cs) {
+    public JLinkedList withCameraSpeed(Pace cs) {
         explicitlySetProperties.add("cameraSpeed");
         double speed = cs.getMultiplier();
         animator.setCameraSpeed(speed);
@@ -160,7 +160,7 @@ public class JLinkedList {
         return this;
     }
 
-    public JLinkedList withCameraFocus(Focus focus) {
+    public JLinkedList withCameraFocus(Zoom focus) {
         double value = focus.getMultiplier();
         animator.setCameraFocus(value);
         this.built = false;
@@ -171,34 +171,34 @@ public class JLinkedList {
 
         if (randomizer != null) {
             if (randomizer.shouldRandomizeInsertAnimation()  && !explicitlySetProperties.contains("insertAnimation")) {
-                this.defaultInsertAnimation = JLinkedListRandomizer.randomInsertAnimation();
+                this.defaultEntrance = Dynamo.randomInsertAnimation();
             }
             if (randomizer.shouldRandomizeRemoveAnimation()  && !explicitlySetProperties.contains("removeAnimation")) {
-                this.defaultRemoveAnimation = JLinkedListRandomizer.randomRemoveAnimation();
+                this.defaultExit = Dynamo.randomRemoveAnimation();
             }
             if (randomizer.shouldRandomizeRenderMode() && !explicitlySetProperties.contains("renderMode")) {
-                withRenderMode(JLinkedListRandomizer.randomRenderMode());
+                withRenderMode(Dynamo.randomRenderMode());
             }
             if (randomizer.shouldRandomizeQuality() && !explicitlySetProperties.contains("quality")) {
-                withQuality(JLinkedListRandomizer.randomQuality());
+                withQuality(Dynamo.randomQuality());
             }
             if (randomizer.shouldRandomizeMaterial() && !explicitlySetProperties.contains("material")) {
-                withMaterial(JLinkedListRandomizer.randomMaterial());
+                withMaterial(Dynamo.randomMaterial());
             }
             if (randomizer.shouldRandomizeBackground() && !explicitlySetProperties.contains("background")) {
-                withBackground(JLinkedListRandomizer.randomBackground());
+                withBackground(Dynamo.randomBackground());
             }
             if (randomizer.shouldRandomizeParticle() && !explicitlySetProperties.contains("particle")) {
-                withParticle(JLinkedListRandomizer.randomParticle());
+                withParticle(Dynamo.randomParticle());
             }
             if (randomizer.shouldRandomizeSteps() && !explicitlySetProperties.contains("steps")) {
-                withStepsPerAnimation(JLinkedListRandomizer.randomSteps());
+                withStepsPerAnimation(Dynamo.randomSteps());
             }
             if (randomizer.shouldRandomizeCameraRotation() && !explicitlySetProperties.contains("cameraRotation")) {
-                withCameraRotations(JLinkedListRandomizer.randomCameraRotation());
+                withCameraRotations(Dynamo.randomCameraRotation());
             }
             if (randomizer.shouldRandomizeCameraSpeed() && !explicitlySetProperties.contains("cameraSpeed")) {
-                withCameraSpeed(JLinkedListRandomizer.randomCameraSpeed());
+                withCameraSpeed(Dynamo.randomCameraSpeed());
             }
         }
 
@@ -245,11 +245,11 @@ public class JLinkedList {
         list.add(value);
 
         if (mode != Render.DISABLED) {
-            animator.runAddAnimation(value, randomizer != null ? randomizer.randomInsertAnimation() : defaultInsertAnimation);
+            animator.runAddAnimation(value, randomizer != null ? randomizer.randomInsertAnimation() : defaultEntrance);
         }
     }
 
-    public void add(int value, JLinkedListInsertAnimation animation) {
+    public void add(int value, Entrance animation) {
         Code.markCurrentLine();
         checkBuilt();
         Variable.update("add", value);
@@ -269,12 +269,12 @@ public class JLinkedList {
         list.remove(index);
 
         if (mode != Render.DISABLED) {
-            animator.runRemoveAnimation(index, randomizer != null ? randomizer.randomRemoveAnimation() : defaultRemoveAnimation);
+            animator.runRemoveAnimation(index, randomizer != null ? randomizer.randomRemoveAnimation() : defaultExit);
         }
         Variable.update("remove", index, value);
     }
 
-    public void remove(int index, JLinkedListRemoveAnimation animation) {
+    public void remove(int index, Exit animation) {
         Code.markCurrentLine();
         checkBuilt();
 

@@ -1,6 +1,6 @@
 package Rendering;
 
-public enum Steps {
+public enum Frames {
     VERY_FAST(1),
     FAST(5),
     NORMAL(15),
@@ -11,7 +11,7 @@ public enum Steps {
 
     private final int framesPerAnimation;
 
-    Steps(int framesPerAnimation) {
+    Frames(int framesPerAnimation) {
         this.framesPerAnimation = framesPerAnimation;
     }
 

@@ -1,12 +1,12 @@
-package Animator;
+package Animations.Animator;
 
-import Animator.AnimatorCore.BoxAnimator;
-import Animator.AnimatorCore.CameraAnimator;
+import Animations.Animator.AnimatorCore.BoxAnimator;
+import Animations.Animator.AnimatorCore.CameraAnimator;
 
 import Animations.*;
 
 import Shapes.JBox;
-import Rendering.Camera;
+import Rendering.View;
 
 import Utility.*;
 import Utility.Renderer;
@@ -32,9 +32,9 @@ public class JLinkedListAnimator {
     private Random rand;
     private Render mode;
     private double scale;
-    private Material material;
+    private Texture material;
     private String background;
-    private Particle particle;
+    private Effect particle;
     private boolean randomBackground;
     private double hidePointerFirstGlance;
 
@@ -43,8 +43,8 @@ public class JLinkedListAnimator {
         this.positionAlongX = 0;
         this.framesPerSecond = 20;
         this.world = new ArrayList<>();
-        this.material = Material.METAL;
-        this.particle = Particle.NONE;
+        this.material = Texture.METAL;
+        this.particle = Effect.NONE;
         this.camera = new Utility.Camera();
         this.background = "/Resources/lake.jpg";
         this.renderer = new Renderer(background);
@@ -62,7 +62,7 @@ public class JLinkedListAnimator {
                 new Point(0, 0, 0.1),
                 0, 0.42, 0.1,
                 new Color(1.0f, 0.82f, 0.0f),
-                Material.METAL, 0.0f, null,
+                Texture.METAL, 0.0f, null,
                 particle
         );
         return pointer;
@@ -94,11 +94,11 @@ public class JLinkedListAnimator {
         renderer.setBackground(background);
     }
 
-    public void setMaterial(Material material) {
+    public void setMaterial(Texture material) {
         this.material = material;
     }
 
-    public void setParticle(Particle particle) {
+    public void setParticle(Effect particle) {
         this.particle = particle;
     }
 
@@ -106,7 +106,7 @@ public class JLinkedListAnimator {
         renderer.setAntialiasing(antiAliasing);
     }
 
-    public void setCameraRotation(Camera rotationType) {
+    public void setCameraRotation(View rotationType) {
         cameraAnimator.setCameraRotation(rotationType);
         boxAnimator.setCameraRotation(cameraAnimator, rotationType);
     }
@@ -117,7 +117,7 @@ public class JLinkedListAnimator {
     }
 
     private void setRandomBackground() {
-        Background randomBg = Background.values()[rand.nextInt(Background.values().length)];
+        Scenery randomBg = Scenery.values()[rand.nextInt(Scenery.values().length)];
         setBackground(randomBg.toString());
     }
 
@@ -129,7 +129,7 @@ public class JLinkedListAnimator {
         this.camera.setRadius(camera.getRadius() - focus);
     }
 
-    public void runAddAnimation(int value, JLinkedListInsertAnimation animation) {
+    public void runAddAnimation(int value, Entrance animation) {
 
         if(randomBackground){ setRandomBackground(); }
 
@@ -183,7 +183,7 @@ public class JLinkedListAnimator {
         positionAlongX--;
     }
 
-    public void runRemoveAnimation(int oldIndex, JLinkedListRemoveAnimation animation) {
+    public void runRemoveAnimation(int oldIndex, Exit animation) {
         if(randomBackground){ setRandomBackground(); }
 
         if (mode == Render.STEP_WISE || mode == Render.STEP_WISE_INTERACTIVE) {

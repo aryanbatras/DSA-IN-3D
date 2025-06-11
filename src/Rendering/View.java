@@ -1,6 +1,6 @@
 package Rendering;
 
-public enum Camera {
+public enum View {
     NONE,
     ROTATE_YAW,
     ROTATE_PITCH,

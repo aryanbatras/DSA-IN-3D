@@ -1,6 +1,7 @@
-package Animator.AnimatorCore;
+package Animations.Animator.AnimatorCore;
 
 import Rendering.Render;
+import Rendering.View;
 import Shapes.JBox;
 import Shapes.Core.Shape;
 import Utility.*;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 public class BoxAnimator {
     private static final double BOUNCE_HEIGHT = 0.5;
     private CameraAnimator rotationModeAnimator;
-    private Rendering.Camera rotationMode;
+    private View rotationMode;
     private final ArrayList<Shape> world;
     private final Subtitle subtitle;
     private final Renderer renderer;
@@ -20,7 +21,7 @@ public class BoxAnimator {
     private double speed;
 
     public BoxAnimator(Renderer renderer, Camera camera, ArrayList<Shape> world, Subtitle subtitle, int framesPerSecond) {
-        this.rotationMode = Rendering.Camera.NONE;
+        this.rotationMode = View.NONE;
         this.rotationModeAnimator = null;
         this.frames = framesPerSecond;
         this.subtitle = subtitle;
@@ -42,7 +43,7 @@ public class BoxAnimator {
         this.mode = mode;
     }
 
-    public void setCameraRotation(CameraAnimator cameraAnimator, Rendering.Camera rotationType) {
+    public void setCameraRotation(CameraAnimator cameraAnimator, View rotationType) {
         this.rotationMode = rotationType;
         this.rotationModeAnimator = cameraAnimator;
     }

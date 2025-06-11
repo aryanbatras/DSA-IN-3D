@@ -1,10 +1,10 @@
-package Animator;
-import Animator.AnimatorCore.BoxAnimator;
-import Animator.AnimatorCore.CameraAnimator;
+package Animations.Animator;
+import Animations.Animator.AnimatorCore.BoxAnimator;
+import Animations.Animator.AnimatorCore.CameraAnimator;
 
 import Animations.*;
 
-import Rendering.Camera;
+import Rendering.View;
 import Shapes.JBox;
 import Shapes.Core.Shape;
 import Utility.*;
@@ -14,15 +14,14 @@ import Rendering.*;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Stack;
 
-public class JStackAnimator {
+public class JArrayListAnimator {
     private final ArrayList<Shape> world;
     private final Renderer renderer;
     private final Utility.Camera camera;
     private Subtitle subtitle;
 
-    private int positionAlongY;
+    private int positionAlongX;
     private int framesPerSecond;
 
     private final CameraAnimator cameraAnimator;
@@ -30,41 +29,27 @@ public class JStackAnimator {
 
     private Render mode;
     private double scale;
-    private Material material;
+    private Texture material;
     private String background;
-    private Particle particle;
+    private Effect particle;
     private boolean randomBackground;
     private Random rand;
 
-    private JBox top;
-
-    public JStackAnimator() {
+    public JArrayListAnimator() {
         this.scale = 0.5;
-        rand = new Random();
-        this.positionAlongY = 0;
+        this.positionAlongX = 0;
         this.framesPerSecond = 20;
-        this.particle = Particle.NONE;
-        this.world = new ArrayList<>();
-        this.material = Material.METAL;
         this.camera = new Utility.Camera();
+        this.world = new ArrayList<>();
+        this.material = Texture.METAL;
+        this.particle = Effect.NONE;
         this.background = "/Resources/lake.jpg";
         this.renderer = new Renderer(background);
-        this.subtitle = new Subtitle("Stack");
+        this.subtitle = new Subtitle("ArrayList");
         this.cameraAnimator = new CameraAnimator(renderer, camera, world, subtitle, framesPerSecond);
         this.boxAnimator = new BoxAnimator(renderer, camera, world, subtitle, framesPerSecond);
         this.randomBackground = false;
-        world.add(setTopPointer());
-    }
-
-    private JBox setTopPointer() {
-        this.top = new JBox(
-                new Point(-7.5, +5, 5),
-                2.5, 1.2, 0.15,
-                new Color(1.0f, 0.82f, 0.0f),
-                material, 0, null,
-                particle
-        );
-        return top;
+        rand = new Random();
     }
 
     public void setFPS(int fps) {
@@ -93,21 +78,19 @@ public class JStackAnimator {
         renderer.setBackground(background);
     }
 
-    public void setMaterial(Material material) {
+    public void setMaterial(Texture material) {
         this.material = material;
-        this.top.material = material;
     }
 
-    public void setParticle(Particle particle) {
+    public void setParticle(Effect particle) {
         this.particle = particle;
-        this.top.particleEffect = particle;
     }
 
     public void setAntiAliasing(double antiAliasing) {
         renderer.setAntialiasing(antiAliasing);
     }
 
-    public void setCameraRotation(Camera rotationType) {
+    public void setCameraRotation(View rotationType) {
         cameraAnimator.setCameraRotation(rotationType);
         boxAnimator.setCameraRotation(cameraAnimator, rotationType);
     }
@@ -122,7 +105,7 @@ public class JStackAnimator {
     }
 
     private void setRandomBackground() {
-        Background randomBg = Background.values()[rand.nextInt(Background.values().length)];
+        Scenery randomBg = Scenery.values()[rand.nextInt(Scenery.values().length)];
         setBackground(randomBg.toString());
     }
 
@@ -130,7 +113,7 @@ public class JStackAnimator {
         this.camera.setRadius(camera.getRadius() - focus);
     }
 
-    public void runAddAnimation(int value, JStackInsertAnimation animation) {
+    public void runAddAnimation(int value, Entrance animation) {
         if(randomBackground){ setRandomBackground(); }
 
         if (mode == Render.STEP_WISE || mode == Render.STEP_WISE_INTERACTIVE) {
@@ -140,29 +123,18 @@ public class JStackAnimator {
 
         Window.invokeReferences(renderer, camera, world, subtitle, mode);
 
-        double finalX = 0;
-        double finalY = positionAlongY + 5;
-
-        positionAlongY += 5;
-        cameraAnimator.slideAlongY(positionAlongY);
-        
-        // Move the top pointer up
-        boxAnimator.slideUp(top, positionAlongY);
-
-        // Create and add the new box
+        double finalX = positionAlongX;
+        double finalY = 0;
         JBox JBox = new JBox(
-                new Point(finalX, finalY, 10),
-                8.2, 5, 0.25,
+                new Point(finalX, finalY, 0),
+                1, 1, 0.1,
                 new Color(0.4f, 0.7f, 1.0f),
                 material, 0, value,
                 particle
         );
         world.add(JBox);
-        
-        subtitle.setMode("Pushing");
+        subtitle.setMode("Inserting");
         subtitle.setValue(String.valueOf(value));
-        
-        // Animate the new box
         switch (animation) {
             case BOUNCE -> boxAnimator.bounceIn(JBox, finalY);
             case SLIDE_FROM_TOP -> boxAnimator.slideFromTop(JBox, finalY);
@@ -171,24 +143,25 @@ public class JStackAnimator {
             case SCALE_POP -> boxAnimator.scalePop(JBox);
             case SHAKE -> boxAnimator.shake(JBox);
         }
+        cameraAnimator.slideAlongX(positionAlongX);
+        positionAlongX--;
     }
 
-    public void runRemoveAnimation(int oldIndex, JStackRemoveAnimation animation) {
+    public void runRemoveAnimation(int index, Exit animation) {
         if(randomBackground){ setRandomBackground(); }
 
         if (mode == Render.STEP_WISE || mode == Render.STEP_WISE_INTERACTIVE) {
             Window.waitUntilNextStep();
             Window.setScale(scale);
         }
+
         Window.invokeReferences(renderer, camera, world, subtitle, mode);
 
-        int index = oldIndex + 1;
         JBox JBox = (JBox) world.get(index);
-        
-        subtitle.setMode("Popping");
+        double originalX = JBox.center.x;
+        subtitle.setMode("Removing");
         subtitle.setValue(String.valueOf(JBox.val));
-        
-        // Animate the box removal
+        cameraAnimator.slideAlongX(originalX);
         switch (animation) {
             case FADE_UP -> boxAnimator.fadeOutAndUp(JBox, JBox.center.y + 5);
             case SLIDE_UP -> boxAnimator.slideUp(JBox, JBox.center.y + 5);
@@ -196,34 +169,29 @@ public class JStackAnimator {
             case SHAKE_AND_FADE -> boxAnimator.shakeAndFade(JBox);
             case SHRINK_AND_DROP -> boxAnimator.shrinkAndDrop(JBox);
         }
-        
-        // Remove the box from the world
         world.remove(JBox);
-        
-        // Move the camera down and update the top pointer
-        positionAlongY -= 5;
-        cameraAnimator.slideAlongY(positionAlongY);
-        boxAnimator.slideDown(top, positionAlongY);
+        boxAnimator.shiftElementsLeft(index);
+        positionAlongX++;
     }
 
-    public void runHighlightAnimation(int oldIndex) {
+    public void runHighlightAnimation(int index) {
         if(randomBackground){ setRandomBackground(); }
 
         if (mode == Render.STEP_WISE || mode == Render.STEP_WISE_INTERACTIVE) {
             Window.waitUntilNextStep();
             Window.setScale(scale);
         }
-        Window.invokeReferences(renderer, camera, world, subtitle, mode);
 
-        int index = oldIndex + 1;
+        Window.invokeReferences(renderer, camera, world, subtitle, mode);
 
         JBox JBox = (JBox) world.get(index);
         subtitle.setMode("Getting");
         subtitle.setValue(String.valueOf(JBox.val));
+        cameraAnimator.slideAlongX(JBox.center.x);
         boxAnimator.highlight(JBox);
     }
 
-    public void runHybridAnimation(int oldIndex, int value) {
+    public void runHybridAnimation(int index, int value) {
         if(randomBackground){ setRandomBackground(); }
 
         if (mode == Render.STEP_WISE || mode == Render.STEP_WISE_INTERACTIVE) {
@@ -232,11 +200,10 @@ public class JStackAnimator {
         }
         Window.invokeReferences(renderer, camera, world, subtitle, mode);
 
-        int index = oldIndex + 1;
-
         JBox JBox = (JBox) world.get(index);
         subtitle.setMode("Updating");
         subtitle.setValue(String.format("%d → %d", JBox.val, value));
+        cameraAnimator.slideAlongX(JBox.center.x);
         boxAnimator.updateValue(JBox, value);
         JBox.val = value; JBox.setDigitsFromNumber(value);
         boxAnimator.shakeSlow(JBox);

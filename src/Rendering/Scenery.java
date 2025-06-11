@@ -1,6 +1,6 @@
 package Rendering;
 
-public enum Background {
+public enum Scenery {
     LAKE("/Resources/lake.jpg"),
     LAPA("/Resources/lapa.jpg"),
     POOL("/Resources/pool.jpg"),
@@ -23,7 +23,7 @@ public enum Background {
 
     private final String path;
 
-    Background(String path) {
+    Scenery(String path) {
         this.path = path;
     }
 

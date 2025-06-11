@@ -1,16 +1,16 @@
 package Shapes;
 
-import Rendering.Material;
-import Rendering.Particle;
+import Rendering.Texture;
+import Rendering.Effect;
 import Shapes.Core.Shape;
 import Utility.*;
 
 public class JBox extends Shape {
-    public Particle particleEffect;
+    public Effect particleEffect;
     public Point center;
     public double width, height, depth;
     public Color color;
-    public Material material;
+    public Texture material;
     public double fuzz;
     public Integer val;
 
@@ -20,7 +20,7 @@ public class JBox extends Shape {
         this.width = width;
     }
 
-    public JBox(Point center, double width, double height, double depth, Color color, Material material, double fuzz, Integer value, Particle particles) {
+    public JBox(Point center, double width, double height, double depth, Color color, Texture material, double fuzz, Integer value, Effect particles) {
         this.particleEffect = particles;
         this.center = new Point(center);
         this.color = new Color(color);

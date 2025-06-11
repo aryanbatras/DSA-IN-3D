@@ -1,16 +1,16 @@
 package Shapes;
-import Rendering.Material;
+import Rendering.Texture;
 import Shapes.Core.Shape;
 import Utility.*;
 
 public class Sphere extends Shape {
-    public Material material;
+    public Texture material;
     public Point center;
     double radius;
     public double fuzz;
     public Color color;
 
-    public Sphere(Point center, double radius, Color c, Material m, double f){
+    public Sphere(Point center, double radius, Color c, Texture m, double f){
         this.center = new Point(center);
         this.color = new Color(c);
         this.radius = radius;

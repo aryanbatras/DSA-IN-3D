@@ -1,6 +1,6 @@
 package Rendering;
 
-public enum Material {
+public enum Texture {
     METAL,
     CHROME,
     GLOSSY,

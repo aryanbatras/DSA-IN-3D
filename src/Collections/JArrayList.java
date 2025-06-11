@@ -1,9 +1,8 @@
 package Collections;
 
-import Randomizer.JArrayListRandomizer;
-import Randomizer.JArrayListRandomizer;
+import Animations.Dynamo;
 import Rendering.*;
-import Rendering.Camera;
+import Rendering.View;
 import Utility.*;
 
 import Animations.*;
@@ -11,7 +10,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import Animator.JArrayListAnimator;
+import Animations.Animator.JArrayListAnimator;
 
 public class JArrayList {
 
@@ -20,9 +19,9 @@ public class JArrayList {
 
     private Render mode;
     private Encoder encoder;
-    private JArrayListRandomizer randomizer;
-    private JArrayListInsertAnimation defaultInsertAnimation;
-    private JArrayListRemoveAnimation defaultRemoveAnimation;
+    private Dynamo randomizer;
+    private Entrance defaultEntrance;
+    private Exit defaultExit;
 
     private double scale;
     private String userOutput;
@@ -38,27 +37,27 @@ public class JArrayList {
         this.arr = new ArrayList<>();
         this.animator = new JArrayListAnimator();
         this.explicitlySetProperties = new HashSet<>();
-        this.defaultInsertAnimation = JArrayListInsertAnimation.SLIDE_FROM_RIGHT;
-        this.defaultRemoveAnimation = JArrayListRemoveAnimation.SLIDE_UP;
+        this.defaultEntrance = Entrance.SLIDE_FROM_RIGHT;
+        this.defaultExit = Exit.SLIDE_UP;
         this.randomizer = null;
         this.built = true;
     }
 
-    public JArrayList withInsertAnimation(JArrayListInsertAnimation insertAnimation) {
-        this.defaultInsertAnimation = insertAnimation;
+    public JArrayList withInsertAnimation(Entrance entrance) {
+        this.defaultEntrance = entrance;
         explicitlySetProperties.add("insertAnimation");
         this.built = false;
         return this;
     }
 
-    public JArrayList withRemoveAnimation(JArrayListRemoveAnimation removeAnimation) {
-        this.defaultRemoveAnimation = removeAnimation;
+    public JArrayList withRemoveAnimation(Exit exit) {
+        this.defaultExit = exit;
         explicitlySetProperties.add("removeAnimation");
         this.built = false;
         return this;
     }
 
-    public JArrayList withRandomizer(JArrayListRandomizer randomizer) {
+    public JArrayList withRandomizer(Dynamo randomizer) {
         this.randomizer = randomizer;
         this.built = false;
         return this;
@@ -72,7 +71,7 @@ public class JArrayList {
         return this;
     }
 
-    public JArrayList withQuality(Quality quality) {
+    public JArrayList withQuality(Resolution quality) {
         switch (quality) {
             case BEST -> scale = 1.0;
             case GOOD -> scale = 0.75;
@@ -98,14 +97,14 @@ public class JArrayList {
         return this;
     }
 
-    public JArrayList withMaterial(Material material) {
+    public JArrayList withMaterial(Texture material) {
         animator.setMaterial(material);
         explicitlySetProperties.add("material");
         this.built = false;
         return this;
     }
 
-    public JArrayList withBackground(Background bg) {
+    public JArrayList withBackground(Scenery bg) {
         String background = bg.toString();
         animator.setBackground(background);
         explicitlySetProperties.add("background");
@@ -113,14 +112,14 @@ public class JArrayList {
         return this;
     }
 
-    public JArrayList withParticle(Particle particle) {
+    public JArrayList withParticle(Effect particle) {
         animator.setParticle(particle);
         explicitlySetProperties.add("particle");
         this.built = false;
         return this;
     }
 
-    public JArrayList withStepsPerAnimation(Steps step) {
+    public JArrayList withStepsPerAnimation(Frames step) {
         int steps = step.getFrames();
         animator.setFPS(steps);
         explicitlySetProperties.add("steps");
@@ -129,13 +128,13 @@ public class JArrayList {
     }
 
 
-    public JArrayList withCameraRotations(Camera rotationType) {
+    public JArrayList withCameraRotations(View rotationType) {
         animator.setCameraRotation(rotationType);
         explicitlySetProperties.add("cameraRotation");
         return this;
     }
 
-    public JArrayList withAntiAliasing(AntiAliasing antiAliasing) {
+    public JArrayList withAntiAliasing(Smooth antiAliasing) {
         double alias = 0;
         switch (antiAliasing) {
             case NONE -> alias = 1.0;
@@ -148,7 +147,7 @@ public class JArrayList {
     return this;
     }
 
-    public JArrayList withCameraSpeed(Speed cs){
+    public JArrayList withCameraSpeed(Pace cs){
         double speed = cs.getMultiplier( );
         animator.setCameraSpeed(speed);
         explicitlySetProperties.add("cameraSpeed");
@@ -161,7 +160,7 @@ public class JArrayList {
         return this;
     }
 
-    public JArrayList withCameraFocus(Focus focus) {
+    public JArrayList withCameraFocus(Zoom focus) {
         double value = focus.getMultiplier();
         animator.setCameraFocus(value);
         this.built = false;
@@ -173,34 +172,34 @@ public class JArrayList {
 
         if (randomizer != null) {
             if (randomizer.shouldRandomizeInsertAnimation()  && !explicitlySetProperties.contains("insertAnimation")) {
-                this.defaultInsertAnimation = JArrayListRandomizer.randomInsertAnimation();
+                this.defaultEntrance = Dynamo.randomInsertAnimation();
             }
             if (randomizer.shouldRandomizeRemoveAnimation()  && !explicitlySetProperties.contains("removeAnimation")) {
-                this.defaultRemoveAnimation = JArrayListRandomizer.randomRemoveAnimation();
+                this.defaultExit = Dynamo.randomRemoveAnimation();
             }
             if (randomizer.shouldRandomizeRenderMode() && !explicitlySetProperties.contains("renderMode")) {
-                withRenderMode(JArrayListRandomizer.randomRenderMode());
+                withRenderMode(Dynamo.randomRenderMode());
             }
             if (randomizer.shouldRandomizeQuality() && !explicitlySetProperties.contains("quality")) {
-                withQuality(JArrayListRandomizer.randomQuality());
+                withQuality(Dynamo.randomQuality());
             }
             if (randomizer.shouldRandomizeMaterial() && !explicitlySetProperties.contains("material")) {
-                withMaterial(JArrayListRandomizer.randomMaterial());
+                withMaterial(Dynamo.randomMaterial());
             }
             if (randomizer.shouldRandomizeBackground() && !explicitlySetProperties.contains("background")) {
-                withBackground(JArrayListRandomizer.randomBackground());
+                withBackground(Dynamo.randomBackground());
             }
             if (randomizer.shouldRandomizeParticle() && !explicitlySetProperties.contains("particle")) {
-                withParticle(JArrayListRandomizer.randomParticle());
+                withParticle(Dynamo.randomParticle());
             }
             if (randomizer.shouldRandomizeSteps() && !explicitlySetProperties.contains("steps")) {
-                withStepsPerAnimation(JArrayListRandomizer.randomSteps());
+                withStepsPerAnimation(Dynamo.randomSteps());
             }
             if (randomizer.shouldRandomizeCameraRotation() && !explicitlySetProperties.contains("cameraRotation")) {
-                withCameraRotations(JArrayListRandomizer.randomCameraRotation());
+                withCameraRotations(Dynamo.randomCameraRotation());
             }
             if (randomizer.shouldRandomizeCameraSpeed() && !explicitlySetProperties.contains("cameraSpeed")) {
-                withCameraSpeed(JArrayListRandomizer.randomCameraSpeed());
+                withCameraSpeed(Dynamo.randomCameraSpeed());
             }
         }
 
@@ -252,10 +251,10 @@ public class JArrayList {
         Variable.update("add", value);
 
         arr.add(value);
-        if (mode != Render.DISABLED) { animator.runAddAnimation(value, randomizer != null ? randomizer.randomInsertAnimation() : defaultInsertAnimation); }
+        if (mode != Render.DISABLED) { animator.runAddAnimation(value, randomizer != null ? randomizer.randomInsertAnimation() : defaultEntrance); }
     }
 
-    public void add(int value, JArrayListInsertAnimation boxAnimation) {
+    public void add(int value, Entrance boxAnimation) {
         Code.markCurrentLine(); checkBuilt();
         Variable.update("add", value);
 
@@ -268,10 +267,10 @@ public class JArrayList {
         Variable.update("remove", index, arr.get(index));
 
         arr.remove(index);
-        if(mode != Render.DISABLED){ animator.runRemoveAnimation(index, randomizer != null ? randomizer.randomRemoveAnimation() : defaultRemoveAnimation);}
+        if(mode != Render.DISABLED){ animator.runRemoveAnimation(index, randomizer != null ? randomizer.randomRemoveAnimation() : defaultExit);}
     }
 
-    public void remove(int index, JArrayListRemoveAnimation boxAnimation) {
+    public void remove(int index, Exit boxAnimation) {
         Code.markCurrentLine(); checkBuilt();
         Variable.update("remove", index, arr.get(index));
 

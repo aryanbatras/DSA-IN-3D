@@ -1,13 +1,11 @@
-package Randomizer;
+package Animations;
 
-import Animations.JLinkedListInsertAnimation;
-import Animations.JLinkedListRemoveAnimation;
 import Rendering.*;
 
 import java.util.Random;
 import java.util.function.Supplier;
 
-public final class JLinkedListRandomizer {
+public final class Dynamo {
     private static final Random rand = new Random();
     private boolean randomizeInsertAnimation = false;
     private boolean randomizeRemoveAnimation = false;
@@ -21,17 +19,17 @@ public final class JLinkedListRandomizer {
     private boolean randomizeAntiAliasing = false;
     private boolean randomizeCameraSpeed = false;
 
-    public static final JLinkedListRandomizer INSTANCE = new JLinkedListRandomizer();
+    public static final Dynamo INSTANCE = new Dynamo();
 
-    private JLinkedListRandomizer() {}
+    private Dynamo() {}
 
-    public static JLinkedListInsertAnimation randomInsertAnimation() {
-        JLinkedListInsertAnimation[] values = JLinkedListInsertAnimation.values();
+    public static Entrance randomInsertAnimation() {
+        Entrance[] values = Entrance.values();
         return values[rand.nextInt(values.length)];
     }
 
-    public static JLinkedListRemoveAnimation randomRemoveAnimation() {
-        JLinkedListRemoveAnimation[] values = JLinkedListRemoveAnimation.values();
+    public static Exit randomRemoveAnimation() {
+        Exit[] values = Exit.values();
         return values[rand.nextInt(values.length)];
     }
 
@@ -40,102 +38,102 @@ public final class JLinkedListRandomizer {
         return values[rand.nextInt(values.length)];
     }
 
-    public static Quality randomQuality() {
-        Quality[] values = Quality.values();
+    public static Resolution randomQuality() {
+        Resolution[] values = Resolution.values();
         return values[rand.nextInt(values.length)];
     }
 
-    public static Material randomMaterial() {
-        Material[] values = Material.values();
+    public static Texture randomMaterial() {
+        Texture[] values = Texture.values();
         return values[rand.nextInt(values.length)];
     }
 
-    public static Background randomBackground() {
-        Background[] values = Background.values();
+    public static Scenery randomBackground() {
+        Scenery[] values = Scenery.values();
         return values[rand.nextInt(values.length)];
     }
 
-    public static Particle randomParticle() {
-        Particle[] values = Particle.values();
+    public static Effect randomParticle() {
+        Effect[] values = Effect.values();
         return values[rand.nextInt(values.length)];
     }
 
-    public static Steps randomSteps() {
-        Steps[] values = Steps.values();
+    public static Frames randomSteps() {
+        Frames[] values = Frames.values();
         return values[rand.nextInt(values.length)];
     }
 
-    public static Camera randomCameraRotation() {
-        Camera[] values = Camera.values();
+    public static View randomCameraRotation() {
+        View[] values = View.values();
         return values[rand.nextInt(values.length)];
     }
 
-    public static AntiAliasing randomAntiAliasing() {
-        AntiAliasing[] values = AntiAliasing.values();
+    public static Smooth randomAntiAliasing() {
+        Smooth[] values = Smooth.values();
         return values[rand.nextInt(values.length)];
     }
 
-    public static Speed randomCameraSpeed() {
-        Speed[] values = Speed.values();
+    public static Pace randomCameraSpeed() {
+        Pace[] values = Pace.values();
         return values[rand.nextInt(values.length)];
     }
 
-    public JLinkedListRandomizer withInsertAnimation() {
+    public Dynamo withInsertAnimation() {
         this.randomizeInsertAnimation = true;
         return this;
     }
 
-    public JLinkedListRandomizer withRemoveAnimation() {
+    public Dynamo withRemoveAnimation() {
         this.randomizeRemoveAnimation = true;
         return this;
     }
 
-    public JLinkedListRandomizer withRenderMode() {
+    public Dynamo withRenderMode() {
         this.randomizeRenderMode = true;
         return this;
     }
 
-    public JLinkedListRandomizer withQuality() {
+    public Dynamo withQuality() {
         this.randomizeQuality = true;
         return this;
     }
 
-    public JLinkedListRandomizer withMaterial() {
+    public Dynamo withMaterial() {
         this.randomizeMaterial = true;
         return this;
     }
 
-    public JLinkedListRandomizer withBackground() {
+    public Dynamo withBackground() {
         this.randomizeBackground = true;
         return this;
     }
 
-    public JLinkedListRandomizer withParticle() {
+    public Dynamo withParticle() {
         this.randomizeParticle = true;
         return this;
     }
 
-    public JLinkedListRandomizer withSteps() {
+    public Dynamo withSteps() {
         this.randomizeSteps = true;
         return this;
     }
 
-    public JLinkedListRandomizer withCameraRotation() {
+    public Dynamo withCameraRotation() {
         this.randomizeCameraRotation = true;
         return this;
     }
 
-    public JLinkedListRandomizer withAntiAliasing() {
+    public Dynamo withAntiAliasing() {
         this.randomizeAntiAliasing = true;
         return this;
     }
 
-    public JLinkedListRandomizer withCameraSpeed() {
+    public Dynamo withCameraSpeed() {
         this.randomizeCameraSpeed = true;
         return this;
     }
 
-    public JLinkedListRandomizer withCrazyMode() {
+    public Dynamo withCrazyMode() {
         this.randomizeInsertAnimation = true;
         this.randomizeRemoveAnimation = true;
         this.randomizeRenderMode = true;
@@ -150,57 +148,57 @@ public final class JLinkedListRandomizer {
         return this;
     }
 
-    public JLinkedListRandomizer withoutInsertAnimation() {
+    public Dynamo withoutInsertAnimation() {
         this.randomizeInsertAnimation = false;
         return this;
     }
 
-    public JLinkedListRandomizer withoutRemoveAnimation() {
+    public Dynamo withoutRemoveAnimation() {
         this.randomizeRemoveAnimation = false;
         return this;
     }
 
-    public JLinkedListRandomizer withoutRenderMode() {
+    public Dynamo withoutRenderMode() {
         this.randomizeRenderMode = false;
         return this;
     }
 
-    public JLinkedListRandomizer withoutQuality() {
+    public Dynamo withoutQuality() {
         this.randomizeQuality = false;
         return this;
     }
 
-    public JLinkedListRandomizer withoutMaterial() {
+    public Dynamo withoutMaterial() {
         this.randomizeMaterial = false;
         return this;
     }
 
-    public JLinkedListRandomizer withoutBackground() {
+    public Dynamo withoutBackground() {
         this.randomizeBackground = false;
         return this;
     }
 
-    public JLinkedListRandomizer withoutParticle() {
+    public Dynamo withoutParticle() {
         this.randomizeParticle = false;
         return this;
     }
 
-    public JLinkedListRandomizer withoutSteps() {
+    public Dynamo withoutSteps() {
         this.randomizeSteps = false;
         return this;
     }
 
-    public JLinkedListRandomizer withoutCameraRotation() {
+    public Dynamo withoutCameraRotation() {
         this.randomizeCameraRotation = false;
         return this;
     }
 
-    public JLinkedListRandomizer withoutAntiAliasing() {
+    public Dynamo withoutAntiAliasing() {
         this.randomizeAntiAliasing = false;
         return this;
     }
 
-    public JLinkedListRandomizer withoutCameraSpeed() {
+    public Dynamo withoutCameraSpeed() {
         this.randomizeCameraSpeed = false;
         return this;
     }

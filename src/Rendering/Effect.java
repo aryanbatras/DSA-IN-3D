@@ -1,6 +1,6 @@
 package Rendering;
 
-public enum Particle {
+public enum Effect {
     NONE,
     MAGIC,
     WATER,

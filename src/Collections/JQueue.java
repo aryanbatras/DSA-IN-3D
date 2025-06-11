@@ -6,17 +6,20 @@ import Rendering.View;
 import Utility.*;
 
 import Animations.*;
-import java.util.Stack;
+
+import Animations.Animator.JQueueAnimator;
+import java.util.ArrayDeque;
+import java.util.Queue;
 import java.util.HashSet;
 import java.util.Set;
 
-import Animations.Animator.JStackAnimator;
 
-public class JStack {
+public class JQueue {
 
-    private int top;
-    private final Stack<Integer> stack;
-    private final JStackAnimator animator;
+    private int front;
+    private int rear;
+    private final Queue<Integer> queue;
+    private final JQueueAnimator animator;
 
     private Render mode;
     private Encoder encoder;
@@ -31,40 +34,42 @@ public class JStack {
     private boolean preferSharedEncoder = false;
     private final Set<String> explicitlySetProperties;
 
-    public JStack() {
+    public JQueue() {
         this.scale = 0.5;
         this.encoder = null;
         this.mode = Render.DISABLED;
-        this.stack = new Stack<>();
-        this.animator = new JStackAnimator();
+        this.queue = new ArrayDeque<>();
+        this.animator = new JQueueAnimator();
         this.explicitlySetProperties = new HashSet<>();
         this.defaultEntrance = Entrance.SLIDE_FROM_RIGHT;
         this.defaultExit = Exit.SHRINK_AND_DROP;
         this.randomizer = null;
         this.built = true;
+        front = 0;
+        rear = 0;
     }
 
-    public JStack withInsertAnimation(Entrance entrance) {
+    public JQueue withInsertAnimation(Entrance entrance) {
         this.defaultEntrance = entrance;
         explicitlySetProperties.add("insertAnimation");
         this.built = false;
         return this;
     }
 
-    public JStack withRemoveAnimation(Exit exit) {
+    public JQueue withRemoveAnimation(Exit exit) {
         this.defaultExit = exit;
         explicitlySetProperties.add("removeAnimation");
         this.built = false;
         return this;
     }
 
-    public JStack withRandomizer(Dynamo randomizer) {
+    public JQueue withRandomizer(Dynamo randomizer) {
         this.randomizer = randomizer;
         this.built = false;
         return this;
     }
 
-    public JStack withRenderMode(Render mode) {
+    public JQueue withRenderMode(Render mode) {
         this.mode = mode;
         animator.setMode(mode);
         explicitlySetProperties.add("renderMode");
@@ -72,7 +77,7 @@ public class JStack {
         return this;
     }
 
-    public JStack withQuality(Resolution quality) {
+    public JQueue withQuality(Resolution quality) {
         switch (quality) {
             case BEST -> scale = 1.0;
             case GOOD -> scale = 0.75;
@@ -85,27 +90,27 @@ public class JStack {
         return this;
     }
 
-    public JStack withOutput(String userOutput) {
+    public JQueue withOutput(String userOutput) {
         this.userOutput = userOutput;
         userProvidedOutput = true;
         this.built = false;
         return this;
     }
 
-    public JStack withSharedEncoder(boolean shared) {
+    public JQueue withSharedEncoder(boolean shared) {
         this.preferSharedEncoder = shared;
         this.built = false;
         return this;
     }
 
-    public JStack withMaterial(Texture material) {
+    public JQueue withMaterial(Texture material) {
         animator.setMaterial(material);
         explicitlySetProperties.add("material");
         this.built = false;
         return this;
     }
 
-    public JStack withBackground(Scenery bg) {
+    public JQueue withBackground(Scenery bg) {
         String background = bg.toString();
         animator.setBackground(background);
         explicitlySetProperties.add("background");
@@ -113,14 +118,14 @@ public class JStack {
         return this;
     }
 
-    public JStack withParticle(Effect particle) {
+    public JQueue withParticle(Effect particle) {
         animator.setParticle(particle);
         explicitlySetProperties.add("particle");
         this.built = false;
         return this;
     }
 
-    public JStack withStepsPerAnimation(Frames step) {
+    public JQueue withStepsPerAnimation(Frames step) {
         int steps = step.getFrames();
         animator.setFPS(steps);
         explicitlySetProperties.add("steps");
@@ -129,13 +134,13 @@ public class JStack {
     }
 
 
-    public JStack withCameraRotations(View rotationType) {
+    public JQueue withCameraRotations(View rotationType) {
         animator.setCameraRotation(rotationType);
         explicitlySetProperties.add("cameraRotation");
         return this;
     }
 
-    public JStack withAntiAliasing(Smooth antiAliasing) {
+    public JQueue withAntiAliasing(Smooth antiAliasing) {
         double alias = 0;
         switch (antiAliasing) {
             case NONE -> alias = 1.0;
@@ -148,19 +153,19 @@ public class JStack {
         return this;
     }
 
-    public JStack withCameraSpeed(Pace cs){
+    public JQueue withCameraSpeed(Pace cs){
         double speed = cs.getMultiplier( );
         animator.setCameraSpeed(speed);
         explicitlySetProperties.add("cameraSpeed");
         return this;
     }
 
-    public JStack withBackgroundChangeOnEveryOperation(boolean change) {
+    public JQueue withBackgroundChangeOnEveryOperation(boolean change) {
         animator.setRandomizeBackgroundAsTrue();
         return this;
     }
 
-    public JStack withCameraFocus(Zoom focus) {
+    public JQueue withCameraFocus(Zoom focus) {
         double value = focus.getMultiplier();
         animator.setCameraFocus(value);
         this.built = false;
@@ -168,7 +173,7 @@ public class JStack {
     }
 
 
-    public JStack build() {
+    public JQueue build() {
 
         if (randomizer != null) {
             if (randomizer.shouldRandomizeInsertAnimation()  && !explicitlySetProperties.contains("insertAnimation")) {
@@ -243,61 +248,65 @@ public class JStack {
     }
 
     private void checkBuilt() {
-        if (built == false) { throw new IllegalStateException("JStack not built! Call .build() before use."); }
+        if (built == false) { throw new IllegalStateException("JQueue not built! Call .build() before use."); }
     }
 
-//  push pop peek isempty isfull  size
+// offer pool peek
 
-    public void push(int value) {
+    public void add(int value){ offer(value); }
+    public void add(int value, Entrance boxAnimation){ offer(value, boxAnimation); }
+
+    public void offer(int value) {
         Code.markCurrentLine(); checkBuilt();
-        Variable.update("push", value);
+        Variable.update("offer", value);
 
-        top++;
-        stack.push(value);
+        rear++;
+        queue.offer(value);
         if (mode != Render.DISABLED) { animator.runAddAnimation(value, randomizer != null ? randomizer.randomInsertAnimation() : defaultEntrance); }
     }
 
-    public void push(int value, Entrance boxAnimation) {
+    public void offer(int value, Entrance boxAnimation) {
         Code.markCurrentLine(); checkBuilt();
-        Variable.update("push", value);
+        Variable.update("offer", value);
 
-        top++;
-        stack.add(value);
+        rear++;
+        queue.offer(value);
         if(mode != Render.DISABLED){ animator.runAddAnimation(value, boxAnimation);}
     }
 
-    public int pop() {
+
+    public int poll() {
         Code.markCurrentLine(); checkBuilt();
 
-        top--;
-        int e = stack.pop();
-        if(mode != Render.DISABLED){ animator.runRemoveAnimation(top, randomizer != null ? randomizer.randomRemoveAnimation() : defaultExit); }
-        Variable.update("pop", e);
+        int e = queue.poll();
+        if(mode != Render.DISABLED){ animator.runRemoveAnimation(randomizer != null ? randomizer.randomRemoveAnimation() : defaultExit); }
+        Variable.update("poll", e);
+        front++;
         return e;
     }
 
-    public int pop(Exit boxAnimation) {
+    public int poll(Exit boxAnimation) {
         Code.markCurrentLine(); checkBuilt();
 
-        top--;
-        int e = stack.pop();
-        if(mode != Render.DISABLED){animator.runRemoveAnimation(top, boxAnimation);}
+        int e = queue.poll();
+        if(mode != Render.DISABLED){animator.runRemoveAnimation(boxAnimation);}
         Variable.update("pop", e);
+        front++;
         return e;
     }
 
     public Integer peek() {
         Code.markCurrentLine(); checkBuilt();
-        int e = stack.peek();
+        int e = queue.peek();
         Variable.update("peek", e);
 
-        if(mode != Render.DISABLED){ animator.runHighlightAnimation(top - 1); }
+        if(mode != Render.DISABLED){ animator.runHighlightAnimation(); }
         return e;
     }
 
     public boolean isempty() {
         Code.markCurrentLine(); checkBuilt();
-        boolean e = stack.isEmpty();
+        boolean e = queue.isEmpty();
 
         Variable.update("isempty", e);
         return e;
@@ -305,7 +314,7 @@ public class JStack {
 
     public int size() {
         Code.markCurrentLine(); checkBuilt();
-        int e = stack.size();
+        int e = queue.size();
 
         Variable.update("size", e);
         return e;

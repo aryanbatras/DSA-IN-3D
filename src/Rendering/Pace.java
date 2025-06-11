@@ -1,6 +1,6 @@
 package Rendering;
 
-public enum Speed {
+public enum Pace {
     X1(0.0052),
     X2(0.0104),
     X4(0.0208),
@@ -9,7 +9,7 @@ public enum Speed {
 
     private final double multiplier;
 
-    Speed(double multiplier) {
+    Pace(double multiplier) {
         this.multiplier = multiplier;
     }
 

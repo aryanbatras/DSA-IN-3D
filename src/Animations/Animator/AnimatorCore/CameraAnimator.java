@@ -1,5 +1,6 @@
-package Animator.AnimatorCore;
+package Animations.Animator.AnimatorCore;
 
+import Rendering.View;
 import Shapes.Core.Shape;
 import Utility.Camera;
 import Utility.Renderer;
@@ -10,9 +11,9 @@ import Utility.Window;
 import java.util.ArrayList;
 
 public class CameraAnimator {
-
     private final Subtitle subtitle;
-    private Rendering.Camera rotationMode;
+
+    private View rotationMode;
     private ArrayList<Shape> world;
     private Renderer renderer;
     private Camera camera;
@@ -21,7 +22,7 @@ public class CameraAnimator {
     private int frames;
 
     public CameraAnimator(Renderer renderer, Camera camera, ArrayList<Shape> world, Subtitle subtitle, int framesPerSecond){
-        this.rotationMode = Rendering.Camera.NONE;
+        this.rotationMode = View.NONE;
         this.frames = framesPerSecond;
         this.subtitle = subtitle;
         this.renderer = renderer;
@@ -53,7 +54,7 @@ public class CameraAnimator {
     }
 
 
-    public static void triggerOptionalCameraEffect(double intensity, Rendering.Camera rotationMode, CameraAnimator cameraAnimator, Utility.Camera camera) {
+    public static void triggerOptionalCameraEffect(double intensity, View rotationMode, CameraAnimator cameraAnimator, Utility.Camera camera) {
         switch (rotationMode) {
             case ROTATE_YAW -> cameraAnimator.smoothYawRotation((intensity));
             case ROTATE_PITCH -> cameraAnimator.smoothPitchRotation((intensity));
@@ -82,7 +83,7 @@ public class CameraAnimator {
         this.mode = mode;
     }
 
-    public void setCameraRotation(Rendering.Camera rotationType) {
+    public void setCameraRotation(View rotationType) {
         this.rotationMode = rotationType;
     }
 

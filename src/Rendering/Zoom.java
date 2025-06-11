@@ -1,6 +1,6 @@
 package Rendering;
 
-public enum Focus {
+public enum Zoom {
     X1(0.0),
     X2(0.5),
     X4(1.0),
@@ -9,7 +9,7 @@ public enum Focus {
 
     private final double multiplier;
 
-    Focus(double multiplier) {
+    Zoom(double multiplier) {
         this.multiplier = multiplier;
     }
 
