@@ -11,3 +11,5 @@
 out/
 *.mp4
 /output
+.gitignore
+.windsurfrules

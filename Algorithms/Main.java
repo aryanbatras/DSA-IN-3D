@@ -1,12 +1,12 @@
+package Examples;
+
 import Algorithms.Array;
 import Rendering.*;
-import Animations.*;
-import Collections.*;
 
 public class Main {
     public static void main(String[] args) {
 
-        JArrayList<String> arr = new JArrayList<>()
+        Collections.JArrayList<String> arr = new Collections.JArrayList<>()
                 .withBackgroundChangeOnEveryOperation(true)
                 .withAlgoVisualizer(Array.BUBBLE_SORT)
                 .withStepsPerAnimation(Frames.NORMAL)

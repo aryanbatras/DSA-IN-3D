@@ -46,7 +46,7 @@ public class JStackAnimator<T> {
         this.world = new ArrayList<>();
         this.material = Texture.METAL;
         this.camera = new Utility.Camera();
-        this.background = "resources/lake.jpg";
+        this.background = "Resources/lake.jpg";
         this.renderer = new Renderer(background);
         this.subtitle = new Subtitle("Stack");
         this.cameraAnimator = new CameraAnimator(renderer, camera, world, subtitle, framesPerSecond);

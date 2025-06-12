@@ -5,51 +5,82 @@ import Animations.Animator.AnimatorCore.CameraAnimator;
 import Animations.*;
 
 import Rendering.View;
-import Shapes.JBox;
 import Shapes.Core.Shape;
-import Utility.*;
 import Utility.Renderer;
+import Utility.*;
+import Shapes.JBox;
 
 import Rendering.*;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-public class JArrayListAnimator<T> {
+public class JQueueAnimator<T> {
     private final ArrayList<Shape> world;
-    private final Renderer renderer;
     private final Utility.Camera camera;
+    private final Renderer renderer;
     private Subtitle subtitle;
 
-    private int positionAlongX;
     private int framesPerSecond;
+    private int positionAlongYRear;
+    private int positionAlongYFront;
+    private int queueWorldIndex;
 
-    private final CameraAnimator cameraAnimator;
     private final BoxAnimator boxAnimator;
+    private final CameraAnimator cameraAnimator;
 
+    private Random rand;
     private Render mode;
     private double scale;
+    private Effect particle;
     private Texture material;
     private String background;
-    private Effect particle;
     private boolean randomBackground;
-    private Random rand;
 
-    public JArrayListAnimator() {
+    private JBox rear;
+    private JBox front;
+
+    public JQueueAnimator() {
         this.scale = 0.5;
-        this.positionAlongX = 0;
+        rand = new Random();
         this.framesPerSecond = 20;
-        this.camera = new Utility.Camera();
+        this.particle = Effect.NONE;
+        this.positionAlongYRear = 0;
+        this.positionAlongYFront = +5;
         this.world = new ArrayList<>();
         this.material = Texture.METAL;
-        this.particle = Effect.NONE;
-        this.background = "resources/lake.jpg";
+        this.camera = new Utility.Camera();
+        this.background = "Resources/lake.jpg";
         this.renderer = new Renderer(background);
-        this.subtitle = new Subtitle("ArrayList");
+        this.subtitle = new Subtitle("Queue");
         this.cameraAnimator = new CameraAnimator(renderer, camera, world, subtitle, framesPerSecond);
         this.boxAnimator = new BoxAnimator(renderer, camera, world, subtitle, framesPerSecond);
         this.randomBackground = false;
-        rand = new Random();
+        world.add(setRearPointer());
+        world.add(setFrontPointer());
+        this.queueWorldIndex = 0;
+    }
+
+    private JBox setFrontPointer() {
+        this.front  = new JBox(
+                new Point(-7.5, +5, 5),
+                2.5, 1.2, 0.15,
+                new Color(1.0f, 0.82f, 0.0f),
+                material, 0, null,
+                particle
+        );
+        return front;
+    }
+
+    private JBox setRearPointer() {
+        this.rear  = new JBox(
+                new Point(-7.5, +5, 5),
+                2.5, 1.2, 0.15,
+                new Color(1.0f, 0.82f, 0.0f),
+                material, 0, null,
+                particle
+        );
+        return rear;
     }
 
     public void setFPS(int fps) {
@@ -80,10 +111,12 @@ public class JArrayListAnimator<T> {
 
     public void setMaterial(Texture material) {
         this.material = material;
+        this.rear .material = material;
     }
 
     public void setParticle(Effect particle) {
         this.particle = particle;
+        this.rear .particleEffect = particle;
     }
 
     public void setAntiAliasing(double antiAliasing) {
@@ -120,21 +153,29 @@ public class JArrayListAnimator<T> {
             Window.waitUntilNextStep();
             Window.setScale(scale);
         }
-
         Window.invokeReferences(renderer, camera, world, subtitle, mode);
 
-        double finalX = positionAlongX;
-        double finalY = 0;
+        double finalX = 0;
+        double finalY = positionAlongYRear + 5;
+
+        positionAlongYRear += 5;
+        cameraAnimator.slideAlongY(positionAlongYRear);
+        boxAnimator.slideUp(rear, positionAlongYRear);
+        queueWorldIndex++;
+
+
         JBox JBox = new JBox(
-                new Point(finalX, finalY, 0),
-                1, 1, 0.1,
+                new Point(finalX, finalY, 10),
+                8.2, 5, 0.25,
                 new Color(0.4f, 0.7f, 1.0f),
-                material, 0, String.valueOf(value),
+                material, 0,  String.valueOf(value),
                 particle
         );
         world.add(JBox);
-        subtitle.setMode("Inserting");
+
+        subtitle.setMode("Pushing");
         subtitle.setValue(String.valueOf(value));
+
         switch (animation) {
             case BOUNCE -> boxAnimator.bounceIn(JBox, finalY);
             case SLIDE_FROM_TOP -> boxAnimator.slideFromTop(JBox, finalY);
@@ -143,25 +184,31 @@ public class JArrayListAnimator<T> {
             case SCALE_POP -> boxAnimator.scalePop(JBox);
             case SHAKE -> boxAnimator.shake(JBox);
         }
-        cameraAnimator.slideAlongX(positionAlongX);
-        positionAlongX--;
+        boxAnimator.slideUp(rear, positionAlongYRear + 5);
     }
 
-    public void runRemoveAnimation(int index, Exit animation) {
+    public void runRemoveAnimation(Exit animation) {
         if(randomBackground){ setRandomBackground(); }
 
         if (mode == Render.STEP_WISE || mode == Render.STEP_WISE_INTERACTIVE) {
             Window.waitUntilNextStep();
             Window.setScale(scale);
         }
-
         Window.invokeReferences(renderer, camera, world, subtitle, mode);
 
-        JBox JBox = (JBox) world.get(index);
-        double originalX = JBox.center.x;
-        subtitle.setMode("Removing");
+        JBox JBox = (JBox) world.get(2);
+
+        double finalX = 0;
+        double finalY = positionAlongYFront + 5;
+        double targetY = positionAlongYFront + 5;
+
+        cameraAnimator.slideAlongY((int) targetY);
+        boxAnimator.slideUp(front, positionAlongYFront);
+        queueWorldIndex--;
+
+        subtitle.setMode("Popping");
         subtitle.setValue(String.valueOf(JBox.val));
-        cameraAnimator.slideAlongX(originalX);
+
         switch (animation) {
             case FADE_UP -> boxAnimator.fadeOutAndUp(JBox, JBox.center.y + 5);
             case SLIDE_UP -> boxAnimator.slideUp(JBox, JBox.center.y + 5);
@@ -169,62 +216,26 @@ public class JArrayListAnimator<T> {
             case SHAKE_AND_FADE -> boxAnimator.shakeAndFade(JBox);
             case SHRINK_AND_DROP -> boxAnimator.shrinkAndDrop(JBox);
         }
-        world.remove(JBox);
-        boxAnimator.shiftElementsLeft(index);
-        positionAlongX++;
+
+        boxAnimator.slideUp(front, positionAlongYFront + 5);
+        positionAlongYFront = (int) targetY;
+        world.remove(2);
     }
 
-    public void runHighlightAnimation(int index) {
+    public void runHighlightAnimation() {
         if(randomBackground){ setRandomBackground(); }
 
         if (mode == Render.STEP_WISE || mode == Render.STEP_WISE_INTERACTIVE) {
             Window.waitUntilNextStep();
             Window.setScale(scale);
         }
-
         Window.invokeReferences(renderer, camera, world, subtitle, mode);
 
-        JBox JBox = (JBox) world.get(index);
+        JBox JBox = (JBox) world.get(2);
         subtitle.setMode("Getting");
         subtitle.setValue(String.valueOf(JBox.val));
-        cameraAnimator.slideAlongX(JBox.center.x);
         boxAnimator.highlight(JBox);
     }
 
-    public void runHybridAnimation(int index, T value) {
-        if(randomBackground){ setRandomBackground(); }
-
-        if (mode == Render.STEP_WISE || mode == Render.STEP_WISE_INTERACTIVE) {
-            Window.waitUntilNextStep();
-            Window.setScale(scale);
-        }
-        Window.invokeReferences(renderer, camera, world, subtitle, mode);
-
-        JBox JBox = (JBox) world.get(index);
-        subtitle.setMode("Updating");
-        subtitle.setValue(String.format("%s → %s", JBox.val, String.valueOf(value)));
-        cameraAnimator.slideAlongX(JBox.center.x);
-        boxAnimator.updateValue(JBox);
-        JBox.val = String.valueOf(value);
-        boxAnimator.shakeSlow(JBox);
-    }
-
-    public void runComparisonAnimation(int i, int j) {
-        if(randomBackground){ setRandomBackground(); }
-        if (mode == Render.STEP_WISE || mode == Render.STEP_WISE_INTERACTIVE) {
-            Window.waitUntilNextStep();
-            Window.setScale(scale);
-        }
-        Window.invokeReferences(renderer, camera, world, subtitle, mode);
-
-        JBox iBox = (JBox) world.get(i);
-        JBox jBox = (JBox) world.get(j);
-        subtitle.setMode("Comparing");
-        subtitle.setValue(String.valueOf(iBox.val + "&" + jBox.val));
-        cameraAnimator.slideAlongX(( iBox.center.x + jBox.center.x ) / 2 );
-        cameraAnimator.zoomOut(iBox.center.x, jBox.center.x);
-        boxAnimator.highlightTwoBoxes(iBox, jBox);
-        cameraAnimator.zoomIn(iBox.center.x, jBox.center.x);
-    }
 }
 

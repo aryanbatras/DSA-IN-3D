@@ -175,10 +175,10 @@ public class Encoder implements AutoCloseable {
 //        String ffmpegPath;
 //
 //        if (os.contains("win")) {
-//            ffmpegPath = "src/resources/ffmpeg.exe";
+//            ffmpegPath = "src/Resources/ffmpeg.exe";
 //        } else if (os.contains("mac") || os.contains("nix") || os.contains("nux")) {
-//            System.out.println( "FFmpeg found in src/resources" );
-//            ffmpegPath = "src/resources/ffmpeg";
+//            System.out.println( "FFmpeg found in src/Resources" );
+//            ffmpegPath = "src/Resources/ffmpeg";
 //        } else {
 //            throw new UnsupportedOperationException("Unsupported OS: " + os);
 //        }
@@ -191,7 +191,7 @@ public class Encoder implements AutoCloseable {
 //
 //        if (!os.contains("win")) {
 //            try {
-//                System.out.println( "chmod +x src/resources/ffmpeg" );
+//                System.out.println( "chmod +x src/Resources/ffmpeg" );
 //                Process chmod = new ProcessBuilder("chmod", "+x", ffmpegFile.getAbsolutePath()).start();
 //                chmod.waitFor();
 //            } catch (Exception e) {
@@ -214,7 +214,7 @@ public class Encoder implements AutoCloseable {
         String os = System.getProperty("os.name").toLowerCase();
         String binaryName = os.contains("win") ? "ffmpeg.exe" : "ffmpeg";
 
-        String internalPath = "resources/" + binaryName;
+        String internalPath = "Resources/" + binaryName;
 
         try (InputStream in = ClassLoader.getSystemResourceAsStream(internalPath)) {
             if (in == null) {
