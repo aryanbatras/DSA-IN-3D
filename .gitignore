@@ -9,3 +9,5 @@
 .idea/
 *.class
 out/
+*.mp4
+/output
