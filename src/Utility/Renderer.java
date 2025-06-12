@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.*;
@@ -67,11 +68,23 @@ public class Renderer {
         this.encoder = encoder;
     }
 
+//    public void setENVIRONMENT(String filePath) {
+//        try {
+//            ENVIRONMENT = ImageIO.read(getClass().getResourceAsStream(filePath));
+//        } catch (IOException e) {
+//            System.out.println("Environment failed to load");
+//        }
+//    }
+
     public void setENVIRONMENT(String filePath) {
-        try {
-            ENVIRONMENT = ImageIO.read(getClass( ).getResourceAsStream(filePath));
+        try (InputStream in = getClass().getClassLoader().getResourceAsStream(filePath)) {
+            if (in == null) {
+                throw new IllegalStateException("Could not find resource: " + filePath);
+            }
+            ENVIRONMENT = ImageIO.read(in);
         } catch (IOException e) {
-            System.out.println("Environment failed to load");
+            System.out.println("Environment failed to load: " + filePath);
+            e.printStackTrace();
         }
     }
 

@@ -46,7 +46,7 @@ public class JLinkedListAnimator<T> {
         this.material = Texture.METAL;
         this.particle = Effect.NONE;
         this.camera = new Utility.Camera();
-        this.background = "/Resources/lake.jpg";
+        this.background = "resources/lake.jpg";
         this.renderer = new Renderer(background);
         this.subtitle = new Subtitle("LinkedList");
         this.cameraAnimator = new CameraAnimator(renderer, camera, world, subtitle, framesPerSecond);

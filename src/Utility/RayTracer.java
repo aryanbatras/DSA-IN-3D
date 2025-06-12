@@ -10,8 +10,6 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Random;
 
-import static Utility.Digit.isInDigit;
-
 public class RayTracer {
 
     private static final Random RAND = new Random();

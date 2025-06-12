@@ -1,5 +1,4 @@
 package Utility;
-import Utility.Code;
 
 public class Condition {
     public static <T extends Comparable<T>> boolean isGreater(T a, T b) {

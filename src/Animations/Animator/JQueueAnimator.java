@@ -50,7 +50,7 @@ public class JQueueAnimator<T> {
         this.world = new ArrayList<>();
         this.material = Texture.METAL;
         this.camera = new Utility.Camera();
-        this.background = "/Resources/lake.jpg";
+        this.background = "resources/lake.jpg";
         this.renderer = new Renderer(background);
         this.subtitle = new Subtitle("Queue");
         this.cameraAnimator = new CameraAnimator(renderer, camera, world, subtitle, framesPerSecond);

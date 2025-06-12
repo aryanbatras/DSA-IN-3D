@@ -165,44 +165,81 @@ public class Encoder implements AutoCloseable {
         }
     }
 
+//    private static String getPlatformFFmpegExecutable() {
+//        if (isFFmpegAvailable("ffmpeg")) {
+//            System.out.println( "FFmpeg found in PATH" );
+//            return "ffmpeg";
+//        }
+//
+//        String os = System.getProperty("os.name").toLowerCase();
+//        String ffmpegPath;
+//
+//        if (os.contains("win")) {
+//            ffmpegPath = "src/resources/ffmpeg.exe";
+//        } else if (os.contains("mac") || os.contains("nix") || os.contains("nux")) {
+//            System.out.println( "FFmpeg found in src/resources" );
+//            ffmpegPath = "src/resources/ffmpeg";
+//        } else {
+//            throw new UnsupportedOperationException("Unsupported OS: " + os);
+//        }
+//
+//        File ffmpegFile = new File(ffmpegPath);
+//        if (!ffmpegFile.exists()) {
+//            System.out.println("Error: FFmpeg binary not found" );
+//            throw new IllegalStateException("Bundled FFmpeg binary not found at: " + ffmpegFile.getAbsolutePath());
+//        }
+//
+//        if (!os.contains("win")) {
+//            try {
+//                System.out.println( "chmod +x src/resources/ffmpeg" );
+//                Process chmod = new ProcessBuilder("chmod", "+x", ffmpegFile.getAbsolutePath()).start();
+//                chmod.waitFor();
+//            } catch (Exception e) {
+//                throw new RuntimeException("Failed to chmod +x for FFmpeg binary", e);
+//            }
+//        }
+//
+//        System.out.println( "FFmpeg found at: " + ffmpegFile.getAbsolutePath() );
+//        return ffmpegFile.getAbsolutePath();
+//    }
+
+/* FOR JAR FILE FUNCTION */
+
     private static String getPlatformFFmpegExecutable() {
         if (isFFmpegAvailable("ffmpeg")) {
-            System.out.println( "FFmpeg found in PATH" );
+            System.out.println("FFmpeg found in PATH");
             return "ffmpeg";
         }
 
         String os = System.getProperty("os.name").toLowerCase();
-        String ffmpegPath;
+        String binaryName = os.contains("win") ? "ffmpeg.exe" : "ffmpeg";
 
-        if (os.contains("win")) {
-            ffmpegPath = "src/Resources/ffmpeg.exe";
-        } else if (os.contains("mac") || os.contains("nix") || os.contains("nux")) {
-            System.out.println( "FFmpeg found in src/Resources" );
-            ffmpegPath = "src/Resources/ffmpeg";
-        } else {
-            throw new UnsupportedOperationException("Unsupported OS: " + os);
-        }
+        String internalPath = "resources/" + binaryName;
 
-        File ffmpegFile = new File(ffmpegPath);
-        if (!ffmpegFile.exists()) {
-            System.out.println("Error: FFmpeg binary not found" );
-            throw new IllegalStateException("Bundled FFmpeg binary not found at: " + ffmpegFile.getAbsolutePath());
-        }
-
-        if (!os.contains("win")) {
-            try {
-                System.out.println( "chmod +x src/Resources/ffmpeg" );
-                Process chmod = new ProcessBuilder("chmod", "+x", ffmpegFile.getAbsolutePath()).start();
-                chmod.waitFor();
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to chmod +x for FFmpeg binary", e);
+        try (InputStream in = ClassLoader.getSystemResourceAsStream(internalPath)) {
+            if (in == null) {
+                throw new IllegalStateException("FFmpeg binary not bundled: " + internalPath);
             }
+
+            // Copy to temp and mark executable
+            File temp = File.createTempFile("ffmpeg", os.contains("win") ? ".exe" : "");
+            temp.deleteOnExit();
+
+            try (FileOutputStream out = new FileOutputStream(temp)) {
+                in.transferTo(out);
+            }
+
+            if (!os.contains("win")) {
+                new ProcessBuilder("chmod", "+x", temp.getAbsolutePath()).start().waitFor();
+            }
+
+            System.out.println("FFmpeg loaded from jar and ready: " + temp.getAbsolutePath());
+            return temp.getAbsolutePath();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to extract FFmpeg binary from jar", e);
         }
-
-        System.out.println( "FFmpeg found at: " + ffmpegFile.getAbsolutePath() );
-        return ffmpegFile.getAbsolutePath();
     }
-
 
     private Process createFFmpegProcess(String outputFile) throws IOException {
 

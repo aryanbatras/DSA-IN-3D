@@ -43,7 +43,7 @@ public class JArrayListAnimator<T> {
         this.world = new ArrayList<>();
         this.material = Texture.METAL;
         this.particle = Effect.NONE;
-        this.background = "/Resources/lake.jpg";
+        this.background = "resources/lake.jpg";
         this.renderer = new Renderer(background);
         this.subtitle = new Subtitle("ArrayList");
         this.cameraAnimator = new CameraAnimator(renderer, camera, world, subtitle, framesPerSecond);
