@@ -15,7 +15,7 @@ import Rendering.*;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class JStackAnimator {
+public class JStackAnimator<T> {
     private final ArrayList<Shape> world;
     private final Renderer renderer;
     private final Utility.Camera camera;
@@ -129,7 +129,7 @@ public class JStackAnimator {
         this.camera.setRadius(camera.getRadius() - focus);
     }
 
-    public void runAddAnimation(int value, Entrance animation) {
+    public void runAddAnimation(T value, Entrance animation) {
         if(randomBackground){ setRandomBackground(); }
 
         if (mode == Render.STEP_WISE || mode == Render.STEP_WISE_INTERACTIVE) {
@@ -153,7 +153,7 @@ public class JStackAnimator {
                 new Point(finalX, finalY, 10),
                 8.2, 5, 0.25,
                 new Color(0.4f, 0.7f, 1.0f),
-                material, 0, value,
+                material, 0,  String.valueOf(value),
                 particle
         );
         world.add(JBox);
@@ -186,8 +186,7 @@ public class JStackAnimator {
         
         subtitle.setMode("Popping");
         subtitle.setValue(String.valueOf(JBox.val));
-        
-        // Animate the box removal
+
         switch (animation) {
             case FADE_UP -> boxAnimator.fadeOutAndUp(JBox, JBox.center.y + 5);
             case SLIDE_UP -> boxAnimator.slideUp(JBox, JBox.center.y + 5);
@@ -195,11 +194,8 @@ public class JStackAnimator {
             case SHAKE_AND_FADE -> boxAnimator.shakeAndFade(JBox);
             case SHRINK_AND_DROP -> boxAnimator.shrinkAndDrop(JBox);
         }
-        
-        // Remove the box from the world
+
         world.remove(JBox);
-        
-        // Move the camera down and update the top pointer
         positionAlongY -= 5;
         cameraAnimator.slideAlongY(positionAlongY);
         boxAnimator.slideDown(top, positionAlongY);
@@ -222,24 +218,6 @@ public class JStackAnimator {
         boxAnimator.highlight(JBox);
     }
 
-    public void runHybridAnimation(int oldIndex, int value) {
-        if(randomBackground){ setRandomBackground(); }
-
-        if (mode == Render.STEP_WISE || mode == Render.STEP_WISE_INTERACTIVE) {
-            Window.waitUntilNextStep();
-            Window.setScale(scale);
-        }
-        Window.invokeReferences(renderer, camera, world, subtitle, mode);
-
-        int index = oldIndex + 1;
-
-        JBox JBox = (JBox) world.get(index);
-        subtitle.setMode("Updating");
-        subtitle.setValue(String.format("%d → %d", JBox.val, value));
-        boxAnimator.updateValue(JBox, value);
-        JBox.val = value; JBox.setDigitsFromNumber(value);
-        boxAnimator.shakeSlow(JBox);
-    }
 
 }
 

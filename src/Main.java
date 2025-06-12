@@ -5,36 +5,43 @@ import Collections.*;
 public class Main {
     public static void main(String[] args) {
 
-//        JArrayList arr = new JArrayList()
-//                .withBackground(Scenery.THE_SKY_IS_ON_FIRE)
-//                .withStepsPerAnimation(Frames.VERY_SLOW)
-//                .withAlgoVisualizer(Array.SHIFT_LEFT)
-//                .withParticle(Effect.FIREWORKS)
-//                .withMaterial(Texture.MIRROR)
-//                .withQuality(Resolution.GOOD)
-//                .withRenderMode(Render.LIVE)
-//                .withCameraFocus(Zoom.X4)
-//                .build();
-//
-//        arr.add(60);
-//        arr.add(20);
-//        arr.add(40);
-//        arr.add(30);
-//        arr.run(); // THIS WILL CALL THE SORT
-
-
-       JStack stack = new JStack()
-                .withBackground(Scenery.THE_SKY_IS_ON_FIRE)
+        JArrayList<String> arr = new JArrayList<>()
+                .withBackgroundChangeOnEveryOperation(true)
                 .withStepsPerAnimation(Frames.VERY_SLOW)
-                .withAlgoVisualizer(Stack.REVERSE_STACK)
-                .withQuality(Resolution.FASTEST)
-                .withParticle(Effect.FIREWORKS)
-                .withMaterial(Texture.MIRROR)
+                .withAlgoVisualizer(Array.QUICK_SORT)
+                .withQuality(Resolution.BALANCE)
                 .withRenderMode(Render.LIVE)
-                .withCameraFocus(Zoom.X1)
+                .withMaterial(Texture.METAL)
+                .withCameraFocus(Zoom.X4)
+                .withSharedEncoder(true)
                 .build();
-       
+
+        JStack<String> stack = new JStack<>()
+                .withBackgroundChangeOnEveryOperation(true)
+                .withAlgoVisualizer(Stack.REVERSE_STACK)
+                .withStepsPerAnimation(Frames.NORMAL)
+                .withQuality(Resolution.FASTEST)
+                .withRenderMode(Render.LIVE)
+                .withMaterial(Texture.METAL)
+                .withCameraFocus(Zoom.X4)
+                .withSharedEncoder(true)
+                .build();
+
+
+        stack.push("a");
+        arr.add("c");
+        stack.push("(");
+        arr.add("e");
+        stack.push("b");
+        arr.add("d");
+        stack.push(")");
+        arr.add("a");
+        stack.push("c");
+        arr.add("b");
+        stack.push(")");
+        arr.run();
         stack.run();
+
 
     }
 

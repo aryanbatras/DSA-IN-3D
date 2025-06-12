@@ -17,7 +17,7 @@ import Rendering.*;
 import java.util.Random;
 import java.util.ArrayList;
 
-public class JLinkedListAnimator {
+public class JLinkedListAnimator<T> {
     private final ArrayList<Shape> world;
     private final Utility.Camera camera;
     private final Renderer renderer;
@@ -129,7 +129,7 @@ public class JLinkedListAnimator {
         this.camera.setRadius(camera.getRadius() - focus);
     }
 
-    public void runAddAnimation(int value, Entrance animation) {
+    public void runAddAnimation(T value, Entrance animation) {
 
         if(randomBackground){ setRandomBackground(); }
 
@@ -147,7 +147,7 @@ public class JLinkedListAnimator {
                 new Point(finalX, finalY, 0),
                 0.75, 0.82, 0.1,
                 new Color(0.4f, 0.7f, 1.0f),
-                material, 0, value,
+                material, 0, String.valueOf(value),
                 particle
         );
 
@@ -236,7 +236,7 @@ public class JLinkedListAnimator {
         boxAnimator.highlight(nodeBox);
     }
 
-    public void runHybridAnimation(int oldIndex, int value) {
+    public void runHybridAnimation(int oldIndex, T value) {
         if(randomBackground){ setRandomBackground(); }
 
         if (mode == Render.STEP_WISE || mode == Render.STEP_WISE_INTERACTIVE) {
@@ -251,9 +251,8 @@ public class JLinkedListAnimator {
         subtitle.setMode("Updating");
         subtitle.setValue(String.format("%d → %d", nodeBox.val, value));
         cameraAnimator.slideAlongX(nodeBox.center.x);
-        boxAnimator.updateValue(nodeBox, value);
-        nodeBox.val = value;
-        nodeBox.setDigitsFromNumber(value);
+        boxAnimator.updateValue(nodeBox);
+        nodeBox.val =  String.valueOf(value);
         boxAnimator.shakeSlow(nodeBox);
     }
 }

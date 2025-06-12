@@ -21,8 +21,8 @@ public class BoxAnimator {
     private double speed;
 
     public BoxAnimator(Renderer renderer, Camera camera, ArrayList<Shape> world, Subtitle subtitle, int framesPerSecond) {
-        this.rotationMode = View.NONE;
         this.rotationModeAnimator = null;
+        this.rotationMode = View.NONE;
         this.frames = framesPerSecond;
         this.subtitle = subtitle;
         this.renderer = renderer;
@@ -48,6 +48,21 @@ public class BoxAnimator {
         this.rotationModeAnimator = cameraAnimator;
     }
 
+    public void highlightTwoBoxes(JBox a, JBox b) {
+        Color originalA = a.color;
+        Color originalB = b.color;
+
+        for (int i = 0; i < frames; i++) {
+            float pulse = Math.abs((float)Math.sin(i * 0.15));
+            a.color = new Color(pulse, 0.2f, 1f - pulse);
+            b.color = new Color(pulse, 0.2f, 1f - pulse);
+            renderer.drawImage(camera, world, subtitle, mode, 0);
+        }
+
+        a.color = originalA;
+        b.color = originalB;
+    }
+
     public void highlight(JBox JBox) {
         Color c = JBox.color;
         for (int i = 0; i < frames; i++) {
@@ -61,7 +76,7 @@ public class BoxAnimator {
         JBox.color = c;
     }
 
-    public void updateValue(JBox JBox, int newValue) {
+    public void updateValue(JBox JBox) {
         Color originalColor = new Color(JBox.color);
         double originalPos = JBox.center.x;
 

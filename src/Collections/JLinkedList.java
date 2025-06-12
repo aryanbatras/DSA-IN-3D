@@ -12,9 +12,9 @@ import Animations.*;
 import Rendering.*;
 import Utility.*;
 
-public class JLinkedList {
-    private final LinkedList<Integer> list;
-    private final JLinkedListAnimator animator;
+public class JLinkedList<T extends Comparable<T>> {
+    private final LinkedList<T> list;
+    private final JLinkedListAnimator<T> animator;
 
     private Render mode;
     private Encoder encoder;
@@ -35,7 +35,7 @@ public class JLinkedList {
         this.encoder = null;
         this.mode = Render.DISABLED;
         this.list = new LinkedList<>();
-        this.animator = new JLinkedListAnimator();
+        this.animator = new JLinkedListAnimator<>();
         this.explicitlySetProperties = new HashSet<>();
         this.defaultEntrance = Entrance.SLIDE_FROM_RIGHT;
         this.defaultExit = Exit.SLIDE_UP;
@@ -165,7 +165,6 @@ public class JLinkedList {
         return this;
     }
 
-
     public JLinkedList withCameraSpeed(Pace cs) {
         explicitlySetProperties.add("cameraSpeed");
         double speed = cs.getMultiplier();
@@ -257,7 +256,7 @@ public class JLinkedList {
         }
     }
 
-    public void add(int value) {
+    public void add(T value) {
         Code.markCurrentLine();
         checkBuilt();
         Variable.update("add", value);
@@ -269,7 +268,7 @@ public class JLinkedList {
         }
     }
 
-    public void add(int value, Entrance animation) {
+    public void add(T value, Entrance animation) {
         Code.markCurrentLine();
         checkBuilt();
         Variable.update("add", value);
@@ -281,37 +280,39 @@ public class JLinkedList {
         }
     }
 
-    public void remove(int index) {
+    public T remove(int index) {
         Code.markCurrentLine();
         checkBuilt();
 
-        int value = list.get(index);
+        T value = list.get(index);
         list.remove(index);
 
         if (mode != Render.DISABLED) {
             animator.runRemoveAnimation(index, randomizer != null ? randomizer.randomRemoveAnimation() : defaultExit);
         }
         Variable.update("remove", index, value);
+        return value;
     }
 
-    public void remove(int index, Exit animation) {
+    public T remove(int index, Exit animation) {
         Code.markCurrentLine();
         checkBuilt();
 
-        int value = list.get(index);
+        T value = list.get(index);
         list.remove(index);
 
         if (mode != Render.DISABLED) {
             animator.runRemoveAnimation(index, animation);
         }
         Variable.update("remove", index, value);
+        return value;
     }
 
-    public int get(int index) {
+    public T get(int index) {
         Code.markCurrentLine();
         checkBuilt();
 
-        int value = list.get(index);
+        T value = list.get(index);
 
         if (mode != Render.DISABLED) {
             animator.runHighlightAnimation(index);
@@ -320,7 +321,7 @@ public class JLinkedList {
         return value;
     }
 
-    public void set(int index, int value) {
+    public void set(int index, T value) {
         Code.markCurrentLine();
         checkBuilt();
 

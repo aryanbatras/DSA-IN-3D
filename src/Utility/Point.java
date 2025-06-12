@@ -59,7 +59,7 @@ public class Point {
     }
 
     public double length(){
-        return Math.sqrt(x * x + y * y + x * x);
+        return Math.sqrt(x * x + y * y + z * z);
     }
 }
 

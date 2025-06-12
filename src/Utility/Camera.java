@@ -41,8 +41,8 @@ public class Camera {
 
     public void copyFrom(Camera other) {
         this.radius = other.radius;
-        this.yaw = other.yaw;
-        this.pitch = other.pitch;
+        this.yaw = 0.0;
+        this.pitch = 0.0;
         this.M_X = other.M_X;
         this.M_Y = other.M_Y;
         this.M_Z = other.M_Z;
@@ -106,6 +106,34 @@ public class Camera {
         double z2 = -dir.x * sinYaw + z1 * cosYaw;
 
         return new Point(x2, y1, z2);
+    }
+
+    public Point project(Point world, int screenWidth, int screenHeight) {
+        // Convert world point to camera/view space
+        Point relative = world.sub(origin);
+        double x = relative.dot(u);
+        double y = relative.dot(v);
+        double z = relative.dot(w.mul(-1)); // make forward positive z
+
+        if (z <= 0.001) return null; // Behind the camera or too close
+
+        // Perspective projection (simple pinhole model)
+        double fovScale = 1.0; // Assuming tan(fov/2) = 1 for 90 degrees FOV
+        double ndcX = (x / z) / fovScale;
+        double ndcY = (y / z) / fovScale;
+
+        // NDC [-1,1] → screen space [0,width]/[0,height]
+        int screenX = (int) ((ndcX + 1) * 0.5 * screenWidth);
+        int screenY = (int) ((1 - ndcY) * 0.5 * screenHeight); // Flip Y axis for screen
+
+        return new Point(screenX, screenY, 0); // z is unused in 2D
+    }
+
+    double getLeftMostVisibleX() {
+        return this.getM_X() - this.getRadius(); // or manually -10
+    }
+    double getRightMostVisibleX() {
+        return this.getM_X() + this.getRadius(); // or manually +10
     }
 
     public double getPitch() { return pitch; }

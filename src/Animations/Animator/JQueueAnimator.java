@@ -15,7 +15,7 @@ import Rendering.*;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class JQueueAnimator {
+public class JQueueAnimator<T> {
     private final ArrayList<Shape> world;
     private final Utility.Camera camera;
     private final Renderer renderer;
@@ -146,7 +146,7 @@ public class JQueueAnimator {
         this.camera.setRadius(camera.getRadius() - focus);
     }
 
-    public void runAddAnimation(int value, Entrance animation) {
+    public void runAddAnimation(T value, Entrance animation) {
         if(randomBackground){ setRandomBackground(); }
 
         if (mode == Render.STEP_WISE || mode == Render.STEP_WISE_INTERACTIVE) {
@@ -168,7 +168,7 @@ public class JQueueAnimator {
                 new Point(finalX, finalY, 10),
                 8.2, 5, 0.25,
                 new Color(0.4f, 0.7f, 1.0f),
-                material, 0, value,
+                material, 0,  String.valueOf(value),
                 particle
         );
         world.add(JBox);
@@ -231,31 +231,10 @@ public class JQueueAnimator {
         }
         Window.invokeReferences(renderer, camera, world, subtitle, mode);
 
-//        int index = oldIndex + 1;
-//
-//        JBox JBox = (JBox) world.get(index);
-//        subtitle.setMode("Getting");
-//        subtitle.setValue(String.valueOf(JBox.val));
-//        boxAnimator.highlight(JBox);
-    }
-
-    public void runHybridAnimation(int value) {
-        if(randomBackground){ setRandomBackground(); }
-
-        if (mode == Render.STEP_WISE || mode == Render.STEP_WISE_INTERACTIVE) {
-            Window.waitUntilNextStep();
-            Window.setScale(scale);
-        }
-        Window.invokeReferences(renderer, camera, world, subtitle, mode);
-
-//        int index = oldIndex + 1;
-
-////        JBox JBox = (JBox) world.get(index);
-//        subtitle.setMode("Updating");
-//        subtitle.setValue(String.format("%d → %d", JBox.val, value));
-//        boxAnimator.updateValue(JBox, value);
-//        JBox.val = value; JBox.setDigitsFromNumber(value);
-//        boxAnimator.shakeSlow(JBox);
+        JBox JBox = (JBox) world.get(2);
+        subtitle.setMode("Getting");
+        subtitle.setValue(String.valueOf(JBox.val));
+        boxAnimator.highlight(JBox);
     }
 
 }

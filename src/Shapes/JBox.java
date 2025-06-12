@@ -12,7 +12,7 @@ public class JBox extends Shape {
     public Color color;
     public Texture material;
     public double fuzz;
-    public Integer val;
+    public String val;
 
     private Integer[] digits;
 
@@ -20,7 +20,7 @@ public class JBox extends Shape {
         this.width = width;
     }
 
-    public JBox(Point center, double width, double height, double depth, Color color, Texture material, double fuzz, Integer value, Effect particles) {
+    public JBox(Point center, double width, double height, double depth, Color color, Texture material, double fuzz, String value, Effect particles) {
         this.particleEffect = particles;
         this.center = new Point(center);
         this.color = new Color(color);
@@ -30,7 +30,7 @@ public class JBox extends Shape {
         this.depth = depth;
         this.fuzz = fuzz;
         this.val = value;
-        setDigitsFromNumber(value);
+//        setDigitsFromNumber(value);
     }
 
     public void setDigitsFromNumber(Integer value){
@@ -159,6 +159,10 @@ public class JBox extends Shape {
         }
 
         return tMin;
+    }
+
+    public Point getProjected2D(Camera camera, int width, int height) {
+            return camera.project(center, width, height);
     }
 
     public double distanceTo(Point point) {

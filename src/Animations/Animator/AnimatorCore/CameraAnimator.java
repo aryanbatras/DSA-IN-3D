@@ -20,10 +20,13 @@ public class CameraAnimator {
     private double speed;
     private Render mode;
     private int frames;
+    private double previousRadius;
+
 
     public CameraAnimator(Renderer renderer, Camera camera, ArrayList<Shape> world, Subtitle subtitle, int framesPerSecond){
         this.rotationMode = View.NONE;
         this.frames = framesPerSecond;
+        this.previousRadius = -1;
         this.subtitle = subtitle;
         this.renderer = renderer;
         this.camera = camera;
@@ -31,7 +34,7 @@ public class CameraAnimator {
         this.speed = 0.0052;
     }
 
-    public void slideAlongY(int cameraFinal) {
+    public void slideAlongY(double cameraFinal) {
         double cameraInitial = camera.getM_Y();
         double delta = (cameraFinal - cameraInitial) / frames;
         for (int i = 0; i < frames; i++) {
@@ -53,6 +56,43 @@ public class CameraAnimator {
         Window.invokeReferences(renderer, camera, world, subtitle, mode);
     }
 
+    public void zoomOut(double x1, double x2) {
+        double center = (x1 + x2) / 2.0;
+        double distance = Math.abs(x2 - x1);
+        double targetRadius = Math.max(1.5, distance * 1.3);
+
+        previousRadius = camera.getRadius();
+
+        double initialRadius = camera.getRadius();
+        double delta = (targetRadius - initialRadius) / frames;
+
+        for (int i = 0; i < frames; i++) {
+            camera.setRadius(camera.getRadius() + delta);
+            camera.setM_X(center);
+            renderer.drawImage(camera, world, subtitle, mode, 0);
+            CameraAnimator.triggerOptionalCameraEffect(speed, rotationMode, this, camera);
+        }
+
+        Window.invokeReferences(renderer, camera, world, subtitle, mode);
+    }
+
+    public void zoomIn(double x1, double x2) {
+        if (previousRadius < 0) return;
+
+        double center = (x1 + x2) / 2.0;
+        double initialRadius = camera.getRadius();
+        double delta = (previousRadius - initialRadius) / frames;
+
+        for (int i = 0; i < frames; i++) {
+            camera.setRadius(camera.getRadius() + delta);
+            camera.setM_X(center);
+            renderer.drawImage(camera, world, subtitle, mode, 0);
+            CameraAnimator.triggerOptionalCameraEffect(speed, rotationMode, this, camera);
+        }
+
+        previousRadius = -1; // Reset after restoring
+        Window.invokeReferences(renderer, camera, world, subtitle, mode);
+    }
 
     public static void triggerOptionalCameraEffect(double intensity, View rotationMode, CameraAnimator cameraAnimator, Utility.Camera camera) {
         switch (rotationMode) {

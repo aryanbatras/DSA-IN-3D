@@ -13,10 +13,10 @@ import java.util.Set;
 
 import Animations.Animator.JArrayListAnimator;
 
-public class JArrayList {
+public class JArrayList<T extends Comparable<T>> {
 
-    private final ArrayList<Integer> arr;
-    private final JArrayListAnimator animator;
+    private final ArrayList<T> arr;
+    private final JArrayListAnimator<T> animator;
 
     private Render mode;
     private Encoder encoder;
@@ -37,7 +37,7 @@ public class JArrayList {
         this.encoder = null;
         this.mode = Render.DISABLED;
         this.arr = new ArrayList<>();
-        this.animator = new JArrayListAnimator();
+        this.animator = new JArrayListAnimator<>();
         this.explicitlySetProperties = new HashSet<>();
         this.defaultEntrance = Entrance.SLIDE_FROM_RIGHT;
         this.defaultExit = Exit.SLIDE_UP;
@@ -266,7 +266,72 @@ public class JArrayList {
         if (built == false) { throw new IllegalStateException("JArrayList not built! Call .build() before use."); }
     }
 
-    public void add(int value) {
+    public boolean isGreaterOrEqualTo(int i, int j) {
+        Code.markCurrentLine(); checkBuilt();
+        Variable.update("isGreater", "[" + i + "]", "[" + j + "]");
+
+        T a = arr.get(i);
+        T b = arr.get(j);
+
+        if (mode != Render.DISABLED) { animator.runComparisonAnimation(i, j); }
+        boolean result = a.compareTo(b) >= 0;
+        Code.setConditionResult("→ " + result);
+        return result;
+    }
+
+    public boolean isSmallerOrEqualTo(int i, int j) {
+        Code.markCurrentLine(); checkBuilt();
+        Variable.update("isGreater", "[" + i + "]", "[" + j + "]");
+
+        T a = arr.get(i);
+        T b = arr.get(j);
+
+        if (mode != Render.DISABLED) { animator.runComparisonAnimation(i, j); }
+        boolean result = a.compareTo(b) <= 0;
+        Code.setConditionResult("→ " + result);
+        return result;
+    }
+
+    public boolean isGreater(int i, int j) {
+        Code.markCurrentLine(); checkBuilt();
+        Variable.update("isGreater", "[" + i + "]", "[" + j + "]");
+
+        T a = arr.get(i);
+        T b = arr.get(j);
+
+        if (mode != Render.DISABLED) { animator.runComparisonAnimation(i, j); }
+        boolean result = a.compareTo(b) > 0;
+        Code.setConditionResult("→ " + result);
+        return result;
+    }
+
+    public boolean isSmaller(int i, int j) {
+        Code.markCurrentLine(); checkBuilt();
+        Variable.update("isSmaller", "[" + i + "]", "[" + j + "]");
+
+        T a = arr.get(i);
+        T b = arr.get(j);
+
+        if (mode != Render.DISABLED) { animator.runComparisonAnimation(i, j); }
+        boolean result = a.compareTo(b) < 0;
+        Code.setConditionResult("→ " + result);
+        return result;
+    }
+
+    public boolean isEqual(int i, int j) {
+        Code.markCurrentLine(); checkBuilt();
+        Variable.update("isEqual", "[" + i + "]", "[" + j + "]");
+
+        T a = arr.get(i);
+        T b = arr.get(j);
+
+        if (mode != Render.DISABLED) { animator.runComparisonAnimation(i, j); }
+        boolean result = a.compareTo(b) == 0;
+        Code.setConditionResult("→ " + result);
+        return result;
+    }
+
+    public void add(T value) {
         Code.markCurrentLine(); checkBuilt();
         Variable.update("add", value);
 
@@ -274,7 +339,7 @@ public class JArrayList {
         if (mode != Render.DISABLED) { animator.runAddAnimation(value, randomizer != null ? randomizer.randomInsertAnimation() : defaultEntrance); }
     }
 
-    public void add(int value, Entrance boxAnimation) {
+    public void add(T value, Entrance boxAnimation) {
         Code.markCurrentLine(); checkBuilt();
         Variable.update("add", value);
 
@@ -282,31 +347,36 @@ public class JArrayList {
         if(mode != Render.DISABLED){ animator.runAddAnimation(value, boxAnimation);}
     }
 
-    public void remove(int index) {
+    public T remove(int index) {
         Code.markCurrentLine(); checkBuilt();
-        Variable.update("remove", index, arr.get(index));
+        T value = arr.get(index);
+        Variable.update("remove", index, value);
 
         arr.remove(index);
         if(mode != Render.DISABLED){ animator.runRemoveAnimation(index, randomizer != null ? randomizer.randomRemoveAnimation() : defaultExit);}
+        return value;
     }
 
-    public void remove(int index, Exit boxAnimation) {
+    public T remove(int index, Exit boxAnimation) {
         Code.markCurrentLine(); checkBuilt();
-        Variable.update("remove", index, arr.get(index));
+        T value = arr.get(index);
+        Variable.update("remove", index, value);
 
         arr.remove(index);
         if(mode != Render.DISABLED){animator.runRemoveAnimation(index, boxAnimation);}
+        return value;
     }
 
-    public Integer get(int index) {
+    public T get(int index) {
         Code.markCurrentLine(); checkBuilt();
-        Variable.update("get", index, arr.get(index));
+        T value = arr.get(index);
+        Variable.update("get", index, value);
 
         if(mode != Render.DISABLED){ animator.runHighlightAnimation(index); }
-        return arr.get(index);
+        return value;
     }
 
-    public void set(int index, int value) {
+    public void set(int index, T value) {
         Code.markCurrentLine(); checkBuilt();
         Variable.update("set", index, value);
 

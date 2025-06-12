@@ -7,17 +7,16 @@ import Rendering.View;
 import Utility.*;
 
 import Animations.*;
-import java.util.Stack;
-import java.util.HashSet;
-import java.util.Set;
+
+import java.util.*;
 
 import Animations.Animator.JStackAnimator;
 
-public class JStack {
+public class JStack<T extends Comparable<T>> {
 
     private int top;
-    private final Stack<Integer> stack;
-    private final JStackAnimator animator;
+    private final Stack<T> stack;
+    private final JStackAnimator<T> animator;
 
     private Render mode;
     private Encoder encoder;
@@ -38,13 +37,14 @@ public class JStack {
         this.encoder = null;
         this.mode = Render.DISABLED;
         this.stack = new Stack<>();
-        this.animator = new JStackAnimator();
+        this.animator = new JStackAnimator<>();
         this.explicitlySetProperties = new HashSet<>();
         this.defaultEntrance = Entrance.SLIDE_FROM_RIGHT;
         this.defaultExit = Exit.SHRINK_AND_DROP;
         this.randomizer = null;
         this.built = true;
     }
+
 
 
     public JStack withAlgoVisualizer(Algorithms.Stack algo){
@@ -269,7 +269,7 @@ public class JStack {
 
 //  push pop peek isempty isfull  size
 
-    public void push(int value) {
+    public void push(T value) {
         Code.markCurrentLine(); checkBuilt();
         Variable.update("push", value);
 
@@ -278,7 +278,7 @@ public class JStack {
         if (mode != Render.DISABLED) { animator.runAddAnimation(value, randomizer != null ? randomizer.randomInsertAnimation() : defaultEntrance); }
     }
 
-    public void push(int value, Entrance boxAnimation) {
+    public void push(T value, Entrance boxAnimation) {
         Code.markCurrentLine(); checkBuilt();
         Variable.update("push", value);
 
@@ -287,29 +287,29 @@ public class JStack {
         if(mode != Render.DISABLED){ animator.runAddAnimation(value, boxAnimation);}
     }
 
-    public int pop() {
+    public T pop() {
         Code.markCurrentLine(); checkBuilt();
 
         top--;
-        int e = stack.pop();
+        T e = stack.pop();
         if(mode != Render.DISABLED){ animator.runRemoveAnimation(top, randomizer != null ? randomizer.randomRemoveAnimation() : defaultExit); }
         Variable.update("pop", e);
         return e;
     }
 
-    public int pop(Exit boxAnimation) {
+    public T pop(Exit boxAnimation) {
         Code.markCurrentLine(); checkBuilt();
 
         top--;
-        int e = stack.pop();
+        T e = stack.pop();
         if(mode != Render.DISABLED){animator.runRemoveAnimation(top, boxAnimation);}
         Variable.update("pop", e);
         return e;
     }
 
-    public Integer peek() {
+    public T peek() {
         Code.markCurrentLine(); checkBuilt();
-        int e = stack.peek();
+        T e = stack.peek();
         Variable.update("peek", e);
 
         if(mode != Render.DISABLED){ animator.runHighlightAnimation(top - 1); }

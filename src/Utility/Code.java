@@ -52,49 +52,129 @@ public class Code {
         return null;
     }
 
+//    private static List<String> mainSource = null;
+//    private static List<String> sortingSource = null;
+
     private static List<String> mainSource = null;
-    private static List<String> sortingSource = null;
-    
+    private static final java.util.Map<String, List<String>> enumSources = new java.util.HashMap<>();
+
+
+//    static {
+//        try {
+//            // Load Main.java
+//            mainSource = Files.readAllLines(Paths.get(findMainFile()));
+//
+//
+//            String sortingPath = "src/Algorithms/Array.java";
+//            if (Files.exists(Paths.get(sortingPath))) {
+//                sortingSource = Files.readAllLines(Paths.get(sortingPath));
+//            } else {
+//                System.err.println("Warning: Could not load SortingAlgorithm.java");
+//            }
+//        } catch (Exception e) {
+//            System.err.println("Error loading source files: " + e.getMessage());
+//        }
+//    }
+
     static {
         try {
             // Load Main.java
             mainSource = Files.readAllLines(Paths.get(findMainFile()));
-            
-            // Load SortingAlgorithm.java - adjust path as needed
-            String sortingPath = "src/Algorithms/Stack.java";
-            if (Files.exists(Paths.get(sortingPath))) {
-                sortingSource = Files.readAllLines(Paths.get(sortingPath));
-            } else {
-                System.err.println("Warning: Could not load SortingAlgorithm.java");
+
+            // Load all enum source files
+            String[] enumFiles = {
+                    "src/Algorithms/Array.java",
+                    "src/Algorithms/Stack.java",
+                    "src/Algorithms/Queue.java",
+                    "src/Algorithms/LinkedList.java"
+            };
+
+            for (String path : enumFiles) {
+                if (Files.exists(Paths.get(path))) {
+                    String className = "Algorithms." + path.split("/")[2].replace(".java", "");
+                    enumSources.put(className, Files.readAllLines(Paths.get(path)));
+                } else {
+                    System.err.println("Warning: Could not load " + path);
+                }
             }
+
         } catch (Exception e) {
             System.err.println("Error loading source files: " + e.getMessage());
         }
     }
 
+
+
+
+//    public static void markCurrentLine() {
+//        if (!enabled) return;
+//
+//        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+//        for (int i = 1; i < stackTrace.length; i++) {
+//            StackTraceElement el = stackTrace[i];
+//
+//            // Check if we're in SortingAlgorithm
+//            if (el.getClassName().startsWith("Algorithms.Array") && sortingSource != null ||
+//                    el.getClassName().startsWith("Algorithms.Stack") && sortingSource != null) {
+//                currentLine.set(el.getLineNumber() - 1);
+//                sourceLines = sortingSource;
+//                return;
+//            }
+//            // Check if we're in Main
+//            else if ("Main.java".equals(el.getFileName()) && mainSource != null) {
+//                currentLine.set(el.getLineNumber() - 1);
+//                sourceLines = mainSource;
+//                return;
+//            }
+//            // Add more conditions here for other classes if needed
+//        }
+//    }
+
     public static void markCurrentLine() {
         if (!enabled) return;
 
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+
         for (int i = 1; i < stackTrace.length; i++) {
             StackTraceElement el = stackTrace[i];
-            
-            // Check if we're in SortingAlgorithm
-            if (el.getClassName().startsWith("Algorithms.Array") && sortingSource != null ||
-                    el.getClassName().startsWith("Algorithms.Stack") && sortingSource != null) {
+            String className = el.getClassName();
+            String baseClassName = className.split("\\$")[0]; // <- THE FIX
+
+            if (baseClassName.startsWith("Algorithms.") && enumSources.containsKey(baseClassName)) {
+                sourceLines = enumSources.get(baseClassName);
                 currentLine.set(el.getLineNumber() - 1);
-                sourceLines = sortingSource;
-                return;
-            } 
-            // Check if we're in Main
-            else if ("Main.java".equals(el.getFileName()) && mainSource != null) {
-                currentLine.set(el.getLineNumber() - 1);
-                sourceLines = mainSource;
+//                conditionResult = " ";
                 return;
             }
-            // Add more conditions here for other classes if needed
+        }
+
+        // Fallback to Main.java
+        for (int i = 1; i < stackTrace.length; i++) {
+            StackTraceElement el = stackTrace[i];
+            if ("Main.java".equals(el.getFileName()) && mainSource != null) {
+                sourceLines = mainSource;
+                currentLine.set(el.getLineNumber() - 1);
+                return;
+            }
         }
     }
+
+
+
+
+    private static String conditionResult = " ";
+
+    public static void setConditionResult(String result) {
+        conditionResult = result;
+    }
+
+    public static String getConditionResult() {
+        return conditionResult;
+    }
+
+
+
+
 
     private static int getMaxVisibleLines() {
         double scale = Code.scale;
@@ -191,7 +271,43 @@ public class Code {
                 }
 
                 g2d.setColor(TEXT);
+//                String displayLine = wrappedLine;
+//                if (isCurrentLine && conditionResult != null) {
+//                    displayLine += "   " + conditionResult;
+//                }
+
                 g2d.drawString(wrappedLine, x + 30, currentY);
+//                if (!getConditionResult().isEmpty()) {
+//                    g2d.setColor(Color.YELLOW);
+//                    g2d.drawString(getConditionResult(), x + 40, y + overlayHeight - 10);
+//                }
+//                if (isCurrentLine) conditionResult = " ";
+//                g2d.setColor(TEXT);
+//                g2d.drawString(wrappedLine, x + 30, currentY);
+
+                // Glue the condition result to this line if it's the current line and first wrapped segment
+                if (!getConditionResult().isBlank()) {
+                    // Draw a soft highlight bar at the bottom
+                    int footerHeight = lineHeight + 4;
+                    int footerY = y + overlayHeight - footerHeight + lineHeight + 5;
+
+                    g2d.setColor(new Color(30, 30, 40, 25));
+                    g2d.fillRect(x, footerY, overlayWidth, footerHeight);
+
+                    // Draw result text in green/red, centered left
+                    Color resultColor = getConditionResult().contains("true")
+                            ? new Color(120, 255, 120, 45)
+                            : new Color(255, 120, 120, 45);
+
+
+                    g2d.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 10));
+                    g2d.setColor(resultColor);
+
+                    String label = "Condition Result: " + getConditionResult();
+                    g2d.drawString(label, x + 16, footerY + fm.getAscent());
+                }
+
+
                 currentY += lineHeight;
             }
         }

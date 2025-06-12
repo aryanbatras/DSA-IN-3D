@@ -15,7 +15,7 @@ import Rendering.*;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class JArrayListAnimator {
+public class JArrayListAnimator<T> {
     private final ArrayList<Shape> world;
     private final Renderer renderer;
     private final Utility.Camera camera;
@@ -113,7 +113,7 @@ public class JArrayListAnimator {
         this.camera.setRadius(camera.getRadius() - focus);
     }
 
-    public void runAddAnimation(int value, Entrance animation) {
+    public void runAddAnimation(T value, Entrance animation) {
         if(randomBackground){ setRandomBackground(); }
 
         if (mode == Render.STEP_WISE || mode == Render.STEP_WISE_INTERACTIVE) {
@@ -129,7 +129,7 @@ public class JArrayListAnimator {
                 new Point(finalX, finalY, 0),
                 1, 1, 0.1,
                 new Color(0.4f, 0.7f, 1.0f),
-                material, 0, value,
+                material, 0, String.valueOf(value),
                 particle
         );
         world.add(JBox);
@@ -191,7 +191,7 @@ public class JArrayListAnimator {
         boxAnimator.highlight(JBox);
     }
 
-    public void runHybridAnimation(int index, int value) {
+    public void runHybridAnimation(int index, T value) {
         if(randomBackground){ setRandomBackground(); }
 
         if (mode == Render.STEP_WISE || mode == Render.STEP_WISE_INTERACTIVE) {
@@ -202,12 +202,29 @@ public class JArrayListAnimator {
 
         JBox JBox = (JBox) world.get(index);
         subtitle.setMode("Updating");
-        subtitle.setValue(String.format("%d → %d", JBox.val, value));
+        subtitle.setValue(String.format("%s → %s", JBox.val, String.valueOf(value)));
         cameraAnimator.slideAlongX(JBox.center.x);
-        boxAnimator.updateValue(JBox, value);
-        JBox.val = value; JBox.setDigitsFromNumber(value);
+        boxAnimator.updateValue(JBox);
+        JBox.val = String.valueOf(value);
         boxAnimator.shakeSlow(JBox);
     }
 
+    public void runComparisonAnimation(int i, int j) {
+        if(randomBackground){ setRandomBackground(); }
+        if (mode == Render.STEP_WISE || mode == Render.STEP_WISE_INTERACTIVE) {
+            Window.waitUntilNextStep();
+            Window.setScale(scale);
+        }
+        Window.invokeReferences(renderer, camera, world, subtitle, mode);
+
+        JBox iBox = (JBox) world.get(i);
+        JBox jBox = (JBox) world.get(j);
+        subtitle.setMode("Comparing");
+        subtitle.setValue(String.valueOf(iBox.val + "&" + jBox.val));
+        cameraAnimator.slideAlongX(( iBox.center.x + jBox.center.x ) / 2 );
+        cameraAnimator.zoomOut(iBox.center.x, jBox.center.x);
+        boxAnimator.highlightTwoBoxes(iBox, jBox);
+        cameraAnimator.zoomIn(iBox.center.x, jBox.center.x);
+    }
 }
 

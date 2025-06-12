@@ -14,12 +14,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-public class JQueue {
+public class JQueue<T extends Comparable<T>> {
 
     private int front;
     private int rear;
-    private final Queue<Integer> queue;
-    private final JQueueAnimator animator;
+    private final Queue<T> queue;
+    private final JQueueAnimator<T> animator;
 
     private Render mode;
     private Encoder encoder;
@@ -40,7 +40,7 @@ public class JQueue {
         this.encoder = null;
         this.mode = Render.DISABLED;
         this.queue = new ArrayDeque<>();
-        this.animator = new JQueueAnimator();
+        this.animator = new JQueueAnimator<>();
         this.explicitlySetProperties = new HashSet<>();
         this.defaultEntrance = Entrance.SLIDE_FROM_RIGHT;
         this.defaultExit = Exit.SHRINK_AND_DROP;
@@ -272,10 +272,10 @@ public class JQueue {
 
 // offer pool peek
 
-    public void add(int value){ offer(value); }
-    public void add(int value, Entrance boxAnimation){ offer(value, boxAnimation); }
+    public void add(T value){ offer(value); }
+    public void add(T value, Entrance boxAnimation){ offer(value, boxAnimation); }
 
-    public void offer(int value) {
+    public void offer(T value) {
         Code.markCurrentLine(); checkBuilt();
         Variable.update("offer", value);
 
@@ -284,7 +284,7 @@ public class JQueue {
         if (mode != Render.DISABLED) { animator.runAddAnimation(value, randomizer != null ? randomizer.randomInsertAnimation() : defaultEntrance); }
     }
 
-    public void offer(int value, Entrance boxAnimation) {
+    public void offer(T value, Entrance boxAnimation) {
         Code.markCurrentLine(); checkBuilt();
         Variable.update("offer", value);
 
@@ -294,29 +294,29 @@ public class JQueue {
     }
 
 
-    public int poll() {
+    public T poll() {
         Code.markCurrentLine(); checkBuilt();
 
-        int e = queue.poll();
+        T e = queue.poll();
         if(mode != Render.DISABLED){ animator.runRemoveAnimation(randomizer != null ? randomizer.randomRemoveAnimation() : defaultExit); }
         Variable.update("poll", e);
         front++;
         return e;
     }
 
-    public int poll(Exit boxAnimation) {
+    public T poll(Exit boxAnimation) {
         Code.markCurrentLine(); checkBuilt();
 
-        int e = queue.poll();
+        T e = queue.poll();
         if(mode != Render.DISABLED){animator.runRemoveAnimation(boxAnimation);}
         Variable.update("pop", e);
         front++;
         return e;
     }
 
-    public Integer peek() {
+    public T peek() {
         Code.markCurrentLine(); checkBuilt();
-        int e = queue.peek();
+        T e = queue.peek();
         Variable.update("peek", e);
 
         if(mode != Render.DISABLED){ animator.runHighlightAnimation(); }

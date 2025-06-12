@@ -1,74 +1,107 @@
 package Algorithms;
 
 import Collections.JStack;
-import Rendering.*;
 
 public enum Stack {
-    BALANCED_PARENTHESIS {
-        public void run(JStack stack) {
-            String expr = "(())(()())";
-            for (char ch : expr.toCharArray()) {
-                if (ch == '(') {
-                    stack.push(1); // Push for '('
-                } else if (ch == ')') {
-                    if (!stack.isEmpty()) stack.pop(); // Pop for ')'
-                }
-            }
-        }
-    },
-
-    BINARY_TO_DECIMAL {
-        public void run(JStack stack) {
-            int number = 13;
-            while (number > 0) {
-                stack.push(number % 2);
-                number /= 2;
-            }
-
-            int result = 0, power = 1;
-            while (!stack.isEmpty()) {
-                result += stack.pop() * power;
-                power *= 2;
-            }
-
-            stack.push(result);
-        }
-    },
 
     REVERSE_STACK {
-        public void run(JStack stack) {
-            JStack temp = new JStack();
-            while (!stack.isEmpty()) temp.push(stack.pop());
-            while (!temp.isEmpty()) stack.push(temp.pop());
-        }
-    },
-
-    NEXT_GREATER_ELEMENT {
-        public void run(JStack stack) {
-            int[] input = {4, 5, 2, 10};
-            for (int i = input.length - 1; i >= 0; i--) {
-                int current = input[i];
-                while (!stack.isEmpty() && stack.peek() <= current) {
-                    stack.pop();
-                }
-                stack.push(current);
+        public <T extends Comparable<T>> void run(JStack<T> stack) {
+            JStack<T> temp = new JStack<T>();
+            while (!stack.isEmpty()) {
+                temp.push( stack.pop());
+            }
+            while (!temp.isEmpty()) {
+                stack.push(temp.pop());
             }
         }
     },
 
     SORT_STACK {
-        public void run(JStack stack) {
-            JStack temp = new JStack();
+        public <T extends Comparable<T>> void run(JStack<T> stack) {
+            JStack<T> temp = new JStack<T>();
             while (!stack.isEmpty()) {
-                int val = stack.pop();
-                while (!temp.isEmpty() && temp.peek() > val) {
+                T val = stack.pop();
+                while (!temp.isEmpty() && temp.peek().compareTo(val) > 0) {
                     stack.push(temp.pop());
                 }
                 temp.push(val);
             }
-            while (!temp.isEmpty()) stack.push(temp.pop());
+            while (!temp.isEmpty()) {
+                stack.push(temp.pop());
+            }
+        }
+    },
+
+    DUPLICATE_REMOVAL {
+        public <T extends Comparable<T>> void run(JStack<T> stack) {
+            JStack<T> temp = new JStack<T>();
+            while (!stack.isEmpty()) {
+                T current = stack.pop();
+                boolean exists = false;
+                JStack<T> checker = new JStack<T>();
+                while (!temp.isEmpty()) {
+                    T val = temp.pop();
+                    if (val.compareTo(current) == 0) exists = true;
+                    checker.push(val);
+                }
+                while (!checker.isEmpty()) {
+                    temp.push(checker.pop());
+                }
+                if (!exists) {
+                    temp.push(current);
+                }
+            }
+            while (!temp.isEmpty()) {
+                stack.push(temp.pop());
+            }
+        }
+    },
+
+    FIND_MINIMUM {
+        public <T extends Comparable<T>> void run(JStack<T> stack) {
+            if (stack.isEmpty()) return;
+            T min = stack.pop();
+            JStack<T> temp = new JStack<T>();
+            temp.push(min);
+
+            while (!stack.isEmpty()) {
+                T current = stack.pop();
+                if (current.compareTo(min) < 0) {
+                    min = current;
+                }
+                temp.push(current);
+            }
+
+            while (!temp.isEmpty()) {
+                stack.push(temp.pop());
+            }
+
+            stack.push(min);
+        }
+    },
+
+    FIND_MAXIMUM {
+        public <T extends Comparable<T>> void run(JStack<T> stack) {
+            if (stack.isEmpty()) return;
+            T max = stack.pop();
+            JStack<T> temp = new JStack<T>();
+            temp.push(max);
+
+            while (!stack.isEmpty()) {
+                T current = stack.pop();
+                if (current.compareTo(max) > 0) {
+                    max = current;
+                }
+                temp.push(current);
+            }
+
+            while (!temp.isEmpty()) {
+                stack.push(temp.pop());
+            }
+
+            stack.push(max);
         }
     };
 
-    public abstract void run(JStack stack);
+    public abstract <T extends Comparable<T>> void run(JStack<T> stack);
 }

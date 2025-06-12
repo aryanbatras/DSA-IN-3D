@@ -2,6 +2,7 @@ package Utility;
 
 import Rendering.Render;
 import Shapes.Core.Shape;
+import Shapes.JBox;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -149,9 +150,6 @@ public class Renderer {
                             }
                         }
 
-
-
-
                     } finally {
                         latch.countDown( );
                     }
@@ -184,6 +182,16 @@ public class Renderer {
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
         drawSubtitles(width, height, g2d, subtitle);
+
+        for (Shape s : world) {
+            if (s instanceof JBox box && box.val != null) {
+                Point screen = box.getProjected2D(camera, width, height);
+                if (screen != null) {
+                    drawSubtitleLikeBox(g2d, screen, String.valueOf(box.val));
+                }
+            }
+        }
+
         Code.render(g2d, Screen.getWidth(), scale);
         Variable.render(g2d, scale);
 
@@ -207,7 +215,29 @@ public class Renderer {
 
     }
 
+    private void drawSubtitleLikeBox(Graphics2D g2d, Point screen, String text) {
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        int fontSize = 18;
+        Font font = new Font("SansSerif", Font.BOLD, fontSize);
+        g2d.setFont(font);
 
+        FontMetrics fm = g2d.getFontMetrics();
+        int textWidth = fm.stringWidth(text);
+        int textHeight = fm.getHeight();
+
+        int padding = 6;
+        int boxWidth = textWidth + padding * 2;
+        int boxHeight = textHeight + padding * 2;
+
+        int boxX = (int) screen.x - boxWidth / 2;
+        int boxY = (int) screen.y - (  boxHeight / 2);
+
+        g2d.setColor(new java.awt.Color(0, 0, 0, 100));
+        g2d.fillRoundRect(boxX, boxY, boxWidth, boxHeight, 24, 24);
+
+        g2d.setColor(java.awt.Color.WHITE);
+        g2d.drawString(text, boxX + padding, boxY + padding + fm.getAscent() - 2);
+    }
 
 
     private void drawSubtitles(int width, int height, Graphics2D g2d, Subtitle subtitle) {
@@ -246,7 +276,6 @@ public class Renderer {
             g2d.drawString(subtitleText, textX, textY);
         }
     }
-
 
     public BufferedImage getActualFrame() {
         return ACTUALFRAME;

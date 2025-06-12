@@ -1,14 +1,12 @@
 package Algorithms;
 
 import Collections.JQueue;
-import java.util.LinkedList;
-import java.util.Stack;
 
 public enum Queue {
 
     REVERSE_ENTIRE {
-        public void run(JQueue queue) {
-            Stack<Integer> stack = new Stack<>();
+        public <T extends Comparable<T>> void run(JQueue<T> queue) {
+            java.util.Stack<T> stack = new java.util.Stack<>();
             while (!queue.isEmpty()) {
                 stack.push(queue.poll());
             }
@@ -19,52 +17,55 @@ public enum Queue {
     },
 
     ROTATE_ONCE {
-        public void run(JQueue queue) {
+        public <T extends Comparable<T>> void run(JQueue<T> queue) {
             if (queue.isEmpty()) return;
-            int front = queue.poll();
-            queue.offer(front);
-        }
-    },
-
-    INTERLEAVE_HALVES {
-        public void run(JQueue queue) {
-            int n = queue.size();
-            if (n % 2 != 0) return;
-
-            java.util.Queue<Integer> firstHalf = new LinkedList<>();
-            for (int i = 0; i < n / 2; i++) {
-                firstHalf.add(queue.poll());
-            }
-
-            while (!firstHalf.isEmpty()) {
-                queue.offer(firstHalf.poll());
-                queue.offer(queue.poll());
-            }
+            queue.offer(queue.poll());
         }
     },
 
     DUPLICATE_ALL {
-        public void run(JQueue queue) {
+        public <T extends Comparable<T>> void run(JQueue<T> queue) {
             int n = queue.size();
             for (int i = 0; i < n; i++) {
-                int val = queue.poll();
+                T val = queue.poll();
                 queue.offer(val);
                 queue.offer(val);
             }
         }
     },
 
-    REMOVE_ODDS {
-        public void run(JQueue queue) {
+    REMOVE_DUPLICATES {
+        public <T extends Comparable<T>> void run(JQueue<T> queue) {
+            java.util.HashSet<T> seen = new java.util.HashSet<>();
             int n = queue.size();
             for (int i = 0; i < n; i++) {
-                int val = queue.poll();
-                if (val % 2 == 0) {
+                T val = queue.poll();
+                if (!seen.contains(val)) {
+                    seen.add(val);
                     queue.offer(val);
                 }
             }
         }
+    },
+
+    SORT_QUEUE {
+        public <T extends Comparable<T>> void run(JQueue<T> queue) {
+            int n = queue.size();
+            for (int i = 0; i < n; i++) {
+                T min = null;
+                for (int j = 0; j < queue.size(); j++) {
+                    T curr = queue.poll();
+                    if (min == null || curr.compareTo(min) < 0) {
+                        if (min != null) queue.offer(min);
+                        min = curr;
+                    } else {
+                        queue.offer(curr);
+                    }
+                }
+                queue.offer(min);
+            }
+        }
     };
 
-    public abstract void run(JQueue queue);
+    public abstract <T extends Comparable<T>> void run(JQueue<T> queue);
 }
