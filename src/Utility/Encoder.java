@@ -8,8 +8,10 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 
 public class Encoder implements AutoCloseable {
-    private static final String DEFAULT_OUTPUT_DIR = "output";
-    private static final String DEFAULT_VIDEO_PREFIX = "video";
+    private static final String DEFAULT_OUTPUT_DIR =
+            System.getProperty("output.dir", System.getProperty("user.home") + "/Desktop");
+
+    private static final String DEFAULT_VIDEO_PREFIX = "DSA_IN_3D";
     private static final int DEFAULT_FPS = 60;
     private static Encoder INSTANCE;
 
@@ -154,9 +156,61 @@ public class Encoder implements AutoCloseable {
         }
     }
 
+    private static boolean isFFmpegAvailable(String command) {
+        try {
+            Process process = new ProcessBuilder(command, "-version").start();
+            return process.waitFor() == 0;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private static String getPlatformFFmpegExecutable() {
+        if (isFFmpegAvailable("ffmpeg")) {
+            System.out.println( "FFmpeg found in PATH" );
+            return "ffmpeg";
+        }
+
+        String os = System.getProperty("os.name").toLowerCase();
+        String ffmpegPath;
+
+        if (os.contains("win")) {
+            ffmpegPath = "src/Resources/ffmpeg.exe";
+        } else if (os.contains("mac") || os.contains("nix") || os.contains("nux")) {
+            System.out.println( "FFmpeg found in src/Resources" );
+            ffmpegPath = "src/Resources/ffmpeg";
+        } else {
+            throw new UnsupportedOperationException("Unsupported OS: " + os);
+        }
+
+        File ffmpegFile = new File(ffmpegPath);
+        if (!ffmpegFile.exists()) {
+            System.out.println("Error: FFmpeg binary not found" );
+            throw new IllegalStateException("Bundled FFmpeg binary not found at: " + ffmpegFile.getAbsolutePath());
+        }
+
+        if (!os.contains("win")) {
+            try {
+                System.out.println( "chmod +x src/Resources/ffmpeg" );
+                Process chmod = new ProcessBuilder("chmod", "+x", ffmpegFile.getAbsolutePath()).start();
+                chmod.waitFor();
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to chmod +x for FFmpeg binary", e);
+            }
+        }
+
+        System.out.println( "FFmpeg found at: " + ffmpegFile.getAbsolutePath() );
+        return ffmpegFile.getAbsolutePath();
+    }
+
+
     private Process createFFmpegProcess(String outputFile) throws IOException {
+
+        String ffmpegPath = getPlatformFFmpegExecutable();
+        System.out.println("Using FFmpeg executable: " + ffmpegPath);
+
         ProcessBuilder pb = new ProcessBuilder(
-                "ffmpeg",
+                ffmpegPath,
                 "-f", "rawvideo",
                 "-pixel_format", "rgb24",
                 "-video_size", String.format("%dx%d", width, height),

@@ -3,11 +3,13 @@ package Utility;
 import java.awt.*;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.ArrayList;
 import java.awt.Color;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 public class Code {
 
@@ -39,17 +41,17 @@ public class Code {
 
     public static String findMainFile() {
         String dir = System.getProperty("user.dir");
-        String[] candidates = {
-                "/src/Main.java",
-                "/Main.java"
-        };
+        Path root = Paths.get(dir);
 
-        for (String path : candidates) {
-            if (Files.exists(Paths.get(dir + path))) {
-                return dir + path;
-            }
+        try (Stream<Path> files = Files.walk(root, 5)) {
+            return files
+                    .filter(p -> p.getFileName().toString().equals("Main.java"))
+                    .findFirst()
+                    .map(Path::toString)
+                    .orElse(null);
+        } catch (IOException e) {
+            return null;
         }
-        return null;
     }
 
 //    private static List<String> mainSource = null;

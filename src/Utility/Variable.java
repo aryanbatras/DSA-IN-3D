@@ -96,4 +96,5 @@ public class Variable {
         } catch (Exception ignored) {}
         return null;
     }
+
 }
