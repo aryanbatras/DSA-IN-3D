@@ -39,13 +39,14 @@ public class Code {
         }
     }
 
-    public static String findMainFile() {
-        String dir = System.getProperty("user.dir");
-        Path root = Paths.get(dir);
+    private static List<String> mainSource = null;
+    private static final java.util.Map<String, List<String>> enumSources = new java.util.HashMap<>();
 
+    private static String findFileNamed(String filename) {
+        Path root = Paths.get(System.getProperty("user.dir"));
         try (Stream<Path> files = Files.walk(root, 5)) {
             return files
-                    .filter(p -> p.getFileName().toString().equals("Main.java"))
+                    .filter(p -> p.getFileName().toString().equals(filename))
                     .findFirst()
                     .map(Path::toString)
                     .orElse(null);
@@ -54,83 +55,36 @@ public class Code {
         }
     }
 
-//    private static List<String> mainSource = null;
-//    private static List<String> sortingSource = null;
-
-    private static List<String> mainSource = null;
-    private static final java.util.Map<String, List<String>> enumSources = new java.util.HashMap<>();
-
-
-//    static {
-//        try {
-//            // Load Main.java
-//            mainSource = Files.readAllLines(Paths.get(findMainFile()));
-//
-//
-//            String sortingPath = "src/Algorithms/Array.java";
-//            if (Files.exists(Paths.get(sortingPath))) {
-//                sortingSource = Files.readAllLines(Paths.get(sortingPath));
-//            } else {
-//                System.err.println("Warning: Could not load SortingAlgorithm.java");
-//            }
-//        } catch (Exception e) {
-//            System.err.println("Error loading source files: " + e.getMessage());
-//        }
-//    }
+    public static String findMainFile() {
+        return findFileNamed("Main.java");
+    }
 
     static {
         try {
-            // Load Main.java
-            mainSource = Files.readAllLines(Paths.get(findMainFile()));
-
-            // Load all enum source files
-            String[] enumFiles = {
-                    "src/Algorithms/Array.java",
-                    "src/Algorithms/Stack.java",
-                    "src/Algorithms/Queue.java",
-                    "src/Algorithms/LinkedList.java"
-            };
-
-            for (String path : enumFiles) {
-                if (Files.exists(Paths.get(path))) {
-                    String className = "Algorithms." + path.split("/")[2].replace(".java", "");
-                    enumSources.put(className, Files.readAllLines(Paths.get(path)));
-                } else {
-                    System.err.println("Warning: Could not load " + path);
-                }
+            String mainFile = findMainFile();
+            if (mainFile != null && Files.exists(Paths.get(mainFile))) {
+                mainSource = Files.readAllLines(Paths.get(mainFile));
             }
+        } catch (IOException e) {
+            System.err.println("Warning: Could not load Main.java — " + e.getMessage());
+        }
 
-        } catch (Exception e) {
-            System.err.println("Error loading source files: " + e.getMessage());
+        String[] enumFiles = {"Array.java", "Stack.java", "Queue.java", "LinkedList.java"};
+        for (String filename : enumFiles) {
+            try {
+                String foundPath = findFileNamed(filename);
+                if (foundPath != null) {
+                    String className = "Algorithms." + filename.replace(".java", "");
+                    enumSources.put(className, Files.readAllLines(Paths.get(foundPath)));
+                } else {
+
+                }
+            } catch (IOException e) { }
         }
     }
 
 
 
-
-//    public static void markCurrentLine() {
-//        if (!enabled) return;
-//
-//        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-//        for (int i = 1; i < stackTrace.length; i++) {
-//            StackTraceElement el = stackTrace[i];
-//
-//            // Check if we're in SortingAlgorithm
-//            if (el.getClassName().startsWith("Algorithms.Array") && sortingSource != null ||
-//                    el.getClassName().startsWith("Algorithms.Stack") && sortingSource != null) {
-//                currentLine.set(el.getLineNumber() - 1);
-//                sourceLines = sortingSource;
-//                return;
-//            }
-//            // Check if we're in Main
-//            else if ("Main.java".equals(el.getFileName()) && mainSource != null) {
-//                currentLine.set(el.getLineNumber() - 1);
-//                sourceLines = mainSource;
-//                return;
-//            }
-//            // Add more conditions here for other classes if needed
-//        }
-//    }
 
     public static void markCurrentLine() {
         if (!enabled) return;
@@ -145,7 +99,6 @@ public class Code {
             if (baseClassName.startsWith("Algorithms.") && enumSources.containsKey(baseClassName)) {
                 sourceLines = enumSources.get(baseClassName);
                 currentLine.set(el.getLineNumber() - 1);
-//                conditionResult = " ";
                 return;
             }
         }

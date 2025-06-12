@@ -17,7 +17,6 @@ public enum Scenery {
     THE_SKY_IS_ON_FIRE("resources/the_sky_is_on_fire.jpg"),
     ADAMS_PLACE_BRIDGE("resources/adams_place_bridge.jpg"),
     PEDESTRIAN_OVERPASS("resources/pedestrian_overpass.jpg"),
-    VOORTREKKER_INTERIOR("resources/voortrekker_interior.jpg"),
     BROWN_PHOTOSTUDIO_02("resources/brown_photostudio_02.jpg"),
     SYMMETRICAL_GARDEN_02("resources/symmetrical_garden_02.jpg"),
     LITTLE_PARIS_UNDER_TOWER("resources/little_paris_under_tower.jpg"),
