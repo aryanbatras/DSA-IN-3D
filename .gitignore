@@ -11,5 +11,13 @@
 out/
 *.mp4
 /output
+.gitattributes
 .gitignore
 .windsurfrules
+/build
+gradlew
+gradlew.bat
+.gradle
+gradle.wrapper
+gradle-wrapper.jar
+gradle-wrapper.properties
