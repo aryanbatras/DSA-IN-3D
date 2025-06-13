@@ -1,18 +1,18 @@
-package Examples;
-
-import Algorithms.Array;
+import Collections.*;
+import Animations.*;
+import Algorithms.*;
 import Rendering.*;
 
 public class Main {
     public static void main(String[] args) {
 
-        Collections.JArrayList<String> arr = new Collections.JArrayList<>()
+        JArrayList arr = new JArrayList()
                 .withBackgroundChangeOnEveryOperation(true)
-                .withAlgoVisualizer(Array.BUBBLE_SORT)
-                .withStepsPerAnimation(Frames.NORMAL)
-                .withQuality(Resolution.FASTEST)
-                .withRenderMode(Render.LIVE)
-                .withMaterial(Texture.METAL)
+                .withAlgoVisualizer(Algorithms.Array.BUBBLE_SORT)
+                .withStepsPerAnimation(Rendering.Frames.NORMAL)
+                .withQuality(Rendering.Resolution.FASTEST)
+                .withRenderMode(Rendering.Render.LIVE)
+                .withMaterial(Rendering.Texture.METAL)
                 .withCameraFocus(Zoom.X1)
                 .build();
 
