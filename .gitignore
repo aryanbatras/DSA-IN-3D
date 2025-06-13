@@ -5,19 +5,18 @@
 .gitattributes
 
 # IDE-specific files (optional)
+out/
 *.iml
 .idea/
-*.class
-out/
-*.mp4
-/output
-.gitattributes
-.gitignore
-.windsurfrules
 /build
-gradlew
-gradlew.bat
+/output
+*.class
 .gradle
+gradlew
+.gitignore
+gradlew.bat
+.gitattributes
+.windsurfrules
 gradle.wrapper
 gradle-wrapper.jar
 gradle-wrapper.properties
