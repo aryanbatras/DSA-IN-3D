@@ -66,7 +66,7 @@ public class JTrees<T extends Comparable<T>> {
     public void run() {
         if (algo == null) { throw new IllegalStateException(" No algo was given via .withAlgoVisualizer() "); }
         if (this.isEmpty()) { throw new IllegalStateException(" Tree is empty "); }
-//        algo.run(this);
+        algo.run(this);
     }
 
     public JTrees withInsertAnimation(Entrance entrance) {

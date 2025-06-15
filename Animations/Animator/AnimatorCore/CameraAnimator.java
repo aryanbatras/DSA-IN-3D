@@ -113,6 +113,91 @@ public class CameraAnimator {
         Window.invokeReferences(renderer, camera, world, subtitle, mode);
     }
 
+    private double previousCenterX = 0;
+    private double previousCenterY = 0;
+
+    public void zoomOut(double x1, double y1, double x2, double y2) {
+        double finalCenterX = (x1 + x2) / 2.0;
+        double finalCenterY = (y1 + y2) / 2.0;
+
+        double dx = Math.abs(x2 - x1);
+        double dy = Math.abs(y2 - y1);
+
+        // Use both dx and dy to compute radius (more balanced)
+        double targetRadius = Math.max(1.5, Math.max(dx * 1.3, dy * 1.3));
+
+        // Store previous camera state for zoom in
+        previousRadius = camera.getRadius();
+        previousCenterX = camera.getM_X();
+        previousCenterY = camera.getM_Y();
+
+        double startRadius = camera.getRadius();
+        double startX = camera.getM_X();
+        double startY = camera.getM_Y();
+
+        for (int i = 1; i <= frames; i++) {
+            double t = i / (double) frames;
+
+            // Linear interpolation
+            double currentX = lerp(startX, finalCenterX, t);
+            double currentY = lerp(startY, finalCenterY, t);
+            double currentRadius = lerp(startRadius, targetRadius, t);
+
+            camera.setM_X(currentX);
+            camera.setM_Y(currentY);
+            camera.setRadius(currentRadius);
+
+            renderer.drawImage(camera, world, subtitle, mode, 0);
+            triggerOptionalCameraEffect(speed, rotationMode, this, camera);
+        }
+
+        // Ensure it ends at the exact center and radius
+        camera.setM_X(finalCenterX);
+        camera.setM_Y(finalCenterY);
+        camera.setRadius(targetRadius);
+
+        Window.invokeReferences(renderer, camera, world, subtitle, mode);
+    }
+
+    public void zoomIn(double x1, double y1, double x2, double y2) {
+        if (previousRadius < 0) return;
+
+        double finalRadius = previousRadius;
+        double finalX = previousCenterX;
+        double finalY = previousCenterY;
+
+        double startRadius = camera.getRadius();
+        double startX = camera.getM_X();
+        double startY = camera.getM_Y();
+
+        for (int i = 1; i <= frames; i++) {
+            double t = i / (double) frames;
+
+            double currentX = lerp(startX, finalX, t);
+            double currentY = lerp(startY, finalY, t);
+            double currentRadius = lerp(startRadius, finalRadius, t);
+
+            camera.setM_X(currentX);
+            camera.setM_Y(currentY);
+            camera.setRadius(currentRadius);
+
+            renderer.drawImage(camera, world, subtitle, mode, 0);
+            triggerOptionalCameraEffect(speed, rotationMode, this, camera);
+        }
+
+        camera.setM_X(finalX);
+        camera.setM_Y(finalY);
+        camera.setRadius(finalRadius);
+
+        previousRadius = -1;
+        Window.invokeReferences(renderer, camera, world, subtitle, mode);
+    }
+
+    private double lerp(double a, double b, double t) {
+        return a + (b - a) * t;
+    }
+
+
     public static void triggerOptionalCameraEffect(double intensity, View rotationMode, CameraAnimator cameraAnimator, Utility.Camera camera) {
         switch (rotationMode) {
             case ROTATE_YAW -> cameraAnimator.smoothYawRotation((intensity));

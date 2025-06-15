@@ -241,6 +241,29 @@ public class BoxAnimator {
         JBox.height = originalHeight;
     }
 
+    public void scalePopFastest(JBox JBox) {
+        double originalWidth = JBox.width;
+        double originalHeight = JBox.height;
+        double maxScale = 0.5;
+
+        for (int i = 0; i < frames / 12; i++) {
+            double scale = 1 + (maxScale - 1) * i / (frames / 12);
+            JBox.width = originalWidth * scale;
+            JBox.height = originalHeight * scale;
+            renderer.drawImage(camera, world, subtitle, mode, 0);
+        }
+
+        for (int i = 0; i < frames / 12; i++) {
+            double scale = maxScale - (maxScale - 1) * i / (frames / 12);
+            JBox.width = originalWidth * scale;
+            JBox.height = originalHeight * scale;
+            renderer.drawImage(camera, world, subtitle, mode, 0);
+        }
+
+        JBox.width = originalWidth;
+        JBox.height = originalHeight;
+    }
+
     public void fadeOutAndUp(JBox JBox, double finalY) {
         double initialY = JBox.center.y;
         double deltaY = (finalY - initialY) / frames;

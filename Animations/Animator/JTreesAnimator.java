@@ -189,22 +189,6 @@ public class JTreesAnimator<T extends Comparable<T>> {
         assignIndices(node.right, depth + 1);
     }
 
-    private int compareDynamicValues(String str1, String str2) {
-        try {
-            Integer int1 = Integer.parseInt(str1);
-            Integer int2 = Integer.parseInt(str2);
-            return int1.compareTo(int2);
-        } catch (NumberFormatException e1) {
-            try {
-                Double double1 = Double.parseDouble(str1);
-                Double double2 = Double.parseDouble(str2);
-                return double1.compareTo(double2);
-            } catch (NumberFormatException e2) {
-                return str1.compareTo(str2);
-            }
-        }
-    }
-
     private Point calculateNodePosition(TreeNode node, T value, double x, double y) {
         if (node == null) {
             return new Point(x, y, 0);
@@ -467,7 +451,6 @@ public class JTreesAnimator<T extends Comparable<T>> {
             case SHRINK_AND_DROP -> boxAnimator.shrinkAndDrop(box);
         }
     }
-
 
     public StringBuilder runTraversalAnimation(JTrees<T>.TreeNode node, Traversal order) {
         if (randomBackground) setRandomBackground();

@@ -1,29 +1,36 @@
-import Collections.*;
-import Animations.*;
-import Algorithms.*;
+import Collections.JGraphs;
+import Animations.Dynamo;
 import Rendering.*;
 
 public class Main {
     public static void main(String[] args) {
 
-        JTrees<Integer> tree = new JTrees<>()
-                .withBackgroundChangeOnEveryOperation(true)
-                .withStepsPerAnimation(Frames.VERY_SLOW)
-                .withMaterial(Rendering.Texture.METAL)
+        JGraphs graph = new JGraphs()
+                .withQuality(Resolution.BALANCE)
+                .withStepsPerAnimation(Frames.NORMAL)
                 .withRenderMode(Render.LIVE)
-                .withQuality(Resolution.FASTEST)
-                .withCameraFocus(Zoom.X1)
+                .withMaterial(Texture.METAL)
                 .build();
 
-        tree.add(10);
-        tree.add(5);
-        tree.add(15);
-        tree.add(3);
-        tree.add(7);
-        tree.add(12);
-        tree.add(20);
-    }
+        graph.addVertex(1);
+        graph.addVertex(2);
+        graph.addVertex(3);
+        graph.addVertex(4);
+        graph.addVertex(5);
 
+        graph.addEdge(1, 2);
+        graph.addEdge(2, 1);
+        graph.addEdge(2, 3);
+        graph.addEdge(3, 2);
+        graph.addEdge(3, 4);
+        graph.addEdge(4, 3);
+        graph.addEdge(4, 5);
+        graph.addEdge(5, 4);
+
+        graph.removeVertex(3);
+
+
+    }
 }
 
 
