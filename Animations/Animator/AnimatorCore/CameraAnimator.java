@@ -2,11 +2,8 @@ package Animations.Animator.AnimatorCore;
 
 import Rendering.View;
 import Shapes.Core.Shape;
-import Utility.Camera;
-import Utility.Renderer;
+import Utility.*;
 import Rendering.Render;
-import Utility.Subtitle;
-import Utility.Window;
 
 import java.util.ArrayList;
 
@@ -32,6 +29,28 @@ public class CameraAnimator {
         this.camera = camera;
         this.world = world;
         this.speed = 0.0052;
+    }
+
+    public void slideTo(Point p) {
+
+        double targetX = p.x;
+        double targetY = p.y;
+
+        double startX = camera.getM_X();
+        double startY = camera.getM_Y();
+
+        double deltaX = (targetX - startX) / frames;
+        double deltaY = (targetY - startY) / frames;
+
+        for (int i = 0; i < frames; i++) {
+            camera.setM_X(camera.getM_X() + deltaX);
+            camera.setM_Y(camera.getM_Y() + deltaY);
+
+            renderer.drawImage(camera, world, subtitle, mode, 0);
+            CameraAnimator.triggerOptionalCameraEffect(speed, rotationMode, this, camera);
+        }
+
+        Window.invokeReferences(renderer, camera, world, subtitle, mode);
     }
 
     public void slideAlongY(double cameraFinal) {

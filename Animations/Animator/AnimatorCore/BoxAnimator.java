@@ -48,6 +48,19 @@ public class BoxAnimator {
         this.rotationModeAnimator = cameraAnimator;
     }
 
+    public void moveBoxTo(JBox box, Point target) {
+        Point start = box.getCenter();
+        double dx = (target.x - start.x) / frames;
+        double dy = (target.y - start.y) / frames;
+
+        for (int i = 0; i < frames; i++) {
+            box.center.x += dx;
+            box.center.y += dy;
+            renderer.drawImage(camera, world, subtitle, mode, 0);
+        }
+    }
+
+
     public void highlightTwoBoxes(JBox a, JBox b) {
         Color originalA = a.color;
         Color originalB = b.color;
@@ -196,6 +209,29 @@ public class BoxAnimator {
 
         for (int i = 0; i < frames / 2; i++) {
             double scale = maxScale - (maxScale - 1) * i / (frames / 2);
+            JBox.width = originalWidth * scale;
+            JBox.height = originalHeight * scale;
+            renderer.drawImage(camera, world, subtitle, mode, 0);
+        }
+
+        JBox.width = originalWidth;
+        JBox.height = originalHeight;
+    }
+
+    public void scalePopFast(JBox JBox) {
+        double originalWidth = JBox.width;
+        double originalHeight = JBox.height;
+        double maxScale = 0.5;
+
+        for (int i = 0; i < frames / 4; i++) {
+            double scale = 1 + (maxScale - 1) * i / (frames / 4);
+            JBox.width = originalWidth * scale;
+            JBox.height = originalHeight * scale;
+            renderer.drawImage(camera, world, subtitle, mode, 0);
+        }
+
+        for (int i = 0; i < frames / 4; i++) {
+            double scale = maxScale - (maxScale - 1) * i / (frames / 4);
             JBox.width = originalWidth * scale;
             JBox.height = originalHeight * scale;
             renderer.drawImage(camera, world, subtitle, mode, 0);

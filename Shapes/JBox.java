@@ -30,7 +30,6 @@ public class JBox extends Shape {
         this.depth = depth;
         this.fuzz = fuzz;
         this.val = value;
-//        setDigitsFromNumber(value);
     }
 
     public void setDigitsFromNumber(Integer value){
@@ -93,6 +92,7 @@ public class JBox extends Shape {
         height *= scale;
         depth *= scale;
     }
+
 
     public Point getNormal(Point hitPoint) {
         Point min = getMin();

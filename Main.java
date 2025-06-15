@@ -6,21 +6,22 @@ import Rendering.*;
 public class Main {
     public static void main(String[] args) {
 
-        JArrayList arr = new JArrayList()
+        JTrees<Integer> tree = new JTrees<>()
                 .withBackgroundChangeOnEveryOperation(true)
-                .withAlgoVisualizer(Algorithms.Array.BUBBLE_SORT)
-                .withStepsPerAnimation(Rendering.Frames.NORMAL)
-                .withQuality(Rendering.Resolution.FASTEST)
-                .withRenderMode(Rendering.Render.LIVE)
+                .withStepsPerAnimation(Frames.VERY_SLOW)
                 .withMaterial(Rendering.Texture.METAL)
+                .withRenderMode(Render.LIVE)
+                .withQuality(Resolution.FASTEST)
                 .withCameraFocus(Zoom.X1)
                 .build();
 
-        arr.add("Hello", Entrance.SLIDE_FROM_TOP);
-        arr.add("World", Entrance.BOUNCE);
-        arr.add("Hello", Entrance.SLIDE_FROM_TOP);
-        arr.add("World", Entrance.BOUNCE);
-        arr.run();
+        tree.add(10);
+        tree.add(5);
+        tree.add(15);
+        tree.add(3);
+        tree.add(7);
+        tree.add(12);
+        tree.add(20);
     }
 
 }
