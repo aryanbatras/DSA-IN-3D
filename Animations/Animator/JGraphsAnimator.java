@@ -3,12 +3,10 @@ package Animations.Animator;
 import Animations.Animator.AnimatorCore.BoxAnimator;
 import Animations.Animator.AnimatorCore.CameraAnimator;
 import Animations.*;
-import Collections.JGraphs;
 import Shapes.Core.Shape;
 import Shapes.JBox;
 import Rendering.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import Utility.*;
 
@@ -246,7 +244,6 @@ public class JGraphsAnimator<T> {
         Point pv = boxV.getCenter();
 
         edgeMap.put(u, v);
-        System.out.println("Edge Map Updated: " + u + " -> " + v);
 
         for (var e : valueToBox.entrySet()) {
             Point c = e.getValue().getCenter();
@@ -470,6 +467,42 @@ public class JGraphsAnimator<T> {
         return segs;
     }
 
+    public void runHighlightVertexAnimation(T value) {
+        if (mode == Render.STEP_WISE || mode == Render.STEP_WISE_INTERACTIVE) {
+            Window.waitUntilNextStep();
+            Window.setScale(scale);
+        }
+        Window.invokeReferences(renderer, camera, world, subtitle, mode);
+
+        subtitle.setMode("Visit Vertex");
+        subtitle.setValue(String.valueOf(value));
+
+        JBox box = valueToBox.get(value);
+        if (box == null) return;
+
+        cameraAnimator.slideTo(box.getCenter());
+        boxAnimator.highlight(box);
+        boxAnimator.shakeSlow(box);
+    }
+
+
+    public void runHighlightEdgeAnimation(T u, T v) {
+        if (mode == Render.STEP_WISE || mode == Render.STEP_WISE_INTERACTIVE) {
+            Window.waitUntilNextStep();
+            Window.setScale(scale);
+        }
+        Window.invokeReferences(renderer, camera, world, subtitle, mode);
+
+        subtitle.setMode("Traverse Edge");
+        subtitle.setValue(u + " → " + v);
+
+        for (JBox bar : edgeBars) {
+            if (bar.val.equals(u + "->" + v)) {
+                cameraAnimator.slideTo(bar.getCenter());
+                boxAnimator.highlight(bar);
+            }
+        }
+    }
 
 
 

@@ -1,13 +1,13 @@
 package Collections;
 
-import Algorithms.Trees;
+import Algorithms.Graph;
 import Animations.Animator.JGraphsAnimator;
 import Animations.*;
 import Rendering.*;
 import java.util.*;
 import Utility.*;
 
-public class JGraphs<T> {
+public class JGraph<T extends Comparable<T>> {
 
     private final Map<T, List<T>> adjacencyList;
     private final JGraphsAnimator<T> animator;
@@ -17,7 +17,7 @@ public class JGraphs<T> {
     private Encoder encoder;
     private Dynamo randomizer;
     private boolean built;
-    private final Set<String> explicitlySetProperties;
+    private Set<String> explicitlySetProperties;
 
     // Default animations
     private Entrance defaultVertexEntrance;
@@ -26,13 +26,13 @@ public class JGraphs<T> {
     private Exit defaultEdgeExit;
 
     // Render mode, output, etc
+    private Graph algo;
     private Render mode;
-    private Trees algo;
     private String userOutput;
     private boolean userProvidedOutput;
     private boolean preferSharedEncoder;
 
-    public JGraphs() {
+    public JGraph() {
         this.adjacencyList = new LinkedHashMap<>();
         this.animator = new JGraphsAnimator<>();
         this.scale = 0.5;
@@ -46,7 +46,7 @@ public class JGraphs<T> {
         this.defaultEdgeEntrance = Entrance.SLIDE_FROM_RIGHT;
         this.defaultEdgeExit = Exit.SLIDE_UP;
     }
-    public JGraphs  withAlgoVisualizer(Trees algo){
+    public JGraph withAlgoVisualizer(Graph algo){
         this.algo = algo;
         /*
          you have to build functions to
@@ -57,13 +57,32 @@ public class JGraphs<T> {
         return this;
     }
 
-    public void run() {
-        if (algo == null) { throw new IllegalStateException(" No algo was given via .withAlgoVisualizer() "); }
-//        if (this.isEmpty()) { throw new IllegalStateException(" Tree is empty "); }
-//        algo.run(this);
+    public JGraph(JGraph g) {
+        this.adjacencyList = g.adjacencyList;
+        this.animator = g.animator;
+        this.scale = g.scale;
+        this.encoder = g.encoder;
+        this.randomizer = g.randomizer;
+        this.built = g.built;
+        this.explicitlySetProperties.addAll(g.explicitlySetProperties);
+        this.defaultVertexEntrance = g.defaultVertexEntrance;
+        this.defaultVertexExit = g.defaultVertexExit;
+        this.defaultEdgeEntrance = g.defaultEdgeEntrance;
+        this.defaultEdgeExit = g.defaultEdgeExit;
+        this.algo = g.algo;
+        this.mode = g.mode;
+        this.userOutput = g.userOutput;
+        this.userProvidedOutput = g.userProvidedOutput;
+        this.preferSharedEncoder = g.preferSharedEncoder;
     }
 
-    public JGraphs  withInsertAnimation(Entrance entrance) {
+    public void run() {
+        if (algo == null) { throw new IllegalStateException(" No algo was given via .withAlgoVisualizer() "); }
+        if (adjacencyList.isEmpty()) { throw new IllegalStateException(" Graph is empty "); }
+        algo.run(this);
+    }
+
+    public JGraph withInsertAnimation(Entrance entrance) {
         this.defaultVertexEntrance = entrance;
         this.defaultEdgeEntrance = entrance;
         explicitlySetProperties.add("insertAnimation");
@@ -71,7 +90,7 @@ public class JGraphs<T> {
         return this;
     }
 
-    public JGraphs  withRemoveAnimation(Exit exit) {
+    public JGraph withRemoveAnimation(Exit exit) {
         this.defaultEdgeExit = exit;
         this.defaultVertexExit = exit;
         explicitlySetProperties.add("removeAnimation");
@@ -79,13 +98,13 @@ public class JGraphs<T> {
         return this;
     }
 
-    public JGraphs  withRandomizer(Dynamo randomizer) {
+    public JGraph withRandomizer(Dynamo randomizer) {
         this.randomizer = randomizer;
         this.built = false;
         return this;
     }
 
-    public JGraphs  withRenderMode(Render mode) {
+    public JGraph withRenderMode(Render mode) {
         this.mode = mode;
         animator.setMode(mode);
         explicitlySetProperties.add("renderMode");
@@ -93,7 +112,7 @@ public class JGraphs<T> {
         return this;
     }
 
-    public JGraphs  withQuality(Resolution quality) {
+    public JGraph withQuality(Resolution quality) {
         switch (quality) {
             case BEST -> scale = 1.0;
             case GOOD -> scale = 0.75;
@@ -106,27 +125,27 @@ public class JGraphs<T> {
         return this;
     }
 
-    public JGraphs  withOutput(String userOutput) {
+    public JGraph withOutput(String userOutput) {
         this.userOutput = userOutput;
         userProvidedOutput = true;
         this.built = false;
         return this;
     }
 
-    public JGraphs  withSharedEncoder(boolean shared) {
+    public JGraph withSharedEncoder(boolean shared) {
         this.preferSharedEncoder = shared;
         this.built = false;
         return this;
     }
 
-    public JGraphs  withMaterial(Texture material) {
+    public JGraph withMaterial(Texture material) {
         animator.setMaterial(material);
         explicitlySetProperties.add("material");
         this.built = false;
         return this;
     }
 
-    public JGraphs  withBackground(Scenery bg) {
+    public JGraph withBackground(Scenery bg) {
         String background = bg.toString();
         animator.setBackground(background);
         explicitlySetProperties.add("background");
@@ -134,14 +153,14 @@ public class JGraphs<T> {
         return this;
     }
 
-    public JGraphs  withParticle(Effect particle) {
+    public JGraph withParticle(Effect particle) {
         animator.setParticle(particle);
         explicitlySetProperties.add("particle");
         this.built = false;
         return this;
     }
 
-    public JGraphs  withStepsPerAnimation(Frames step) {
+    public JGraph withStepsPerAnimation(Frames step) {
         int steps = step.getFrames();
         animator.setFPS(steps);
         explicitlySetProperties.add("steps");
@@ -149,13 +168,13 @@ public class JGraphs<T> {
         return this;
     }
 
-    public JGraphs  withCameraRotations(View rotationType) {
+    public JGraph withCameraRotations(View rotationType) {
         animator.setCameraRotation(rotationType);
         explicitlySetProperties.add("cameraRotation");
         return this;
     }
 
-    public JGraphs  withAntiAliasing(Smooth antiAliasing) {
+    public JGraph withAntiAliasing(Smooth antiAliasing) {
         double alias = 0;
         switch (antiAliasing) {
             case NONE -> alias = 1.0;
@@ -168,7 +187,7 @@ public class JGraphs<T> {
         return this;
     }
 
-    public JGraphs  withCameraSpeed(Pace cs) {
+    public JGraph withCameraSpeed(Pace cs) {
         explicitlySetProperties.add("cameraSpeed");
         double speed = cs.getMultiplier();
         animator.setCameraSpeed(speed);
@@ -176,20 +195,20 @@ public class JGraphs<T> {
         return this;
     }
 
-    public JGraphs  withBackgroundChangeOnEveryOperation(boolean change) {
+    public JGraph withBackgroundChangeOnEveryOperation(boolean change) {
         animator.setRandomizeBackgroundAsTrue();
         this.built = false;
         return this;
     }
 
-    public JGraphs  withCameraFocus(Zoom focus) {
+    public JGraph withCameraFocus(Zoom focus) {
         double value = focus.getMultiplier();
         animator.setCameraFocus(value);
         this.built = false;
         return this;
     }
 
-    public JGraphs  build() {
+    public JGraph build() {
 
         if (randomizer != null) {
             if (randomizer.shouldRandomizeInsertAnimation()  && !explicitlySetProperties.contains("insertAnimation")) {
@@ -261,7 +280,6 @@ public class JGraphs<T> {
         }
     }
 
-    // Vertex operations
     public void addVertex(T v) {
         Code.markCurrentLine();
         checkBuilt();
@@ -285,7 +303,6 @@ public class JGraphs<T> {
         return v;
     }
 
-    // Edge operations
     public void addEdge(T u, T v) {
         Code.markCurrentLine();
         checkBuilt();
@@ -324,7 +341,6 @@ public class JGraphs<T> {
         if (nbrs != null) nbrs.remove(v);
     }
 
-    // Graph queries
     public boolean containsVertex(T v) {
         Code.markCurrentLine(); checkBuilt();
         return adjacencyList.containsKey(v);
@@ -340,18 +356,6 @@ public class JGraphs<T> {
         return new ArrayList<>(adjacencyList.getOrDefault(v, List.of()));
     }
 
-    // Traversal animations
-//    public String bfs(T start) {
-//        Code.markCurrentLine(); checkBuilt();
-//        return "BFS -> " + animator.runBFSTraversal(adjacencyList, start).toString();
-//    }
-//
-//    public String dfs(T start) {
-//        Code.markCurrentLine(); checkBuilt();
-//        return "DFS -> " + animator.runDFSTraversal(adjacencyList, start).toString();
-//    }
-
-    // Utilities
     public int vertexCount() {
         Code.markCurrentLine(); checkBuilt();
         return adjacencyList.size();
@@ -365,4 +369,27 @@ public class JGraphs<T> {
     public void clear() {
         adjacencyList.clear();
     }
+
+    public void highlightVertex(T value) {
+        Code.markCurrentLine(); checkBuilt();
+        if (mode != Render.DISABLED) {
+            animator.runHighlightVertexAnimation(value);
+        }
+    }
+
+    public void highlightEdge(T u, T v) {
+        if (mode != Render.DISABLED) {
+            animator.runHighlightEdgeAnimation(u, v);
+        }
+    }
+
+
+    public Map<T, List<T>> getAdjacencyList() {
+        return new LinkedHashMap<>(adjacencyList);
+    }
+
+    public T[] getVertices() {
+        return adjacencyList.keySet().toArray((T[]) new Comparable[0]);
+    }
+
 }

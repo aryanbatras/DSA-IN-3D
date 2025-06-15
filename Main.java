@@ -1,11 +1,11 @@
-import Collections.JGraphs;
-import Animations.Dynamo;
+import Algorithms.Graph;
+import Collections.JGraph;
 import Rendering.*;
 
 public class Main {
     public static void main(String[] args) {
 
-        JGraphs graph = new JGraphs()
+        JGraph graph = new JGraph()
                 .withQuality(Resolution.BALANCE)
                 .withStepsPerAnimation(Frames.NORMAL)
                 .withRenderMode(Render.LIVE)
@@ -26,8 +26,11 @@ public class Main {
         graph.addEdge(4, 3);
         graph.addEdge(4, 5);
         graph.addEdge(5, 4);
+        graph.addEdge(5, 1);
+        graph.addEdge(1, 5);
 
-        graph.removeVertex(3);
+        Graph.CYCLE_DETECTION.run(graph);
+        Graph.REVERSE_GRAPH.run(graph);
 
 
     }

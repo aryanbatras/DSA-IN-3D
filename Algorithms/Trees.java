@@ -1,7 +1,6 @@
 package Algorithms;
 
 import Collections.JTrees;
-import java.util.*;
 
 public enum Trees {
 
