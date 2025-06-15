@@ -69,7 +69,7 @@ public class Code {
             System.err.println("Warning: Could not load Main.java — " + e.getMessage());
         }
 
-        String[] enumFiles = {"Array.java", "Stack.java", "Queue.java", "LinkedList.java"};
+        String[] enumFiles = {"Array.java", "Stack.java", "Queue.java", "LinkedList.java", "Graph.java", "Trees.java"};
         for (String filename : enumFiles) {
             try {
                 String foundPath = findFileNamed(filename);
