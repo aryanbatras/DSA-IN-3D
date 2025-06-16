@@ -48,6 +48,43 @@ public class BoxAnimator {
         this.rotationModeAnimator = cameraAnimator;
     }
 
+    public void swing(JBox box) {
+        double originalX = box.center.x;
+        for (int i = 0; i < frames; i++) {
+            box.center.x = originalX + Math.sin(i * 0.2) * 0.5;
+            renderer.drawImage(camera, world, subtitle, mode, 0);
+        }
+        box.center.x = originalX;
+    }
+
+    public void pulseHighlight(JBox box) {
+        Color original = box.color;
+        for (int i = 0; i < frames; i++) {
+            float t = (float)Math.abs(Math.sin(i * 0.05));
+            box.color = new Color(1.0f, 0.3f + 0.7f * t, 0.3f + 0.7f * t);
+            renderer.drawImage(camera, world, subtitle, mode, 0);
+        }
+        box.color = original;
+    }
+
+
+    public void flipRotation(JBox a, JBox b) {
+        Point startA = a.center;
+        Point startB = b.center;
+        for (int i = 0; i < frames; i++) {
+            double t = i / (double)frames;
+            double arc = Math.sin(t * Math.PI);
+            a.center.x = startA.x + (startB.x - startA.x) * t;
+            a.center.y = startA.y + arc * 1.5;
+
+            b.center.x = startB.x + (startA.x - startB.x) * t;
+            b.center.y = startB.y + arc * 1.5;
+
+            renderer.drawImage(camera, world, subtitle, mode, 0);
+        }
+    }
+
+
     public void moveBoxTo(JBox box, Point target) {
         Point start = box.getCenter();
         double dx = (target.x - start.x) / frames;
@@ -58,6 +95,96 @@ public class BoxAnimator {
             box.center.y += dy;
             renderer.drawImage(camera, world, subtitle, mode, 0);
         }
+    }
+
+    public void animateLLRotation(JBox A, JBox B, JBox C) {
+        Point startA = A.getCenter();
+        Point startB = B.getCenter();
+        Point startC = C.getCenter();
+
+        Point targetC = startB;
+        Point targetB = startA;
+        Point targetA = new Point(-startB.x, startB.y, startB.z);
+
+        double Adx = (targetA.x - startA.x) / frames;
+        double Ady = (targetA.y - startA.y) / frames;
+        double Adz = (targetA.z - startA.z) / frames;
+
+        double Bdx = (targetB.x - startB.x) / frames;
+        double Bdy = (targetB.y - startB.y) / frames;
+        double Bdz = (targetB.z - startB.z) / frames;
+
+        double Cdx = (targetC.x - startC.x) / frames;
+        double Cdy = (targetC.y - startC.y) / frames;
+        double Cdz = (targetC.z - startC.z) / frames;
+
+        for (int i = 0; i < frames; i++) {
+            A.center.x += Adx;
+            A.center.y += Ady;
+            A.center.z += Adz;
+            B.center.x += Bdx;
+            B.center.y += Bdy;
+            B.center.z += Bdz;
+            C.center.x += Cdx;
+            C.center.y += Cdy;
+            C.center.z += Cdz;
+            renderer.drawImage(camera, world, subtitle, mode, 0);
+        }
+    }
+
+    public void animateRRRotation(JBox A, JBox B, JBox C) {
+        Point startA = A.getCenter();
+        Point startB = B.getCenter();
+        Point startC = C.getCenter();
+
+        Point targetC = startB;
+        Point targetB = startA;
+        Point targetA = new Point(-startB.x, startB.y, startB.z);
+
+        double Adx = (targetA.x - startA.x) / frames;
+        double Ady = (targetA.y - startA.y) / frames;
+        double Adz = (targetA.z - startA.z) / frames;
+
+        double Bdx = (targetB.x - startB.x) / frames;
+        double Bdy = (targetB.y - startB.y) / frames;
+        double Bdz = (targetB.z - startB.z) / frames;
+
+        double Cdx = (targetC.x - startC.x) / frames;
+        double Cdy = (targetC.y - startC.y) / frames;
+        double Cdz = (targetC.z - startC.z) / frames;
+
+        for (int i = 0; i < frames; i++) {
+            A.center.x += Adx;
+            A.center.y += Ady;
+            A.center.z += Adz;
+            B.center.x += Bdx;
+            B.center.y += Bdy;
+            B.center.z += Bdz;
+            C.center.x += Cdx;
+            C.center.y += Cdy;
+            C.center.z += Cdz;
+            renderer.drawImage(camera, world, subtitle, mode, 0);
+        }
+    }
+
+
+
+    public void highlightThreeBoxes(JBox a, JBox b, JBox c) {
+        Color originalA = a.color;
+        Color originalB = b.color;
+        Color originalC = c.color;
+
+        for (int i = 0; i < frames; i++) {
+            float pulse = Math.abs((float)Math.sin(i * 0.025));
+            a.color = new Color(pulse, 0.2f, 1f - pulse);
+            b.color = new Color(pulse, 0.2f, 1f - pulse);
+            c.color = new Color(pulse, 0.2f, 1f - pulse);
+            renderer.drawImage(camera, world, subtitle, mode, 0);
+        }
+
+        a.color = originalA;
+        b.color = originalB;
+        c.color = originalC;
     }
 
     public void highlightTwoBoxes(JBox a, JBox b) {
@@ -169,7 +296,7 @@ public class BoxAnimator {
             JBox.center.y += velocity;
             if (JBox.center.y < baseY) {
                 JBox.center.y = baseY;
-                velocity = -velocity * 0.6; // dampen bounce
+                velocity = -velocity * 0.6;
             }
             renderer.drawImage(camera, world, subtitle, mode, 0);
         }
@@ -340,4 +467,63 @@ public class BoxAnimator {
 
         }
     }
+
+    public void animateRLRotation(JBox A, JBox B, JBox C) {
+        // STEP 1: Rotate left at B → simulate a LL on B and C
+        Point startB = B.getCenter();
+        Point startC = C.getCenter();
+
+        // C moves to B's position (intermediate root)
+        Point tempC = startB;
+
+        // B goes to C’s new right child position
+        Point tempB = new Point(startC.x - 5.0, startC.y, startC.z);
+
+        double Bdx = (tempB.x - startB.x) / frames;
+        double Bdy = (tempB.y - startB.y) / frames;
+
+        double Cdx = (tempC.x - startC.x) / frames;
+        double Cdy = (tempC.y - startC.y) / frames;
+
+        for (int i = 0; i < frames; i++) {
+            B.center.x += Bdx;
+            B.center.y += Bdy;
+            C.center.x += Cdx;
+            C.center.y += Cdy;
+            renderer.drawImage(camera, world, subtitle, mode, 0);
+        }
+    }
+
+
+    public void animateLRRotation(JBox A, JBox B, JBox C) {
+        // STEP 1: Rotate right at B → simulate a RR on B and C
+        Point startB = B.getCenter();
+        Point startC = C.getCenter();
+
+        // C moves to B's position (intermediate root)
+        Point tempC = startB;
+
+        // B goes to C's new left child position
+        Point tempB = new Point(startC.x + 5.0, startC.y, startC.z);
+
+        double Bdx = (tempB.x - startB.x) / frames;
+        double Bdy = (tempB.y - startB.y) / frames;
+
+        double Cdx = (tempC.x - startC.x) / frames;
+        double Cdy = (tempC.y - startC.y) / frames;
+
+        for (int i = 0; i < frames; i++) {
+            B.center.x += Bdx;
+            B.center.y += Bdy;
+            C.center.x += Cdx;
+            C.center.y += Cdy;
+            renderer.drawImage(camera, world, subtitle, mode, 0);
+        }
+
+        // STEP 2: Now simulate LL rotation on A, C, B
+//        animateLLRotation(A, C, B);
+    }
+
+
+
 }
