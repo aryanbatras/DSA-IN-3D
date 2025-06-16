@@ -60,7 +60,6 @@ public class BoxAnimator {
         }
     }
 
-
     public void highlightTwoBoxes(JBox a, JBox b) {
         Color originalA = a.color;
         Color originalB = b.color;
@@ -80,8 +79,8 @@ public class BoxAnimator {
         Color c = JBox.color;
         for (int i = 0; i < frames; i++) {
             JBox.color = new Color(
-                    Math.abs((float)Math.sin(i * 0.1)),
-                    Math.abs((float)Math.sin(i * 0.1)),
+                    Math.abs((float)Math.sin(i * 0.025)),
+                    Math.abs((float)Math.sin(i * 0.025)),
                     JBox.color.b
             );
             renderer.drawImage(camera, world, subtitle, mode, 0);

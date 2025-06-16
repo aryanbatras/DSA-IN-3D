@@ -1,34 +1,29 @@
-import Algorithms.Graph;
-import Collections.JGraph;
+import Collections.JMaxHeap;
 import Rendering.*;
 
 public class Main {
     public static void main(String[] args) {
 
-        JGraph graph = new JGraph()
-                .withQuality(Resolution.BALANCE)
-                .withStepsPerAnimation(Frames.NORMAL)
-                .withRenderMode(Render.LIVE)
+        JMaxHeap heap = new JMaxHeap()
+                .withQuality(Resolution.FASTEST)
+                .withStepsPerAnimation(Frames.VERY_SLOW)
+                .withRenderMode(Render.STEP_WISE)
                 .withMaterial(Texture.METAL)
                 .build();
 
-        graph.addVertex(1);
-        graph.addVertex(2);
-
-        graph.addEdge(1, 2);
-        graph.addEdge(2, 1);
-        graph.addEdge(2, 3);
-        graph.addEdge(3, 2);
-        graph.addEdge(3, 4);
-        graph.addEdge(4, 3);
-        graph.addEdge(4, 5);
-        graph.addEdge(5, 4);
-        graph.addEdge(5, 1);
-        graph.addEdge(1, 5);
-
-        Graph.CYCLE_DETECTION.run(graph);
-        Graph.REVERSE_GRAPH.run(graph);
-
+        heap.add(10);
+        heap.add(2);
+        heap.add(5);
+        heap.add(3);
+        heap.add(4);
+        heap.add(1);
+        heap.add(6);
+        heap.remove();
+        heap.remove();
+        heap.remove();
+        heap.remove();
+        heap.remove();
+        heap.remove();
 
     }
 }

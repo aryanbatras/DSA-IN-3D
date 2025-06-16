@@ -1,37 +1,33 @@
 package Collections;
 
-import Algorithms.Trees;
+import Animations.Animator.JMaxHeapAnimator;
+import Algorithms.MaxHeap;
 import Animations.Dynamo;
-import Animations.Animator.JTreesAnimator;
-
-import java.util.*;
-
-import Rendering.View;
-import Animations.*;
+import Animations.Entrance;
+import Animations.Exit;
 import Rendering.*;
-import Utility.*;
+import Utility.Code;
+import Utility.Encoder;
+import Utility.Variable;
+import Utility.Window;
 
-public class JTrees<T extends Comparable<T>> {
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
-    private TreeNode root;
-    private final JTreesAnimator<T> animator;
+public class JMaxHeap<T extends Comparable<T>> {
 
-    public class TreeNode {
-         public T value;
-         public TreeNode left;
-         public TreeNode right;
-        TreeNode(T value) {
-            this.value = value;
-        }
-    }
+    private final ArrayList<T> heapList;
+    private final JMaxHeapAnimator<T> animator;
 
     private Render mode;
     private Encoder encoder;
+    private Exit defaultExit;
     private Dynamo randomizer;
     private Entrance defaultEntrance;
-    private Exit defaultExit;
 
-    private Trees algo;
+    private MaxHeap algo;
     private double scale;
     private String userOutput;
     private boolean built = false;
@@ -39,12 +35,12 @@ public class JTrees<T extends Comparable<T>> {
     private boolean preferSharedEncoder = false;
     private final Set<String> explicitlySetProperties;
 
-    public JTrees() {
-        this.root = null;
+    public JMaxHeap() {
         this.scale = 0.5;
         this.encoder = null;
         this.mode = Render.DISABLED;
-        this.animator = new JTreesAnimator<>();
+        this.heapList = new ArrayList<>();
+        this.animator = new JMaxHeapAnimator<>();
         this.explicitlySetProperties = new HashSet<>();
         this.defaultEntrance = Entrance.SLIDE_FROM_RIGHT;
         this.defaultExit = Exit.SLIDE_UP;
@@ -52,7 +48,7 @@ public class JTrees<T extends Comparable<T>> {
         this.built = true;
     }
 
-    public JTrees withAlgoVisualizer(Trees algo){
+    public JMaxHeap withAlgoVisualizer(MaxHeap algo){
         this.algo = algo;
         /*
          you have to build functions to
@@ -69,27 +65,27 @@ public class JTrees<T extends Comparable<T>> {
         algo.run(this);
     }
 
-    public JTrees withInsertAnimation(Entrance entrance) {
+    public JMaxHeap withInsertAnimation(Entrance entrance) {
         this.defaultEntrance = entrance;
         explicitlySetProperties.add("insertAnimation");
         this.built = false;
         return this;
     }
 
-    public JTrees withRemoveAnimation(Exit exit) {
+    public JMaxHeap withRemoveAnimation(Exit exit) {
         this.defaultExit = exit;
         explicitlySetProperties.add("removeAnimation");
         this.built = false;
         return this;
     }
 
-    public JTrees withRandomizer(Dynamo randomizer) {
+    public JMaxHeap withRandomizer(Dynamo randomizer) {
         this.randomizer = randomizer;
         this.built = false;
         return this;
     }
 
-    public JTrees withRenderMode(Render mode) {
+    public JMaxHeap withRenderMode(Render mode) {
         this.mode = mode;
         animator.setMode(mode);
         explicitlySetProperties.add("renderMode");
@@ -97,7 +93,7 @@ public class JTrees<T extends Comparable<T>> {
         return this;
     }
 
-    public JTrees withQuality(Resolution quality) {
+    public JMaxHeap withQuality(Resolution quality) {
         switch (quality) {
             case BEST -> scale = 1.0;
             case GOOD -> scale = 0.75;
@@ -110,27 +106,27 @@ public class JTrees<T extends Comparable<T>> {
         return this;
     }
 
-    public JTrees withOutput(String userOutput) {
+    public JMaxHeap withOutput(String userOutput) {
         this.userOutput = userOutput;
         userProvidedOutput = true;
         this.built = false;
         return this;
     }
 
-    public JTrees withSharedEncoder(boolean shared) {
+    public JMaxHeap withSharedEncoder(boolean shared) {
         this.preferSharedEncoder = shared;
         this.built = false;
         return this;
     }
 
-    public JTrees withMaterial(Texture material) {
+    public JMaxHeap withMaterial(Texture material) {
         animator.setMaterial(material);
         explicitlySetProperties.add("material");
         this.built = false;
         return this;
     }
 
-    public JTrees withBackground(Scenery bg) {
+    public JMaxHeap withBackground(Scenery bg) {
         String background = bg.toString();
         animator.setBackground(background);
         explicitlySetProperties.add("background");
@@ -138,14 +134,14 @@ public class JTrees<T extends Comparable<T>> {
         return this;
     }
 
-    public JTrees withParticle(Effect particle) {
+    public JMaxHeap withParticle(Effect particle) {
         animator.setParticle(particle);
         explicitlySetProperties.add("particle");
         this.built = false;
         return this;
     }
 
-    public JTrees withStepsPerAnimation(Frames step) {
+    public JMaxHeap withStepsPerAnimation(Frames step) {
         int steps = step.getFrames();
         animator.setFPS(steps);
         explicitlySetProperties.add("steps");
@@ -153,13 +149,13 @@ public class JTrees<T extends Comparable<T>> {
         return this;
     }
 
-    public JTrees withCameraRotations(View rotationType) {
+    public JMaxHeap withCameraRotations(View rotationType) {
         animator.setCameraRotation(rotationType);
         explicitlySetProperties.add("cameraRotation");
         return this;
     }
 
-    public JTrees withAntiAliasing(Smooth antiAliasing) {
+    public JMaxHeap withAntiAliasing(Smooth antiAliasing) {
         double alias = 0;
         switch (antiAliasing) {
             case NONE -> alias = 1.0;
@@ -172,7 +168,7 @@ public class JTrees<T extends Comparable<T>> {
         return this;
     }
 
-    public JTrees withCameraSpeed(Pace cs) {
+    public JMaxHeap withCameraSpeed(Pace cs) {
         explicitlySetProperties.add("cameraSpeed");
         double speed = cs.getMultiplier();
         animator.setCameraSpeed(speed);
@@ -180,20 +176,20 @@ public class JTrees<T extends Comparable<T>> {
         return this;
     }
 
-    public JTrees withBackgroundChangeOnEveryOperation(boolean change) {
+    public JMaxHeap withBackgroundChangeOnEveryOperation(boolean change) {
         animator.setRandomizeBackgroundAsTrue();
         this.built = false;
         return this;
     }
 
-    public JTrees withCameraFocus(Zoom focus) {
+    public JMaxHeap withCameraFocus(Zoom focus) {
         double value = focus.getMultiplier();
         animator.setCameraFocus(value);
         this.built = false;
         return this;
     }
 
-    public JTrees build() {
+    public JMaxHeap build() {
 
         if (randomizer != null) {
             if (randomizer.shouldRandomizeInsertAnimation()  && !explicitlySetProperties.contains("insertAnimation")) {
@@ -259,39 +255,60 @@ public class JTrees<T extends Comparable<T>> {
 
     private void checkBuilt() {
         if (!built) {
-            throw new IllegalStateException("JTrees not built! Call .build() before use.");
+            throw new IllegalStateException("JHeap not built! Call .build() before use.");
+        }
+    }
+
+    private void insertIntoHeap(T value) {
+        heapList.add(value);
+        heapifyUp(heapList.size() - 1);
+    }
+
+    private void deleteFromHeap() {
+        int index = 0;
+        if (index == -1) return;
+
+        int lastIndex = heapList.size() - 1;
+        Collections.swap(heapList, index, lastIndex);
+        heapList.remove(lastIndex);
+
+        if (index < heapList.size()) {
+            heapifyDown(index);
+            heapifyUp(index);
+        }
+
+    }
+
+    private void heapifyUp(int index) {
+        while (index > 0) {
+            int parent = (index - 1) / 2;
+            if (heapList.get(index).compareTo(heapList.get(parent)) > 0) {
+                Collections.swap(heapList, index, parent);
+                index = parent;
+            } else break;
         }
     }
 
 
-    private TreeNode insertIntoBST(TreeNode node, T value) {
-        if (node == null) return new TreeNode(value);
-        if (value.compareTo(node.value) < 0) {
-            node.left = insertIntoBST(node.left, value);
-        } else {
-            node.right = insertIntoBST(node.right, value);
-        }
-        return node;
-    }
+    private void heapifyDown(int index) {
+        int size = heapList.size();
+        while (index < size) {
+            int left = 2 * index + 1;
+            int right = 2 * index + 2;
+            int largest = index;
 
-    private TreeNode deleteFromBST(TreeNode node, T value) {
-        if (node == null) return null;
-        int cmp = value.compareTo(node.value);
-        if (cmp < 0) node.left = deleteFromBST(node.left, value);
-        else if (cmp > 0) node.right = deleteFromBST(node.right, value);
-        else {
-            if (node.left == null) return node.right;
-            if (node.right == null) return node.left;
-            TreeNode minLarger = getMin(node.right);
-            node.value = minLarger.value;
-            node.right = deleteFromBST(node.right, minLarger.value);
-        }
-        return node;
-    }
+            if (left < size && heapList.get(left).compareTo(heapList.get(largest)) > 0) {
+                largest = left;
+            }
+            if (right < size && heapList.get(right).compareTo(heapList.get(largest)) > 0) {
+                largest = right;
+            }
 
-    private TreeNode getMin(TreeNode node) {
-        while (node.left != null) node = node.left;
-        return node;
+            if (largest != index) {
+                Collections.swap(heapList, index, largest);
+                index = largest;
+            } else break;
+        }
     }
 
     public void add(T value) {
@@ -299,7 +316,7 @@ public class JTrees<T extends Comparable<T>> {
         checkBuilt();
         Variable.update("add", value);
 
-        root = insertIntoBST(root, value);
+        insertIntoHeap(value);
 
         if (mode != Render.DISABLED) {
             animator.runAddAnimation(value, randomizer != null ? randomizer.randomInsertAnimation() : defaultEntrance);
@@ -311,128 +328,42 @@ public class JTrees<T extends Comparable<T>> {
         checkBuilt();
         Variable.update("add", value);
 
-        root = insertIntoBST(root, value);
+        insertIntoHeap(value);
 
         if (mode != Render.DISABLED) {
             animator.runAddAnimation(value, animation);
         }
     }
 
-    public T delete(T value){
-     return remove(value);
+    public T getPriority(){
+        return remove();
     }
 
-    public T delete(T value, Exit animation){
-        return remove(value);
-    }
-
-    public T remove(T value) {
+    public T remove() {
         Code.markCurrentLine();
         checkBuilt();
+        T value =  heapList.get(0);
+        Variable.update("remove", value);
 
         if (mode != Render.DISABLED) {
-            animator.runRemoveAnimation(value, randomizer != null ? randomizer.randomRemoveAnimation() : defaultExit);
+            animator.runRemoveAnimation();
         }
 
-        root = deleteFromBST(root, value);
-        Variable.update("remove", value);
-        return value;
-    }
-
-    public T remove(T value, Exit animation) {
-        Code.markCurrentLine();
-        checkBuilt();
-
-        if (mode != Render.DISABLED) {
-            animator.runRemoveAnimation(value, animation);
-        }
-
-        root = deleteFromBST(root, value);
-        Variable.update("remove", value);
+        deleteFromHeap();
         return value;
     }
 
     public int size() {
-        Code.markCurrentLine();
-        checkBuilt();
-        return getSize(root);
-    }
-
-    private int getSize(TreeNode node) {
-        if (node == null) return 0;
-        return 1 + getSize(node.left) + getSize(node.right);
+        return heapList.size();
     }
 
     public boolean isEmpty() {
-        Code.markCurrentLine();
-        checkBuilt();
-        return root == null;
+        return heapList.isEmpty();
     }
 
     public void clear() {
-        root = null;
+        heapList.clear();
     }
-
-    public String inorder() {
-        Code.markCurrentLine();
-        checkBuilt();
-
-       return "Inorder Traversal -> " + animator.runTraversalAnimation(root, Traversal.INORDER).toString();
-    }
-
-    public String preorder() {
-        Code.markCurrentLine();
-        checkBuilt();
-
-        return "Preorder Traversal -> " +  animator.runTraversalAnimation(root, Traversal.PREORDER).toString();
-    }
-
-    public String postorder() {
-        Code.markCurrentLine();
-        checkBuilt();
-
-        return "Postorder Traversal -> " +  animator.runTraversalAnimation(root, Traversal.POSTORDER).toString();
-    }
-
-    public String leaves() {
-        Code.markCurrentLine();
-        checkBuilt();
-
-        return "Leaf Nodes -> " + animator.runLeafHighlightAnimation(root);
-    }
-
-    public boolean contains(T value) {
-    return search(value);
-    }
-
-    public boolean search(T value) {
-        Code.markCurrentLine();
-        checkBuilt();
-
-        return animator.runSearchAnimation(root, value);
-    }
-
-    public int getHeight() {
-        Code.markCurrentLine();
-        checkBuilt();
-
-        return animator.runHeightAnimation(root);
-    }
-
-    public T getMin() {
-        Code.markCurrentLine();
-        checkBuilt();
-
-        return animator.runMinMaxAnimation(root, true);
-    }
-
-    public T getMax() {
-        Code.markCurrentLine();
-        checkBuilt();
-
-        return animator.runMinMaxAnimation(root, false);
-    }
-
 
 
 }
