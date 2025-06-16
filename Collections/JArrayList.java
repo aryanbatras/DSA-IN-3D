@@ -7,9 +7,8 @@ import Rendering.View;
 import Utility.*;
 
 import Animations.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+
+import java.util.*;
 
 import Animations.Animator.JArrayListAnimator;
 
@@ -387,6 +386,33 @@ public class JArrayList<T extends Comparable<T>> {
     public int size() {
         Code.markCurrentLine(); checkBuilt();
         return arr.size();
+    }
+
+    public T getRandomElement() {
+        Code.markCurrentLine(); checkBuilt();
+        if(size() == 0) throw new NoSuchElementException("List is Empty");
+        return arr.get(new Random().nextInt(arr.size() - 1));
+    }
+
+    public boolean checkSorted() {
+        Code.markCurrentLine(); checkBuilt();
+        if (size() <= 1) return true;
+        boolean ascending = arr.get(0).compareTo(arr.get(1)) <= 0;
+        for (int i = 1; i < size() - 1; i++) {
+            int cmp = arr.get(i).compareTo(arr.get(i + 1));
+            if ((ascending && cmp > 0) || (!ascending && cmp < 0)) {
+                throw new IllegalStateException("List is not sorted");
+            }
+        }
+        return ascending;
+    }
+
+    public void checkInteger() {
+        Code.markCurrentLine(); checkBuilt();
+        if (size() == 0) return;
+        if (!(arr.get(0) instanceof Integer)) {
+            throw new IllegalStateException("List must contain only Integer elements");
+        }
     }
 }
 

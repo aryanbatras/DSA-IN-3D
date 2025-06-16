@@ -1,30 +1,31 @@
+import Algorithms.Array;
 import Algorithms.MaxHeap;
 import Algorithms.MinHeap;
 import Collections.JAVLTree;
-import Collections.JMaxHeap;
+import Collections.JArrayList;
 import Collections.JMinHeap;
 import Rendering.*;
 
 public class Main {
     public static void main(String[] args) {
 
-        JMaxHeap heap = new JMaxHeap()
+        JArrayList arr = new JArrayList<>()
                 .withBackgroundChangeOnEveryOperation(true)
-                .withStepsPerAnimation(Frames.SLOW)
-                .withQuality(Resolution.BALANCE)
+                .withStepsPerAnimation(Frames.NORMAL)
+                .withQuality(Resolution.FASTEST)
                 .withRenderMode(Render.LIVE)
                 .withMaterial(Texture.METAL)
-                .withCameraFocus(Zoom.X16)
+                .withCameraFocus(Zoom.X4)
                 .build();
 
-        heap.add(10);
-        heap.add(15);
-        heap.add(20);
-        heap.add(5);
-        heap.add(2);
-        heap.add(1);
+        arr.add(20);
+        arr.add(15);
+        arr.add(10);
+        arr.add(5);
+        arr.add(2);
+        arr.add(1);
 
-        MaxHeap.HEAP_SORT.run(heap);
+        Array.BINARY_SEARCH.run(arr);
     }
 }
 
