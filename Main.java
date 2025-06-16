@@ -1,25 +1,30 @@
+import Algorithms.MaxHeap;
+import Algorithms.MinHeap;
 import Collections.JAVLTree;
 import Collections.JMaxHeap;
+import Collections.JMinHeap;
 import Rendering.*;
 
 public class Main {
     public static void main(String[] args) {
 
-        JAVLTree avl = new JAVLTree()
-                .withQuality(Resolution.FASTEST)
+        JMaxHeap heap = new JMaxHeap()
+                .withBackgroundChangeOnEveryOperation(true)
+                .withStepsPerAnimation(Frames.SLOW)
+                .withQuality(Resolution.BALANCE)
                 .withRenderMode(Render.LIVE)
-                .withStepsPerAnimation(Frames.VERY_SLOW)
                 .withMaterial(Texture.METAL)
+                .withCameraFocus(Zoom.X16)
                 .build();
 
-        avl.add(10);
-        avl.add(15);
-        avl.add(20);
-        avl.add(5);
-        avl.add(2);
-        avl.add(1);
-        avl.remove(10);
+        heap.add(10);
+        heap.add(15);
+        heap.add(20);
+        heap.add(5);
+        heap.add(2);
+        heap.add(1);
 
+        MaxHeap.HEAP_SORT.run(heap);
     }
 }
 

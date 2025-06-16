@@ -4,30 +4,46 @@ import Collections.JMaxHeap;
 
 public enum MaxHeap {
 
-    INORDER_TRAVERSAL {
-        public <T extends Comparable<T>> void run(JMaxHeap<T> heap) {
+    FIND_K_LARGEST {
+        public <T extends Comparable<T>> void run(JMaxHeap<T> maxheap) {
+            int k = Math.min(5, maxheap.size());
+            System.out.println(("Finding " + k + " largest elements using MinHeap") );
+
+            for (int i = 0; i < k; i++) {
+                T max = maxheap.remove();
+                System.out.println( "Extracted: " + max );
+            }
+
+            System.out.println(("Extracted top " + k + " largest elements") );
         }
     },
 
-    PREORDER_TRAVERSAL {
-        public <T extends Comparable<T>> void run(JMaxHeap<T> heap) {
+    HEAP_SORT {
+        public <T extends Comparable<T>> void run(JMaxHeap<T> maxheap) {
+            System.out.println(("Heap Sort: Removing all elements in sorted order") );
+
+            int size = maxheap.size();
+            for (int i = 0; i < size; i++) {
+                T max = maxheap.remove();
+                System.out.println("Sorted: " + max );
+            }
+
+            System.out.println(("Heap Sort complete!") );
         }
     },
 
-    POSTORDER_TRAVERSAL {
-        public <T extends Comparable<T>> void run(JMaxHeap<T> heap) {
-        }
-    },
+    PEEK_TOP {
+        public <T extends Comparable<T>> void run(JMaxHeap<T> maxheap) {
+            if (maxheap.isEmpty()) {
+                System.out.println(("Heap is empty!") );
+                return;
+            }
 
-    HEIGHT_OF_TREE {
-        public <T extends Comparable<T>> void run(JMaxHeap<T> heap) {
-        }
-    },
-
-    LEAF_NODES {
-        public <T extends Comparable<T>> void run(JMaxHeap<T> heap) {
+            T top = maxheap.getPriority();
+            System.out.println(("Top element (Min): " + top) );
         }
     };
 
-    public abstract <T extends Comparable<T>> void run(JMaxHeap<T> heap);
+
+    public abstract <T extends Comparable<T>> void run(JMaxHeap<T> maxheap);
 }
