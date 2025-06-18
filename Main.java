@@ -1,9 +1,9 @@
-import Animations.Dynamo;
-import Animations.Entrance;
-import Animations.Exit;
 import Collections.*;
+import Animations.*;
 import Algorithms.*;
 import Rendering.*;
+
+import java.util.Random;
 
 public class Main {
     public static void main(String[] args) {
@@ -274,35 +274,79 @@ public class Main {
 //        avl.add(25);
 //
 
+        // CREATE YOUR DATA STRUCTURE AS USUAL WITH A 'J' PREFIX
+        JArrayList<Integer> arr = new JArrayList<Integer>();
 
-    JArrayList<Integer> arr = new JArrayList<>().build();
+        // PERFORM USAUL OPERATIONS
+        arr.add(10);
+        arr.add(20);
+        arr.add(30);
+        arr.add(40);
+        arr.add(50);
+        arr.remove(0);
+        arr.remove(2);
 
-    arr.add(10);
-    arr.add(20);
-    arr.add(30);
-    arr.add(40);
-    arr.add(50);
+        // NOTHING WILL BE RENDERED BY DEFAULT
+        // UNLESS YOU USE THE .with() METHODS AND BUILD IT WITH .build()
+        // KEEP THE CONFIGURATIONS SIMPLE AND  CONSISTENT USING .build() METHOD
 
-    // ANIMATIONS WITH INFINITE CUSTOMIZATIONS
+        // RANDOMIZER
         arr
-                .withInsertAnimation(Entrance.BOUNCE)
-                .withRemoveAnimation(Exit.SHRINK_AND_DROP)
+                .withInsertAnimation(Dynamo.randomInsertAnimation())
+                .withRemoveAnimation(Dynamo.randomRemoveAnimation())
+                .withBackground(Dynamo.randomBackground())
+                .withMaterial(Dynamo.randomMaterial())
+                .withParticle(Dynamo.randomParticle())
+                .withStepsPerAnimation(Frames.NORMAL)
+                .withRenderMode(Render.STEP_WISE)
+                .withQuality(Resolution.FASTEST)
+                .build();
+
+        // TRY OUT OUR SURPRISE MODE
+        arr
+                .withRandomizer(Dynamo.INSTANCE.withCrazyMode().withoutQuality().withoutRenderMode().withoutSteps())
+                .withQuality(Resolution.BALANCE).withRenderMode(Render.LIVE).withStepsPerAnimation(Frames.NORMAL)
+                .build();
+
+    // ANIMATIONS WITH INFINITE CUSTOMIZATION
+        arr
                 .withBackgroundChangeOnEveryOperation(true)
-                .withStepsPerAnimation(Frames.VERY_FAST)
+                .withRemoveAnimation(Exit.SHRINK_AND_DROP)
+                .withStepsPerAnimation(Frames.VERY_SLOW)
+                .withInsertAnimation(Entrance.BOUNCE)
+                .withCameraRotations(View.ROTATE_YAW)
                 .withQuality(Resolution.FASTEST)
                 .withMaterial(Texture.CHROME)
                 .withParticle(Effect.AURORA)
+                .withAntiAliasing(Smooth.X2)
+                .withCameraFocus(Zoom.X16)
+                .withCameraSpeed(Pace.X4)
                 .build();
 
         // CREATE OUR OWN VIDEOS
         arr
+                .withSharedEncoder(true)
                 .withRenderMode(Render.VIDEO)
-                .withStepsPerAnimation(Frames.NORMAL)
                 .withQuality(Resolution.BALANCE)
+                .withStepsPerAnimation(Frames.NORMAL)
+                .withBackground(Scenery.GLASS_PASSAGE)
+                .withOutput("randomizer.mp4")
                 .build();
 
+        // OR USE OUR INBUILT BUBBLE SORT TO VISUALIZE
 
-    // BUBBLE SORT
+        // THIS WAY
+        arr
+                .withAlgoVisualizer(Array.BUBBLE_SORT)
+                .withStepsPerAnimation(Frames.NORMAL)
+                .withRenderMode(Render.STEP_WISE)
+                .withQuality(Resolution.BALANCE)
+                .build().run();
+
+        // OR THIS WAY
+        Array.BUBBLE_SORT.run(arr);
+
+        // OR BUILD YOUR OWN SORTING ALGORITHM
         for(int i = 0; i < arr.size() - 1; i++){
             for(int j = 0; j < arr.size() - i - 1; j++){
                 if(arr.isGreater(j, j + 1)){
@@ -313,8 +357,6 @@ public class Main {
                 }
             }
         }
-
-
 
 
 
@@ -461,6 +503,29 @@ public class Main {
 
         arr2.withRenderMode(Render.VIDEO).withQuality(Resolution.BEST).withStepsPerAnimation(Frames.VERY_SLOW).build();
         Array.MERGE_SORT.run(arr2);
+
+
+        JAVLTree avl = new JAVLTree()
+                .withRandomizer(Dynamo.INSTANCE.withCrazyMode().withoutQuality().withoutRenderMode().withoutSteps())
+                .withQuality(Resolution.BEST).withRenderMode(Render.LIVE).build();
+
+        JLinkedList list = new JLinkedList()
+                .withRandomizer(Dynamo.INSTANCE.withCrazyMode().withoutQuality().withoutRenderMode().withoutSteps())
+                .withQuality(Resolution.BEST).withRenderMode(Render.STEP_WISE).build();
+
+        JStack stack = new JStack()
+                .withRandomizer(Dynamo.INSTANCE.withCrazyMode().withoutQuality().withoutRenderMode().withoutSteps())
+                .withQuality(Resolution.BEST).withRenderMode(Render.STEP_WISE_INTERACTIVE).build();
+
+        int value;
+        Random rand = new Random();
+        for(int i = 0; i < 5; i++) {
+            value = rand.nextInt(100);
+            stack.push(value);
+            list.add(value);
+            avl.add(value);
+        }
+
     }
 }
 

@@ -388,4 +388,14 @@ public class JGraph<T extends Comparable<T>> {
         return adjacencyList.keySet().toArray((T[]) new Comparable[0]);
     }
 
+    public void dfs(){
+        if (adjacencyList.isEmpty()) { throw new IllegalStateException(" Graph is empty "); }
+        Graph.DEPTH_FIRST_TRAVERSAL.run(this);
+    }
+
+    public void bfs(){
+        if (adjacencyList.isEmpty()) { throw new IllegalStateException(" Graph is empty "); }
+        Graph.BREADTH_FIRST_TRAVERSAL.run(this);
+    }
+
 }

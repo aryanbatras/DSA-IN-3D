@@ -1,114 +1,360 @@
-# 🌟 JavaReflect Clone ~ DSA IN 3D
+# DSA-IN-3D:  3D Data Structure Visualizer In Java
 
-## Journey
-
-### Phase 1
-- Minimal Setup [Done]
-- Pick minimal shapes material no gui [Done]
-- Generate boxes based on array inputs [Done]
-- every JBox is associated with a value show that [Done]
-- fix bugs make numbers look beautiful [Done]
-- make a line of chain between the boxes [Done]
-- show insertion animation in array [Done]
-- implement video generation using ffmpeg [Done]
-- clean code and give a better structure to the code base
-- delete animations (swap too) [This is challenging]
-- generate video
-
-#### Some Thoughts before moving to Phase 2 :
-
-```
- I want to give a better structure to my 3D Visualisation project. The project is not going to be an ordinary one, it is going to be the most ultimate one, with ray tracing implementations, and 3D video generation just by calling functions in code. And nothing complex. The use of this library will be almost be the exact copy of how collections framework in java is used. For example, here we take an ArrayList, provided that the programmer goes for calling .add and .remove functions, these functions will implement animations underlying and showing the manipulations through ray tracing. But here's the catch, we are not going to show any live animations or representations right on the spot, we are just going to generate a sweet video and open it for them. That we've already done as you know. What is left for now is the right structure, the right classes, the right design, and where and how happens what? It should be become a well planned out library. So that programmers and educational professors should just hit import and use it the same way they use an collections framework of Java, just the change is that these classes are named JArrayList<> so we are adding a J before every class name, pretty easy right? But here's the challenge, the animation changes, manual frame handling, and camera changes bit by bit to make it look perfect has become so complex and messy, even for showing one operation, that it takes a lot and literally a lot of time, to just add a function of a class, suppose it took me a day just to show insert at position function in an simple array, and that also isn't perfect. Now, I have told you everything, please guide me from now. Let's see what you got ! Push yourself buddy !
+**Built in 2 Weeks · 100% Pure Java · Zero Dependencies · No Maven/Gradle · Just Clone and Run in IntelliJ**
  
-And I am gonna build the bonus tools like scene builder and stuff ! But before starting up to advance the project ! There's an issue over here, that our 3D Visualizations are full of mirror reflections and a HDRI background of mountains and lake, though it looks very beautiful, but suppose I want to show an array size of 100, or even 100 elements, how would that every fit in a frame or photo, the boxes beyond an array size of 5 looks so small, that their numbers are unreadable, so static image generation is not possible here, only video and stuff ! But imagine the user asked for the showing the visualizing the values of data structure first before calling any functions, he called JArrayList<Integer> arr = new JArrayList<>(), and then he called, arr.show() or arr.visualize() then what do I do? Another issue is that a 2D visualisation is clearly visible from a white board background perspective, though it doesn't look beautiful, how would I able to balance the beauty of my 3D Visualisation and clear visibility underneath together? These are my current challenges?
+[![DSA-IN-3D: 3D Data Structure Visualizer In Java](https://img.youtube.com/vi/PxCY7eM119E/0.jpg)](https://youtu.be/PxCY7eM119E)
 
-It is going to add this value to the world [with value displayed on it]. By default, the new value will always come sliding from left. And it will take the starting position it is currently on then increment. What we have to do is make sure that. We are separating camera animations with JBox animations. And for that we are going to create two separate classes for that
+## 🔥 What is DSA-IN-3D?
 
-Functions of this class will be internally called ! We start by going into the defaults of this ! Let's call it from JArrayList. Screen size will be common. Camera will be unique for every animator. And renderer engine will be unique as well. World itself will be unique to each array we create
+> DSA-IN-3D is a full-fledged **3D data structure visualizer** built from scratch in Java.
+> > It’s made to **educate**, **demonstrate**, and **inspire**—perfect for students, teachers, and curious developers who want to **see algorithms and data structures come alive in 3D**
+> 
+> > It features ray tracing, realistic rendering, camera animations, interactive and video modes, and an intuitive `.with()` API inspired by the Java Collections framework.
 
+## 💡 Features & Customizations
+
+### 🧱 Supported Data Structures
+
+* `JLinkedList<T>` ✅
+* `JArrayList<T>`  ✅
+* `JAVLTree<T>`    ✅
+* `JStack<T>`      ✅
+* `JQueue<T>`      ✅
+* `JTrees<T>`      ✅
+* `JGraph<T>`      ✅
+* `JHeap<T>`       ✅
+
+### 🎞️ Operation Visualizers
+
+* `.get()`, `.set()`, for `JArrayList` and `JLinkedList`
+* `.add()`, `.remove()`,  for `JArrayList`, `JLinkedList`, `JHeaps`, `JAVLTree`
+* `.push()`, `.pop()`,  for `JStack` and `.offer()` and `.poll()` for `JQueue`
+* `.isGreater()`, `.isSmaller()`, `.isGreaterOrEqual()`, `.isSmallerOrEqual()` for `JArrayList`
+* `.addVertex()`, `.removeVertex()`, `.addEdge()`, `.removeEdge()`, `.dfs()`, `.bfs()` for `JGraph`
+* `.getMin()`, `.getMax()`, `.getHeight()`, `.search()`, `.leaves()`, `.preorder()`, `.postorder()`, `.inorder()` for `JAVLTree` and `JTrees`
+
+---
+
+## 🚧 Our Development Journey
+
+### Phase 1: Basic Setup and Vision
+
+* Minimal ray tracer created, basic `JBox` class drawn with numbers.
+* Array-based box line generation: `.add(5)` triggers an animated sliding box.
+* Added insertion + deletion animation.
+* Implemented video generation using FFmpeg.
+
+### Phase 2: Library-Like Architecture
+
+* Introduced `JArrayListAnimator`, separating rendering, box animation, and camera logic.
+* `.withSubtitles()`, `.withInsertAnimation()`, `.withDeleteAnimation()` added.
+* Introduced builder-style API like `JArrayList<Integer> list = new JArrayList<>().withXYZ()`
+
+### Phase 3: Rendering Challenges & Optimization
+
+* Added rendering optimizations and GUI progress bars.
+* Introduced **live rendering mode**.
+
+### Phase 4: Randomness & Subtitles
+
+* Randomize camera, texture, insert animations.
+* Subtitle system added with perfect frame-by-frame sync.
+* Modes: `VIDEO`, `LIVE`, `STEP_WISE`, `STEP_WISE_INTERACTIVE`.
+
+### Phase 5–6: Shared Rendering Pipeline
+
+* Encoders optimized with shared FFMPEG stream logic (12 edge cases handled!).
+* Quality, naming, reuse of encoder logic finalized.
+* Screen resolution scale chaining added.
+
+### Phase 7–8: Data Structures + Algorithms
+
+* `JStacks`, `JQueues`, `JTrees` done. `JGraphs`, `JHeaps`, `JAVLTree` also done.
+* Added sorting/searching: `bubble`, `selection`, `insertion`, `binary search`,  `DFS`, `BFS` etc.
+* Fully type-generic: `JArrayList<String>`, `JTree<Double>` etc. work out of the box.
+
+---
+
+## ⚙️ Getting Started
+
+### 🔧 Requirements
+
+* Java 17+
+* IntelliJ IDEA (recommended)
+* No Maven. No Gradle.
+
+### 💻 Run it Now
+
+#### Using Git Clone
+
+```bash
+git clone https://github.com/aryanbatras/DSA-IN-3D
+```
+1. Open the project in IntelliJ.
+2. Navigate to `Main.java`
+3. Click **Run** — done!
+
+#### Using Just Intellij
+
+1. Open IntelliJ
+2. Click on Clone Repository
+3. Paste the URL: `https://github.com/aryanbatras/DSA-IN-3D`
+4. Click on Clone
+5. Open the project in IntelliJ.
+6. Navigate to `Main.java`
+7. Click **Run** — done!
+
+#### 📦 Using the JAR File in Your Own Project
+
+1. Download the DSA-IN-3D.jar from Releases
+2. Place it in your project folder or add it via IntelliJ:
+3. File → Project Structure → Libraries → + → Add JAR/Directory 
+4.  Create Your Own Main.java
+  
+```java 
+
+// Main.java
+
+import Collections.*;
+import Animations.*;
+import Algorithms.*;
+import Rendering.*;
+
+public class Main {
+public static void main(String[] args) {
+    
+// Create your structure
+JArrayList<Integer> arr = new JArrayList<>();
+
+        // Customize it with infinite possibilities
+        arr
+            .withRemoveAnimation(Exit.SHRINK_AND_DROP)
+            .withInsertAnimation(Entrance.BOUNCE)
+            .withBackground(Scenery.GLASS_PASSAGE)
+            .withQuality(Resolution.BALANCE)
+            .withRenderMode(Render.VIDEO)
+            .withOutput("my_array.mp4")
+            .build();
+
+        // Perform some operations
+        arr.add(10);
+        arr.add(20);
+        arr.add(30);
+        arr.remove(1);
+    }
+}
+```
+5.  Compile & Run the Program
+
+> On macOS/Linux:
+> ```bash
+> javac -cp "DSA-IN-3D.jar" Main.java
+> java -cp ".:DSA-IN-3D.jar" Main
+> ```
+> On Windows:
+> ```bash
+> javac -cp "DSA-IN-3D.jar" Main.java
+> java -cp ".;DSA-IN-3D.jar" Main
+> ```
+> 
+✅ That's it! Your customized 3D animation will be saved as an .mp4 file in your working directory.
+
+---
+
+### 🛠️ Configurable Options
+
+```java
+
+
+// ✅ Create your data structure
+JArrayList<Integer> arr = new JArrayList<>();
+
+// ✅ Perform usual operations
+arr.add(10);
+arr.add(20);
+arr.add(30);
+arr.add(40);
+arr.add(50);
+arr.remove(0);
+arr.remove(2);
+
+// ⚠️ Nothing will be rendered unless you configure and call .build()
+
+// 🔀 Randomizer-based configuration
+arr
+  .withInsertAnimation(Dynamo.randomInsertAnimation())
+  .withRemoveAnimation(Dynamo.randomRemoveAnimation())
+  .withBackground(Dynamo.randomBackground())
+  .withMaterial(Dynamo.randomMaterial())
+  .withParticle(Dynamo.randomParticle())
+  .withStepsPerAnimation(Frames.NORMAL)
+  .withRenderMode(Render.STEP_WISE)
+  .withQuality(Resolution.FASTEST)
+  .build();
+
+// 🎉 Surprise mode: total chaos!
+arr
+  .withRandomizer(
+  Dynamo.INSTANCE
+          .withCrazyMode()
+          .withoutRenderMode()
+          .withoutQuality()
+          .withoutSteps()
+   )
+    .withStepsPerAnimation(Frames.NORMAL)
+    .withQuality(Resolution.BALANCE)
+    .withRenderMode(Render.LIVE)
+    .build();
+
+// 🎨 Fine-grained custom animation config
+arr
+  .withBackgroundChangeOnEveryOperation(true)
+  .withRemoveAnimation(Exit.SHRINK_AND_DROP)
+  .withStepsPerAnimation(Frames.VERY_SLOW)
+  .withCameraRotations(View.ROTATE_YAW)
+  .withInsertAnimation(Entrance.BOUNCE)
+  .withQuality(Resolution.FASTEST)
+  .withMaterial(Texture.CHROME)
+  .withParticle(Effect.AURORA)
+  .withAntiAliasing(Smooth.X2)
+  .withCameraFocus(Zoom.X16)
+  .withCameraSpeed(Pace.X4)
+  .build();
+
+// 🎥 Create your own video
+arr
+  .withSharedEncoder(true)
+  .withRenderMode(Render.VIDEO)
+  .withQuality(Resolution.BALANCE)
+  .withStepsPerAnimation(Frames.NORMAL)
+  .withBackground(Scenery.GLASS_PASSAGE)
+  .withOutput("randomizer.mp4")
+  .build();
+
+// 🔁 Use inbuilt algorithms
+
+// Option 1: Direct configuration and run
+arr
+  .withAlgoVisualizer(Array.BUBBLE_SORT)
+  .withStepsPerAnimation(Frames.NORMAL)
+  .withRenderMode(Render.STEP_WISE)
+  .withQuality(Resolution.BALANCE)
+  .build()
+  .run();
+
+// Option 2: Minimal syntax
+Array.BUBBLE_SORT.run(arr);
+
+// Or ✍️ Write your own algorithm visually
+for (int i = 0; i < arr.size() - 1; i++) {
+    for (int j = 0; j < arr.size() - i - 1; j++) {
+        if (arr.isGreater(j, j + 1)) {
+            int temp = arr.get(j);
+            arr.set(j, j + 1);
+            arr.set(j + 1, temp);
+        }
+    }
+}
 ```
 
-### Phase 2
-- Create a separate JArrayListAnimator class (Separate animation logic) [Done]
-- Simplify animation logic using separate cameraAnimator and boxAnimator class [Done]
-- Add both add and remove operation animations for a simple ArrayList [Done]
-- Simply video generation for every data structure [On going . . .]
+#### 🔗  Chain Video Encoders
+You can chain multiple data structures together, run them in same or different modes, and render using custom or shared encoders. Both will use the same encoder stream and render in sequence as you write your code !
+```java 
+JArrayList<Integer> arr = new JArrayList<>()
+.withRenderMode(Render.VIDEO)
+.withSharedEncoder(true)
+.build();
 
-```
-Rendering Optimizations are very much required as current speed is 200ms for every frame, and for a simple add and remove operation on arraylist, it needs 500 frames for a size of 10 values, and that literally needs us to wait a lot, which nobody would actually want to. Fast usability is more necessary here. The challenge is how that would be done?
-```
-
-### Phase 3
-- Extreme optimizations are needed for rendering ! 
-- Implemented BVH from scratch, and it didn't boost rendering time !
-
-Decided to focus on implementing data structure and animations first !
-Build the GUI and simple progress bar because we have no option ! Rendering time is a lot.
-Then ask for a live interaction mode ! Where rendering happens and is shown to user at the same time !
-[ Remember to keep stuff super simple ! ]
-
-### Phase 4
-- Implemented Multiple Animations in JArrayList [Done]
-- Implemented Randomized Animations in JArrayList [Done]
-- The coolest feature ! Subtitles in video generation [Done]
-- Make the subtitles sync with the video [The Challenge is to sync subtitles with video]
-
-- GIVE A OPTION TO USER TO CHANGE THE MODE; WHETHER VIDEO GENERATION OR LIVE INTERACTION MODE OR TEACHING MODE
-- DO NOT RENDER ANIMATIONS UNLESS THE MODE IS SPECIFIED SPECIFICALLY !
-
-### Phase 5
-- SOME CURRENT ISSUES AFTER DEBUGGING AND FIXING THE RENDER THING
-- RENDER.VIDEO FOR 2 ARRAYS CREATING 2 FFMPEG INSTANCES AND OVERRIDING THE WRITE OPERATION
-- LIVE RENDERING STARTS AT A VERY FAST RATE THAN PROGRESSIVELY SLOWS DOWN ITS SPEED
-
-### Phase 6
-- LET THE SCREEN SCALE BE SET BY THE USER THROUGH CONSTRUCTOR CHAINING
-
-
-
-```Handling edge cases be like:
-SUPPOSE RENDER.VIDEO IS CHOOSEN ! THEN. . .
-
-- - NO OUTPUT NAME GIVEN CASES - -
-1. IF USER GIVES NO QUALITY, NO OUTPUT NAME THEN DIFFERENT ENCODERS STILL CREATED
-2. BUT IF USER GIVES NO QUALITY, NO OUTPUTNAME WITH SHARED ENCODER TRUE THEN SAME ENCODERS ARE USED
-
-3. IF USER GIVES DIFFERENT QUALITIES, NO OUTPUT NAME THEN DIFFERENT ENCODERS STILL CREATED
-4. BUT IF USER GIVES DIFFERENT QUALITIES, NO OUTPUT NAME WITH SHARED ENCODER AS TRUE THEN AT MAX WE KNOW THAT 4 NON-OUTPUT ENCODERS CAN BE CREATED FOR 4 DIFFERENT QUALITIES WHICH IS REUSED AGAIN AND AGAIN UNLESS THE USER HAS NOT SPECIFIED ANY OUTPUT NAME.
-
-5. IF USER GIVES ONE QUALITY TO MODIFY THE DEFAULT SCALE AND DOES THE SAME FOR ALL JARRAYLISTS AFTER IT, WITH NO OUTPUT NAME THEN DIFFERENT ENCODERS STILL CREATED
-6. IF USER GIVES ONE QUALITY TO MODIFY THE DEFAULT SCALE AND DOES THE SAME FOR ALL JARRAYLISTS AFTER IT, WITH NO OUTPUT NAME AND SET SHARED ENCODER TO TRUE IN ALL THEN ONLY ONE ENCODER WILL BE CREATED AND REUSED AMONG ALL !
-
-- - NOW TO THE OUTPUT NAME GIVEN CASES - -
-7. IF USER GIVES NO QUALITY, WITH OUTPUT NAME THEN DIFFERENT ENCODERS STILL CREATED
-8. BUT IF USER GIVES NO QUALITY, WITH OUTPUT NAME WITH SHARED ENCODER TRUE THEN SAME ENCODERS ARE USED ONLY FOR THOSE WHOSE OUTPUT NAME MATCHES THE OTHER ALREADY CREATED JARRAYLIST !
-
-9. IF USER GIVES DIFFERENT QUALITIES, WITH OUTPUT NAME THEN DIFFERENT ENCODERS STILL CREATED
-10. BUT IF USER GIVES DIFFERENT QUALITIES, WITH OUTPUT NAME WITH SHARED ENCODER AS TRUE THEN AT MAX WE KNOW THAT 4 NON-OUTPUT ENCODERS CAN BE CREATED FOR 4 DIFFERENT QUALITIES WHICH IS REUSED AGAIN AND AGAIN UNLESS THE OUTPUT NAME FOR THOSE JARRAYLISTS ARE SAME, OTHERWISE WE KNOW . .
-
-
-11. IF USER GIVES ONE QUALITY TO MODIFY THE DEFAULT SCALE AND DOES THE SAME FOR ALL JARRAYLISTS AFTER IT, WITH WITH OUTPUT NAME THEN DIFFERENT ENCODERS STILL CREATED
-12. IF USER GIVES ONE QUALITY TO MODIFY THE DEFAULT SCALE AND DOES THE SAME FOR ALL JARRAYLISTS AFTER IT, WITH WITH OUTPUT NAME AND SET SHARED ENCODER TO TRUE IN ALL THEN JARRAYLISTS WITH SAME OUTPUT NAME WILL REUSE THE SAME ENCODERS, OTHERWISE WE KNOW . .
-
+JStack<Integer> stack = new JStack<>()
+.withRenderMode(Render.VIDEO)
+.withSharedEncoder(true)
+.build();
 ```
 
+#### 🔗 Infinite Customization & Multi-Structure Scenes
+
+DSA-IN-3D supports not only supports individual data structure animations but also the ability to chain and combine multiple structures together in a single scene. You can create a JArrayList, a JTree, and a JGraph side by side each with its own unique animations, styles, and rendering configurations.
+
+* Every structure can be customized independently using the .with() API
+* Run each one in a different render mode ( LIVE, VIDEO, STEP_WISE )
+* Use distinct camera angles, textures, backgrounds, and animation speeds
+
+```java
+    JAVLTree avl = new JAVLTree()
+        .withRandomizer(Dynamo.INSTANCE.withCrazyMode().withoutQuality().withoutRenderMode().withoutSteps())
+        .withQuality(Resolution.BEST).withRenderMode(Render.LIVE).build();
+
+    JLinkedList list = new JLinkedList()
+        .withRandomizer(Dynamo.INSTANCE.withCrazyMode().withoutQuality().withoutRenderMode().withoutSteps())
+        .withQuality(Resolution.BEST).withRenderMode(Render.STEP_WISE).build();
+        
+    JStack stack = new JStack()
+        .withRandomizer(Dynamo.INSTANCE.withCrazyMode().withoutQuality().withoutRenderMode().withoutSteps())
+        .withQuality(Resolution.BEST).withRenderMode(Render.STEP_WISE_INTERACTIVE).build();
+       
+        int value;
+        Random rand = new Random();
+        for(int i = 0; i < 5; i++) {
+            value = rand.nextInt(100);
+            stack.push(value);
+            list.add(value);
+            avl.add(value);
+        }        
+```
+
+With infinite customization, DSA-IN-3D is the ultimate tool to bring your data structures and algorithms to life in 3D.
+
+---
+
+### 🌈 Modes of Usage
+
+* `LIVE` – live visualization
+* `VIDEO` – export to high-quality `.mp4`
+* `STEP_WISE` – step-by-step visualization
+* `STEP_WISE_INTERACTIVE` – full mouse/keyboard camera
+
+---
+
+## 🌍 Contributions Welcome
+
+* Adding new structures: `JTrie`, `JSkipList`, `JSegmentTree`, etc. [Recommended]
+* Improving animation logic or visual effects
+* Fixing bugs / improving performance
+* Creating new `.with()` APIs
+
+---
+
+## 📊 Big Numbers, Big Effort
+
+* 🧠 3500+ lines of pure Java
+* 🎞️ 12+ algorithm visualizations
+* 🧱 30+ animator and structure classes
+* 🚀 Built completely in **2 weeks** of effort
+* 🌄 Built-in ray tracing with realistic HDR 
+* 🧰 25+ `.with()` customizable API flags
+
+---
+
+## 🧠 Challenges We Solved
+
+* Custom ray tracer with reflections + soft shadows
+* Resolution, naming, quality chaining support
+* Shared FFMPEG encoder optimization
+* Subtitle rendering with exact timing
+* Frame-by-frame animation syncing
+* Multi-structure shared scenes
+* Interactive camera logic
+
+---
 
 
+## 📌 License & Credits
 
+**License:** Apache 2.0
 
-### Phase 7
-- ADD DATA STRUCTURES 
-- JSTACKS [DONE]
-- JQUEUES [DONE]
-- JTREES [ON GOING]
-- JGRAPH
-- JHEAP
+**Made by:** Aryan Batra [@aryanbatras](https://github.com/aryanbatras)
 
+**Special Thanks To:** Everyone who joins this mission to make data structures visual, beautiful, and joyful.
 
-## PHASE 8
-- IMPLEMENT ALGORITHM VISUALIZERS [DONE]
-- MAKE DATA STRUCTURES TAKE ANY TYPE
-- ADD ON TO VISIBILITY WITH OVERLAY GUI TEXTS
-- WRITE BIG BIG DATA STRUCTURE VARIABLE NAME
-- ADD A CODE PARSER GUI SWING BASED
+---
 
