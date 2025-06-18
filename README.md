@@ -1,8 +1,15 @@
 # DSA-IN-3D:  3D Data Structure Visualizer In Java
 
 **Built in 2 Weeks · 100% Pure Java · Zero Dependencies · No Maven/Gradle · Just Clone and Run in IntelliJ**
- 
-[![DSA-IN-3D: 3D Data Structure Visualizer In Java](https://img.youtube.com/vi/PxCY7eM119E/0.jpg)](https://youtu.be/PxCY7eM119E)
+
+--- 
+<h2>🎥 Watch Demo on YouTube</h2>
+
+<a href="https://youtu.be/PxCY7eM119E" target="_blank">
+  <img src="https://img.youtube.com/vi/PxCY7eM119E/hqdefault.jpg" style="width:100%; height:auto;" />
+</a>
+
+---
 
 ## 🔥 What is DSA-IN-3D?
 
@@ -355,6 +362,10 @@ With infinite customization, DSA-IN-3D is the ultimate tool to bring your data s
 **Made by:** Aryan Batra [@aryanbatras](https://github.com/aryanbatras)
 
 **Special Thanks To:** Everyone who joins this mission to make data structures visual, beautiful, and joyful.
+
+![Java](https://img.shields.io/badge/language-Java-blue)
+![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![Built With](https://img.shields.io/badge/Built%20With-IntelliJ-orange)
 
 ---
 
