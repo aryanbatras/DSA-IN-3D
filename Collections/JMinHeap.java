@@ -30,7 +30,7 @@ public class JMinHeap<T extends Comparable<T>> {
     private final Set<String> explicitlySetProperties;
 
     public JMinHeap() {
-        this.scale = 0.5;
+        this.scale = 0.25;
         this.encoder = null;
         this.mode = Render.DISABLED;
         this.heapList = new ArrayList<>();
@@ -38,6 +38,8 @@ public class JMinHeap<T extends Comparable<T>> {
         this.explicitlySetProperties = new HashSet<>();
         this.defaultEntrance = Entrance.SLIDE_FROM_RIGHT;
         this.defaultExit = Exit.SLIDE_UP;
+        animator.setScale(0.25);
+        animator.setFPS(1);
         this.randomizer = null;
         this.built = true;
     }
@@ -313,10 +315,7 @@ public class JMinHeap<T extends Comparable<T>> {
         Variable.update("add", value);
 
         insertIntoHeap(value);
-
-        if (mode != Render.DISABLED) {
-            animator.runAddAnimation(value, randomizer != null ? randomizer.randomInsertAnimation() : defaultEntrance);
-        }
+        animator.runAddAnimation(value, randomizer != null ? randomizer.randomInsertAnimation() : defaultEntrance);
     }
 
 
@@ -326,10 +325,7 @@ public class JMinHeap<T extends Comparable<T>> {
         Variable.update("add", value);
 
         insertIntoHeap(value);
-
-        if (mode != Render.DISABLED) {
-            animator.runAddAnimation(value, animation);
-        }
+        animator.runAddAnimation(value, animation);
     }
 
     public T getPriority(){
@@ -341,10 +337,7 @@ public class JMinHeap<T extends Comparable<T>> {
         checkBuilt();
         T value =  heapList.get(0);
         Variable.update("remove", value);
-
-        if (mode != Render.DISABLED) {
-            animator.runRemoveAnimation();
-        }
+        animator.runRemoveAnimation();
 
         deleteFromHeap();
         return value;

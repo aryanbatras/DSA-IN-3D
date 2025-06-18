@@ -36,7 +36,7 @@ public class JQueue<T extends Comparable<T>> {
     private final Set<String> explicitlySetProperties;
 
     public JQueue() {
-        this.scale = 0.5;
+        this.scale = 0.25;
         this.encoder = null;
         this.mode = Render.DISABLED;
         this.queue = new ArrayDeque<>();
@@ -45,6 +45,8 @@ public class JQueue<T extends Comparable<T>> {
         this.defaultEntrance = Entrance.SLIDE_FROM_RIGHT;
         this.defaultExit = Exit.SHRINK_AND_DROP;
         this.randomizer = null;
+        animator.setScale(0.25);
+        animator.setFPS(1);
         this.built = true;
         front = 0;
         rear = 0;
@@ -281,7 +283,7 @@ public class JQueue<T extends Comparable<T>> {
 
         rear++;
         queue.offer(value);
-        if (mode != Render.DISABLED) { animator.runAddAnimation(value, randomizer != null ? randomizer.randomInsertAnimation() : defaultEntrance); }
+        animator.runAddAnimation(value, randomizer != null ? randomizer.randomInsertAnimation() : defaultEntrance);
     }
 
     public void offer(T value, Entrance boxAnimation) {
@@ -290,7 +292,7 @@ public class JQueue<T extends Comparable<T>> {
 
         rear++;
         queue.offer(value);
-        if(mode != Render.DISABLED){ animator.runAddAnimation(value, boxAnimation);}
+        animator.runAddAnimation(value, boxAnimation);
     }
 
 
@@ -298,7 +300,7 @@ public class JQueue<T extends Comparable<T>> {
         Code.markCurrentLine(); checkBuilt();
 
         T e = queue.poll();
-        if(mode != Render.DISABLED){ animator.runRemoveAnimation(randomizer != null ? randomizer.randomRemoveAnimation() : defaultExit); }
+        animator.runRemoveAnimation(randomizer != null ? randomizer.randomRemoveAnimation() : defaultExit);
         Variable.update("poll", e);
         front++;
         return e;
@@ -308,7 +310,7 @@ public class JQueue<T extends Comparable<T>> {
         Code.markCurrentLine(); checkBuilt();
 
         T e = queue.poll();
-        if(mode != Render.DISABLED){animator.runRemoveAnimation(boxAnimation);}
+        animator.runRemoveAnimation(boxAnimation);
         Variable.update("pop", e);
         front++;
         return e;
@@ -319,7 +321,7 @@ public class JQueue<T extends Comparable<T>> {
         T e = queue.peek();
         Variable.update("peek", e);
 
-        if(mode != Render.DISABLED){ animator.runHighlightAnimation(); }
+         animator.runHighlightAnimation();
         return e;
     }
 

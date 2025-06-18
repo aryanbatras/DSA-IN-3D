@@ -83,6 +83,7 @@ public class JGraphsAnimator<T> {
     }
 
     private void setRandomBackground() {
+        if(mode == Render.DISABLED) return;
         Scenery rnd = Scenery.values()[new Random().nextInt(Scenery.values().length)];
         setBackground(rnd.toString());
     }
@@ -499,7 +500,7 @@ public class JGraphsAnimator<T> {
         for (JBox bar : edgeBars) {
             if (bar.val.equals(u + "->" + v)) {
                 cameraAnimator.slideTo(bar.getCenter());
-                boxAnimator.highlight(bar);
+//                boxAnimator.highlight(bar);
             }
         }
     }

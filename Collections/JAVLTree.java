@@ -47,13 +47,15 @@ public class JAVLTree<T extends Comparable<T>> {
 
     public JAVLTree() {
         this.root = null;
-        this.scale = 0.5;
+        this.scale = 0.25;
         this.encoder = null;
         this.mode = Render.DISABLED;
         this.animator = new JAVLTreesAnimator<>();
         this.explicitlySetProperties = new HashSet<>();
         this.defaultEntrance = Entrance.SLIDE_FROM_RIGHT;
         this.defaultExit = Exit.SHRINK_AND_DROP;
+        animator.setScale(0.25);
+        animator.setFPS(1);
         this.randomizer = null;
         this.built = true;
     }
@@ -396,9 +398,8 @@ public class JAVLTree<T extends Comparable<T>> {
 
         root = insert(root, value);
 
-        if (mode != Render.DISABLED) {
             animator.runAddAnimation(value, randomizer != null ? randomizer.randomInsertAnimation() : defaultEntrance);
-        }
+
     }
 
     public void add(T value, Entrance animation) {
@@ -408,9 +409,8 @@ public class JAVLTree<T extends Comparable<T>> {
 
         root = insert(root, value);
 
-        if (mode != Render.DISABLED) {
             animator.runAddAnimation(value, animation);
-        }
+
     }
 
     public T delete(T value){
@@ -425,9 +425,8 @@ public class JAVLTree<T extends Comparable<T>> {
         Code.markCurrentLine();
         checkBuilt();
 
-        if (mode != Render.DISABLED) {
             animator.runRemoveAnimation(value, randomizer != null ? randomizer.randomRemoveAnimation() : defaultExit);
-        }
+
 
         root = delete(root, value);
         Variable.update("remove", value);
@@ -438,9 +437,8 @@ public class JAVLTree<T extends Comparable<T>> {
         Code.markCurrentLine();
         checkBuilt();
 
-        if (mode != Render.DISABLED) {
             animator.runRemoveAnimation(value, animation);
-        }
+
 
         root = delete(root, value);
         Variable.update("remove", value);

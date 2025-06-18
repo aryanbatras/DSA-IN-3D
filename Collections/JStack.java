@@ -32,7 +32,7 @@ public class JStack<T extends Comparable<T>> {
     private final Set<String> explicitlySetProperties;
 
     public JStack() {
-        this.scale = 0.5;
+        this.scale = 0.25;
         this.encoder = null;
         this.mode = Render.DISABLED;
         this.stack = new Stack<>();
@@ -40,6 +40,8 @@ public class JStack<T extends Comparable<T>> {
         this.explicitlySetProperties = new HashSet<>();
         this.defaultEntrance = Entrance.SLIDE_FROM_RIGHT;
         this.defaultExit = Exit.SHRINK_AND_DROP;
+        animator.setScale(0.25);
+        animator.setFPS(1);
         this.randomizer = null;
         this.built = true;
     }
@@ -283,7 +285,7 @@ public class JStack<T extends Comparable<T>> {
 
         top++;
         stack.add(value);
-        if(mode != Render.DISABLED){ animator.runAddAnimation(value, boxAnimation);}
+         animator.runAddAnimation(value, boxAnimation);
     }
 
     public T pop() {
@@ -291,7 +293,7 @@ public class JStack<T extends Comparable<T>> {
 
         top--;
         T e = stack.pop();
-        if(mode != Render.DISABLED){ animator.runRemoveAnimation(top, randomizer != null ? randomizer.randomRemoveAnimation() : defaultExit); }
+        animator.runRemoveAnimation(top, randomizer != null ? randomizer.randomRemoveAnimation() : defaultExit);
         Variable.update("pop", e);
         return e;
     }
@@ -301,7 +303,7 @@ public class JStack<T extends Comparable<T>> {
 
         top--;
         T e = stack.pop();
-        if(mode != Render.DISABLED){animator.runRemoveAnimation(top, boxAnimation);}
+        animator.runRemoveAnimation(top, boxAnimation);
         Variable.update("pop", e);
         return e;
     }
@@ -311,7 +313,7 @@ public class JStack<T extends Comparable<T>> {
         T e = stack.peek();
         Variable.update("peek", e);
 
-        if(mode != Render.DISABLED){ animator.runHighlightAnimation(top - 1); }
+        animator.runHighlightAnimation(top - 1);
         return e;
     }
 

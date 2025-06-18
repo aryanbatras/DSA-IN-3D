@@ -35,7 +35,7 @@ public class JGraph<T extends Comparable<T>> {
     public JGraph() {
         this.adjacencyList = new LinkedHashMap<>();
         this.animator = new JGraphsAnimator<>();
-        this.scale = 0.5;
+        this.scale = 0.25;
         this.mode = Render.DISABLED;
         this.encoder = null;
         this.randomizer = null;
@@ -45,6 +45,8 @@ public class JGraph<T extends Comparable<T>> {
         this.defaultVertexExit = Exit.SCALE_DOWN;
         this.defaultEdgeEntrance = Entrance.SLIDE_FROM_RIGHT;
         this.defaultEdgeExit = Exit.SLIDE_UP;
+        animator.setScale(0.25);
+        animator.setFPS(1);
     }
     public JGraph withAlgoVisualizer(Graph algo){
         this.algo = algo;
@@ -284,19 +286,17 @@ public class JGraph<T extends Comparable<T>> {
         Code.markCurrentLine();
         checkBuilt();
         adjacencyList.putIfAbsent(v, new ArrayList<>());
-        if (mode != Render.DISABLED) {
             animator.runAddVertexAnimation(v,
                     randomizer != null ? randomizer.randomInsertAnimation() : defaultVertexEntrance);
-        }
+
     }
 
     public T removeVertex(T v) {
         Code.markCurrentLine();
         checkBuilt();
-        if (mode != Render.DISABLED) {
             animator.runRemoveVertexAnimation(v,
                     randomizer != null ? randomizer.randomRemoveAnimation() : defaultVertexExit);
-        }
+
         adjacencyList.remove(v);
         // also remove edges
         for (List<T> nbrs : adjacencyList.values()) nbrs.remove(v);
@@ -313,30 +313,28 @@ public class JGraph<T extends Comparable<T>> {
         // only insert & animate if new
         if (!adjacencyList.containsKey(u)) {
             adjacencyList.put(u, new ArrayList<>());
-            if (mode != Render.DISABLED) animator.runAddVertexAnimation(u, defaultVertexEntrance);
+            animator.runAddVertexAnimation(u, defaultVertexEntrance);
         }
         if (!adjacencyList.containsKey(v)) {
             adjacencyList.put(v, new ArrayList<>());
-            if (mode != Render.DISABLED) animator.runAddVertexAnimation(v, defaultVertexEntrance);
+             animator.runAddVertexAnimation(v, defaultVertexEntrance);
         }
 
         boolean reverseExists = adjacencyList.containsKey(v) && adjacencyList.get(v).contains(u);
         adjacencyList.get(u).add(v);
 
-        if (mode != Render.DISABLED) {
             animator.runAddEdgeAnimation(u, v, randomizer != null ? randomizer.randomInsertAnimation() : defaultEdgeEntrance,
                     reverseExists);
-        }
+
     }
 
 
     public void removeEdge(T u, T v) {
         Code.markCurrentLine();
         checkBuilt();
-        if (mode != Render.DISABLED) {
             animator.runRemoveEdgeAnimation(u, v,
                     randomizer != null ? randomizer.randomRemoveAnimation() : defaultEdgeExit);
-        }
+
         List<T> nbrs = adjacencyList.get(u);
         if (nbrs != null) nbrs.remove(v);
     }
@@ -372,15 +370,13 @@ public class JGraph<T extends Comparable<T>> {
 
     public void highlightVertex(T value) {
         Code.markCurrentLine(); checkBuilt();
-        if (mode != Render.DISABLED) {
             animator.runHighlightVertexAnimation(value);
-        }
+
     }
 
     public void highlightEdge(T u, T v) {
-        if (mode != Render.DISABLED) {
             animator.runHighlightEdgeAnimation(u, v);
-        }
+
     }
 
 

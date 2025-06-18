@@ -77,15 +77,13 @@ public class Renderer {
 //    }
 
     public void setENVIRONMENT(String filePath) {
+
         try (InputStream in = getClass().getClassLoader().getResourceAsStream(filePath)) {
             if (in == null) {
                 throw new IllegalStateException("Could not find resource: " + filePath);
             }
             ENVIRONMENT = ImageIO.read(in);
-        } catch (IOException e) {
-            System.out.println("Environment failed to load: " + filePath);
-            e.printStackTrace();
-        }
+        } catch (IOException ignored) { }
     }
 
     public void interactiveDrawImage(Camera camera, ArrayList<Shape> world, Subtitle subtitle, Render mode, int interactive){
@@ -104,13 +102,13 @@ public class Renderer {
 
     public void drawImage(Camera camera, ArrayList<Shape> world, Subtitle subtitle, Render mode, int interactiveCaller) {
 
+        if(mode == Render.DISABLED){ return; }
+
         final int width = BEINGRENDERED.getWidth( );
         final int height = BEINGRENDERED.getHeight( );
         final int[] pixels = ((DataBufferInt) BEINGRENDERED.getRaster( ).getDataBuffer( )).getData( );
         final Camera finalCamera;
 
-
-        // Track transition
         boolean transitionedFrom1to0 = (lastInteractiveCaller == 1 && interactiveCaller == 0);
         boolean transitionedFrom0to1 = (lastInteractiveCaller == 0 && interactiveCaller == 1);
 
@@ -118,7 +116,6 @@ public class Renderer {
             savedCameraState = camera.clone();
         }
 
-        // 🔁 Camera restore logic (1 ➝ 0 transition)
         if (mode == Render.STEP_WISE_INTERACTIVE && transitionedFrom1to0 && savedCameraState != null) {
             camera.copyFrom(savedCameraState);
         }

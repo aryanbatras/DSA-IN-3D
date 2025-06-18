@@ -165,6 +165,7 @@ public class JTreesAnimator<T extends Comparable<T>> {
     }
 
     private void setRandomBackground() {
+        if(mode == Render.DISABLED) return;
         Scenery randomBg = Scenery.values( )[rand.nextInt(Scenery.values( ).length)];
         setBackground(randomBg.toString( ));
     }
@@ -404,11 +405,11 @@ public class JTreesAnimator<T extends Comparable<T>> {
             Point P = parentBox.getCenter();
             Point C = childBox .getCenter();
 
-            JBox hBar = makeBar(new Point(P.x,P.y,P.z), new Point(C.x,P.y,C.z), thickness, "");
+            JBox hBar = makeBar(new Point(P.x,P.y,P.z), new Point(C.x,P.y,C.z), thickness, " ");
             world.add(hBar); worldBars.add(hBar);
             boxAnimator.scalePopFast(hBar);
 
-            JBox vBar = makeBar(new Point(C.x,P.y,C.z), new Point(C.x,C.y,C.z), thickness, "");
+            JBox vBar = makeBar(new Point(C.x,P.y,C.z), new Point(C.x,C.y,C.z), thickness, " ");
             world.add(vBar); worldBars.add(vBar);
             boxAnimator.scalePopFast(vBar);
         }
@@ -436,7 +437,7 @@ public class JTreesAnimator<T extends Comparable<T>> {
                 w, h, d,
                 new Color(1.0f, 0.82f, 0.0f),
                 Texture.METAL,
-                0.0, name, Effect.NONE
+                0.0, null, Effect.NONE
         );
         return bar;
     }

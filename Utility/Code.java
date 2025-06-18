@@ -94,7 +94,7 @@ public class Code {
         for (int i = 1; i < stackTrace.length; i++) {
             StackTraceElement el = stackTrace[i];
             String className = el.getClassName();
-            String baseClassName = className.split("\\$")[0]; // <- THE FIX
+            String baseClassName = className.split("\\$")[0];
 
             if (baseClassName.startsWith("Algorithms.") && enumSources.containsKey(baseClassName)) {
                 sourceLines = enumSources.get(baseClassName);
@@ -103,7 +103,6 @@ public class Code {
             }
         }
 
-        // Fallback to Main.java
         for (int i = 1; i < stackTrace.length; i++) {
             StackTraceElement el = stackTrace[i];
             if ("Main.java".equals(el.getFileName()) && mainSource != null) {
@@ -226,30 +225,16 @@ public class Code {
                 }
 
                 g2d.setColor(TEXT);
-//                String displayLine = wrappedLine;
-//                if (isCurrentLine && conditionResult != null) {
-//                    displayLine += "   " + conditionResult;
-//                }
 
                 g2d.drawString(wrappedLine, x + 30, currentY);
-//                if (!getConditionResult().isEmpty()) {
-//                    g2d.setColor(Color.YELLOW);
-//                    g2d.drawString(getConditionResult(), x + 40, y + overlayHeight - 10);
-//                }
-//                if (isCurrentLine) conditionResult = " ";
-//                g2d.setColor(TEXT);
-//                g2d.drawString(wrappedLine, x + 30, currentY);
 
-                // Glue the condition result to this line if it's the current line and first wrapped segment
                 if (!getConditionResult().isBlank()) {
-                    // Draw a soft highlight bar at the bottom
                     int footerHeight = lineHeight + 4;
                     int footerY = y + overlayHeight - footerHeight + lineHeight + 5;
 
                     g2d.setColor(new Color(30, 30, 40, 25));
                     g2d.fillRect(x, footerY, overlayWidth, footerHeight);
 
-                    // Draw result text in green/red, centered left
                     Color resultColor = getConditionResult().contains("true")
                             ? new Color(120, 255, 120, 45)
                             : new Color(255, 120, 120, 45);

@@ -41,13 +41,15 @@ public class JTrees<T extends Comparable<T>> {
 
     public JTrees() {
         this.root = null;
-        this.scale = 0.5;
+        this.scale = 0.25;
         this.encoder = null;
         this.mode = Render.DISABLED;
         this.animator = new JTreesAnimator<>();
         this.explicitlySetProperties = new HashSet<>();
         this.defaultEntrance = Entrance.SLIDE_FROM_RIGHT;
-        this.defaultExit = Exit.SLIDE_UP;
+        this.defaultExit = Exit.SHRINK_AND_DROP;
+        animator.setScale(0.25);
+        animator.setFPS(1);
         this.randomizer = null;
         this.built = true;
     }
@@ -301,9 +303,7 @@ public class JTrees<T extends Comparable<T>> {
 
         root = insertIntoBST(root, value);
 
-        if (mode != Render.DISABLED) {
-            animator.runAddAnimation(value, randomizer != null ? randomizer.randomInsertAnimation() : defaultEntrance);
-        }
+        animator.runAddAnimation(value, randomizer != null ? randomizer.randomInsertAnimation() : defaultEntrance);
     }
 
     public void add(T value, Entrance animation) {
@@ -313,9 +313,7 @@ public class JTrees<T extends Comparable<T>> {
 
         root = insertIntoBST(root, value);
 
-        if (mode != Render.DISABLED) {
-            animator.runAddAnimation(value, animation);
-        }
+        animator.runAddAnimation(value, animation);
     }
 
     public T delete(T value){
@@ -330,9 +328,7 @@ public class JTrees<T extends Comparable<T>> {
         Code.markCurrentLine();
         checkBuilt();
 
-        if (mode != Render.DISABLED) {
-            animator.runRemoveAnimation(value, randomizer != null ? randomizer.randomRemoveAnimation() : defaultExit);
-        }
+        animator.runRemoveAnimation(value, randomizer != null ? randomizer.randomRemoveAnimation() : defaultExit);
 
         root = deleteFromBST(root, value);
         Variable.update("remove", value);
@@ -343,9 +339,7 @@ public class JTrees<T extends Comparable<T>> {
         Code.markCurrentLine();
         checkBuilt();
 
-        if (mode != Render.DISABLED) {
-            animator.runRemoveAnimation(value, animation);
-        }
+        animator.runRemoveAnimation(value, animation);
 
         root = deleteFromBST(root, value);
         Variable.update("remove", value);

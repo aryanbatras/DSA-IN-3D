@@ -58,6 +58,7 @@ public class BoxAnimator {
     }
 
     public void pulseHighlight(JBox box) {
+        if(Render.DISABLED == mode) return;
         Color original = box.color;
         for (int i = 0; i < frames; i++) {
             float t = (float)Math.abs(Math.sin(i * 0.05));
@@ -170,6 +171,8 @@ public class BoxAnimator {
 
 
     public void highlightThreeBoxes(JBox a, JBox b, JBox c) {
+        if(Render.DISABLED == mode) return;
+
         Color originalA = a.color;
         Color originalB = b.color;
         Color originalC = c.color;
@@ -188,6 +191,8 @@ public class BoxAnimator {
     }
 
     public void highlightTwoBoxes(JBox a, JBox b) {
+        if(Render.DISABLED == mode) return;
+
         Color originalA = a.color;
         Color originalB = b.color;
 
@@ -203,6 +208,8 @@ public class BoxAnimator {
     }
 
     public void highlight(JBox JBox) {
+        if(Render.DISABLED == mode) return;
+
         Color c = JBox.color;
         for (int i = 0; i < frames; i++) {
             JBox.color = new Color(
@@ -233,6 +240,8 @@ public class BoxAnimator {
     }
 
     public void slideFromLeft(JBox JBox, double finalX) {
+        if(Render.DISABLED == mode) return;
+
         double initialX = finalX - 5.0;
         double delta = (finalX - initialX) / frames;
         JBox.center.x = initialX;
@@ -245,6 +254,8 @@ public class BoxAnimator {
     }
 
     public void slideFromRight(JBox JBox, double finalX) {
+        if(Render.DISABLED == mode) return;
+
         double initialX = finalX + 5.0;
         double delta = (finalX - initialX) / frames;
         JBox.center.x = initialX;
@@ -257,6 +268,8 @@ public class BoxAnimator {
     }
 
     public void slideFromTop(JBox JBox, double finalY) {
+        if(Render.DISABLED == mode) return;
+
         double initialY = finalY + 5.0;
         double delta = (finalY - initialY) / frames;
         JBox.center.y = initialY;
@@ -268,6 +281,8 @@ public class BoxAnimator {
     }
 
     public void slideUp(JBox JBox, double finalY) {
+        if(Render.DISABLED == mode) return;
+
         double initialY = JBox.center.y;
         double delta = (finalY - initialY) / frames;
         for (int i = 0; i < frames; i++) {
@@ -278,6 +293,8 @@ public class BoxAnimator {
     }
 
     public void slideDown(JBox JBox, int finalY) {
+        if(Render.DISABLED == mode) return;
+
         double initialY = JBox.center.y;
         double delta = (initialY - finalY) / frames;
         for (int i = 0; i < frames; i++) {
@@ -288,6 +305,8 @@ public class BoxAnimator {
     }
 
     public void bounceIn(JBox JBox, double baseY) {
+        if(Render.DISABLED == mode) return;
+
         JBox.center.y = baseY + BOUNCE_HEIGHT;
         double gravity = (BOUNCE_HEIGHT * 2) / (frames * frames);
         double velocity = 0;
@@ -304,6 +323,8 @@ public class BoxAnimator {
     }
 
     public void shake(JBox JBox) {
+        if(Render.DISABLED == mode) return;
+
         double originalX = JBox.center.x;
         for (int i = 0; i < frames; i++) {
             JBox.center.x = originalX + Math.sin(i * 0.5) * 0.2;
@@ -313,6 +334,8 @@ public class BoxAnimator {
     }
 
  public void shakeSlow(JBox JBox) {
+     if(Render.DISABLED == mode) return;
+
      double originalX = JBox.center.x;
      for (int i = 0; i < frames / 2; i++) {
          JBox.center.x = originalX + Math.sin(i * 0.5) * 0.05;
@@ -322,6 +345,8 @@ public class BoxAnimator {
  }
 
     public void scalePop(JBox JBox) {
+        if(Render.DISABLED == mode) return;
+
         double originalWidth = JBox.width;
         double originalHeight = JBox.height;
         double maxScale = 1.4;
@@ -345,6 +370,8 @@ public class BoxAnimator {
     }
 
     public void scalePopFast(JBox JBox) {
+        if(Render.DISABLED == mode) return;
+
         double originalWidth = JBox.width;
         double originalHeight = JBox.height;
         double maxScale = 0.5;
@@ -368,6 +395,8 @@ public class BoxAnimator {
     }
 
     public void scalePopFastest(JBox JBox) {
+        if(Render.DISABLED == mode) return;
+
         double originalWidth = JBox.width;
         double originalHeight = JBox.height;
         double maxScale = 0.5;
@@ -391,6 +420,8 @@ public class BoxAnimator {
     }
 
     public void fadeOutAndUp(JBox JBox, double finalY) {
+        if(Render.DISABLED == mode) return;
+
         double initialY = JBox.center.y;
         double deltaY = (finalY - initialY) / frames;
         float alpha = 1.0f;
@@ -425,6 +456,8 @@ public class BoxAnimator {
     }
 
     public void scaleDown(JBox JBox) {
+        if(Render.DISABLED == mode) return;
+
         double originalWidth = JBox.width;
         double originalHeight = JBox.height;
 
@@ -437,6 +470,8 @@ public class BoxAnimator {
     }
 
     public void shakeAndFade(JBox JBox) {
+        if(Render.DISABLED == mode) return;
+
         double originalX = JBox.center.x;
         float alpha = 1.0f;
         float fadeRate = alpha / frames;
@@ -454,6 +489,8 @@ public class BoxAnimator {
     }
 
     public void shrinkAndDrop(JBox JBox) {
+        if(Render.DISABLED == mode) return;
+
         double deltaY = 1.5 / frames;
         double originalWidth = JBox.width;
         double originalHeight = JBox.height;

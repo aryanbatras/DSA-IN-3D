@@ -160,36 +160,6 @@ public class RayTracer {
                         );
                     }
 
-//                    if (normal.z != 0 && JBox.getDigits( ) != null) {
-//                        Point boxMin = JBox.getMin( ), boxMax = JBox.getMax( ), boxSize = boxMax.sub(boxMin);
-//                        double u = 1.0 - (hitPoint.x - boxMin.x) / boxSize.x;
-//                        double v = (hitPoint.y - boxMin.y) / boxSize.y;
-//                        Integer[] digits = JBox.getDigits( );
-//                        double digitWidth = 1.0 / digits.length;
-//                        for (int i = 0; i < digits.length; i++) {
-//                            double startU = i * digitWidth, endU = (i + 1) * digitWidth;
-//                            if (u >= startU && u < endU && isInDigit(digits[i], (u - startU) / digitWidth, v, digits.length)) {
-//                                Point reflected = reflect(r.getDirection( ).normalize( ), normal)
-//                                        .add(randomInUnitSphere( ).mul(fuzz * 0.1));
-//                                Color bounce = rayColor(mode, camera, world, new Ray(hitPoint, reflected), environmentMap, depth - 1);
-//                                float glow = (float) Math.pow(1.0f - Math.abs(normal.z), 3);
-//                                float edge = (float) Math.pow(Math.abs(Math.sin(hitPoint.x * 8) * Math.cos(hitPoint.y * 8)), 4);
-//
-//                                float base = 0.8f;
-//                                float emission = 0.5f * glow + 0.3f * edge;
-//                                float shineBoost = 0.3f;
-//
-//                                return new Color(
-//                                        Math.min(1f, hitColor.r * base + bounce.r * 0.2f + emission + shineBoost),
-//                                        Math.min(1f, hitColor.g * base + bounce.g * 0.2f + emission + shineBoost),
-//                                        Math.min(1f, hitColor.b * base + bounce.b * 0.3f + emission + shineBoost)
-//                                );
-//
-//                            }
-//                        }
-//                    }
-//
-
                 }
             }
         }

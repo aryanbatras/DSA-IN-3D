@@ -118,6 +118,7 @@ public class JMinHeapAnimator<T extends Comparable<T>> {
     }
 
     private void setRandomBackground() {
+        if(mode == Render.DISABLED) return;
         Scenery randomBg = Scenery.values( )[rand.nextInt(Scenery.values( ).length)];
         setBackground(randomBg.toString( ));
     }

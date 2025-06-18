@@ -32,7 +32,7 @@ public class JArrayList<T extends Comparable<T>> {
     private final Set<String> explicitlySetProperties;
 
     public JArrayList() {
-        this.scale = 0.5;
+        this.scale = 0.25;
         this.encoder = null;
         this.mode = Render.DISABLED;
         this.arr = new ArrayList<>();
@@ -40,6 +40,8 @@ public class JArrayList<T extends Comparable<T>> {
         this.explicitlySetProperties = new HashSet<>();
         this.defaultEntrance = Entrance.SLIDE_FROM_RIGHT;
         this.defaultExit = Exit.SLIDE_UP;
+        animator.setScale(0.25);
+        animator.setFPS(1);
         this.randomizer = null;
         this.built = true;
     }
@@ -272,7 +274,7 @@ public class JArrayList<T extends Comparable<T>> {
         T a = arr.get(i);
         T b = arr.get(j);
 
-        if (mode != Render.DISABLED) { animator.runComparisonAnimation(i, j); }
+         animator.runComparisonAnimation(i, j);
         boolean result = a.compareTo(b) >= 0;
         Code.setConditionResult("→ " + result);
         return result;
@@ -285,7 +287,7 @@ public class JArrayList<T extends Comparable<T>> {
         T a = arr.get(i);
         T b = arr.get(j);
 
-        if (mode != Render.DISABLED) { animator.runComparisonAnimation(i, j); }
+        animator.runComparisonAnimation(i, j);
         boolean result = a.compareTo(b) <= 0;
         Code.setConditionResult("→ " + result);
         return result;
@@ -298,7 +300,7 @@ public class JArrayList<T extends Comparable<T>> {
         T a = arr.get(i);
         T b = arr.get(j);
 
-        if (mode != Render.DISABLED) { animator.runComparisonAnimation(i, j); }
+         animator.runComparisonAnimation(i, j);
         boolean result = a.compareTo(b) > 0;
         Code.setConditionResult("→ " + result);
         return result;
@@ -311,7 +313,7 @@ public class JArrayList<T extends Comparable<T>> {
         T a = arr.get(i);
         T b = arr.get(j);
 
-        if (mode != Render.DISABLED) { animator.runComparisonAnimation(i, j); }
+        animator.runComparisonAnimation(i, j);
         boolean result = a.compareTo(b) < 0;
         Code.setConditionResult("→ " + result);
         return result;
@@ -324,7 +326,7 @@ public class JArrayList<T extends Comparable<T>> {
         T a = arr.get(i);
         T b = arr.get(j);
 
-        if (mode != Render.DISABLED) { animator.runComparisonAnimation(i, j); }
+         animator.runComparisonAnimation(i, j);
         boolean result = a.compareTo(b) == 0;
         Code.setConditionResult("→ " + result);
         return result;
@@ -335,7 +337,7 @@ public class JArrayList<T extends Comparable<T>> {
         Variable.update("add", value);
 
         arr.add(value);
-        if (mode != Render.DISABLED) { animator.runAddAnimation(value, randomizer != null ? randomizer.randomInsertAnimation() : defaultEntrance); }
+         animator.runAddAnimation(value, randomizer != null ? randomizer.randomInsertAnimation() : defaultEntrance);
     }
 
     public void add(T value, Entrance boxAnimation) {
@@ -343,7 +345,7 @@ public class JArrayList<T extends Comparable<T>> {
         Variable.update("add", value);
 
         arr.add(value);
-        if(mode != Render.DISABLED){ animator.runAddAnimation(value, boxAnimation);}
+        animator.runAddAnimation(value, boxAnimation);
     }
 
     public T remove(int index) {
@@ -352,7 +354,7 @@ public class JArrayList<T extends Comparable<T>> {
         Variable.update("remove", index, value);
 
         arr.remove(index);
-        if(mode != Render.DISABLED){ animator.runRemoveAnimation(index, randomizer != null ? randomizer.randomRemoveAnimation() : defaultExit);}
+         animator.runRemoveAnimation(index, randomizer != null ? randomizer.randomRemoveAnimation() : defaultExit);
         return value;
     }
 
@@ -362,7 +364,7 @@ public class JArrayList<T extends Comparable<T>> {
         Variable.update("remove", index, value);
 
         arr.remove(index);
-        if(mode != Render.DISABLED){animator.runRemoveAnimation(index, boxAnimation);}
+        animator.runRemoveAnimation(index, boxAnimation);
         return value;
     }
 
@@ -371,7 +373,7 @@ public class JArrayList<T extends Comparable<T>> {
         T value = arr.get(index);
         Variable.update("get", index, value);
 
-        if(mode != Render.DISABLED){ animator.runHighlightAnimation(index); }
+         animator.runHighlightAnimation(index);
         return value;
     }
 
@@ -379,7 +381,7 @@ public class JArrayList<T extends Comparable<T>> {
         Code.markCurrentLine(); checkBuilt();
         Variable.update("set", index, value);
 
-        if(mode != Render.DISABLED){ animator.runHybridAnimation(index, value); }
+         animator.runHybridAnimation(index, value);
         arr.set(index, value);
     }
 

@@ -31,7 +31,7 @@ public class JLinkedList<T extends Comparable<T>> {
     private final Set<String> explicitlySetProperties;
 
     public JLinkedList() {
-        this.scale = 0.5;
+        this.scale = 0.25;
         this.encoder = null;
         this.mode = Render.DISABLED;
         this.list = new LinkedList<>();
@@ -39,6 +39,8 @@ public class JLinkedList<T extends Comparable<T>> {
         this.explicitlySetProperties = new HashSet<>();
         this.defaultEntrance = Entrance.SLIDE_FROM_RIGHT;
         this.defaultExit = Exit.SLIDE_UP;
+        animator.setScale(0.25);
+        animator.setFPS(1);
         this.randomizer = null;
         this.built = true;
     }
@@ -263,9 +265,8 @@ public class JLinkedList<T extends Comparable<T>> {
 
         list.add(value);
 
-        if (mode != Render.DISABLED) {
             animator.runAddAnimation(value, randomizer != null ? randomizer.randomInsertAnimation() : defaultEntrance);
-        }
+
     }
 
     public void add(T value, Entrance animation) {
@@ -275,9 +276,8 @@ public class JLinkedList<T extends Comparable<T>> {
 
         list.add(value);
 
-        if (mode != Render.DISABLED) {
             animator.runAddAnimation(value, animation);
-        }
+
     }
 
     public T remove(int index) {
@@ -287,9 +287,8 @@ public class JLinkedList<T extends Comparable<T>> {
         T value = list.get(index);
         list.remove(index);
 
-        if (mode != Render.DISABLED) {
             animator.runRemoveAnimation(index, randomizer != null ? randomizer.randomRemoveAnimation() : defaultExit);
-        }
+
         Variable.update("remove", index, value);
         return value;
     }
@@ -301,9 +300,8 @@ public class JLinkedList<T extends Comparable<T>> {
         T value = list.get(index);
         list.remove(index);
 
-        if (mode != Render.DISABLED) {
             animator.runRemoveAnimation(index, animation);
-        }
+
         Variable.update("remove", index, value);
         return value;
     }
@@ -314,9 +312,7 @@ public class JLinkedList<T extends Comparable<T>> {
 
         T value = list.get(index);
 
-        if (mode != Render.DISABLED) {
             animator.runHighlightAnimation(index);
-        }
         Variable.update("get", index, value);
         return value;
     }
@@ -327,9 +323,7 @@ public class JLinkedList<T extends Comparable<T>> {
 
         list.set(index, value);
 
-        if (mode != Render.DISABLED) {
-            animator.runHybridAnimation(index, value);
-        }
+        animator.runHybridAnimation(index, value);
         Variable.update("set", index, value);
     }
 
